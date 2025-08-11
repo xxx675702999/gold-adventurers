@@ -551,7 +551,7 @@
     </style>
  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </head>
-<body onload="resetItemDisplay()">
+<body onload="resetItemDisplay(); resetPetDisplay()">
 <body>
     <h1>金币冒险者</h1>
  <div class="player-name">
@@ -1009,9 +1009,13 @@
     </div>
 </div>
 
-<!-- 伴侣系统界面 -->
 <div id="companionSystem" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1a1a1a; color: white; padding: 20px; border: 3px solid #4CAF50; border-radius: 10px; z-index: 1001; width: 800px; max-height: 600px; overflow-y: auto;">
-    <h2 style="text-align: center; color: #4CAF50;">伴侣系统</h2>
+    <!-- 标题栏（包含标题和关闭按钮） -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #4CAF50; padding-bottom: 10px;">
+        <h2 style="color: #4CAF50; margin: 0;">伴侣系统</h2>
+        <button onclick="closeCompanionSystem()" style="background: #f44336; color: white; border: none; padding: 5px 15px; border-radius: 3px; cursor: pointer; font-size: 14px;">关闭</button>
+    </div>
+    
     
     <!-- 伴侣等级与升级 -->
     <div style="margin: 15px 0; padding: 10px; background: #333; border-radius: 5px;">
@@ -1020,23 +1024,16 @@
         <button onclick="upgradeCompanion()" style="background: #4CAF50; color: white; border: none; padding: 5px 15px; border-radius: 3px; cursor: pointer;">升级</button>
     </div>
     
+    <div style="display: flex; gap: 10px; margin: 15px 0;">
     <!-- 伴侣宝箱 -->
-    <div style="margin: 15px 0; padding: 10px; background: #333; border-radius: 5px;">
+    <div style="flex: 1; padding: 10px; background: #333; border-radius: 5px;">
         <h3>伴侣宝箱</h3>
         <p>当前钥匙: <span id="companionKeyCount">0</span></p>
         <button onclick="drawCompanion()" style="background: #2196F3; color: white; border: none; padding: 5px 15px; border-radius: 3px; cursor: pointer;">开启宝箱 (消耗1钥匙)</button>
     </div>
     
-    <!-- 伴侣列表 -->
-    <div style="margin: 15px 0;">
-        <h3>我的伴侣</h3>
-        <div id="companionList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px;max-height: 400px; overflow-y: auto;">
-            <!-- 伴侣卡片会动态生成在这里 -->
-        </div>
-    </div>
-    
     <!-- 批量分解 -->
-    <div style="margin: 15px 0; padding: 10px; background: #333; border-radius: 5px;">
+    <div style="flex: 1; padding: 10px; background: #333; border-radius: 5px;">
         <h3>批量分解</h3>
         <select id="decomposeRarity" style="padding: 5px; margin-right: 10px;">
             <option value="white">普通(白色)</option>
@@ -1047,13 +1044,31 @@
             <option value="red">神赐(红色)</option>
         </select>
         <button onclick="batchDecompose()" style="background: #f44336; color: white; border: none; padding: 5px 15px; border-radius: 3px; cursor: pointer;">批量分解选中品阶(未锁定)</button>
-    </div>
-    
-    <!-- 关闭按钮 -->
-    <div style="text-align: center; margin-top: 20px;">
-        <button onclick="closeCompanionSystem()" style="background: #555; color: white; border: none; padding: 8px 20px; border-radius: 3px; cursor: pointer;">关闭</button>
+<div style="flex: 1; padding: 10px; background: #333; border-radius: 5px; margin-top: 1px;">
+    <h3>自动分解设置</h3>
+    <select id="autoDecomposeBelowRarity" style="padding: 5px; margin-right: 10px;">
+        <option value="white">普通(白色)及以下</option>
+        <option value="blue">稀有(蓝色)及以下</option>
+        <option value="purple">史诗(紫色)及以下</option>
+        <option value="pink">卓越(粉色)及以下</option>
+        <option value="orange">完美(橙色)及以下</option>
+        <option value="red">神赐(红色)及以下</option>
+    </select>
+    <button id="toggleAutoDecompose" onclick="toggleAutoDecompose()" style="background: #ff9800; color: white; border: none; padding: 5px 15px; border-radius: 3px; cursor: pointer;">自动分解：关闭</button>
+</div>
     </div>
 </div>
+    
+    <!-- 伴侣列表 -->
+    <div style="margin: 15px 0;">
+        <h3>我的伴侣</h3>
+        <div id="companionList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px;max-height: 400px; overflow-y: auto;">
+            <!-- 伴侣卡片会动态生成在这里 -->
+        </div>
+    </div>
+  </div>  
+ 
+
 
   <div id="worldBossUI">
         <button class="boss-close-button" onclick="toggleWorldBossUI()">×</button>
@@ -1165,6 +1180,10 @@
         companions: [], // 伴侣列表
     equippedCompanionId: null, // 当前装备的伴侣ID
     companionLevel: 1, // 共享的伴侣等级
+   autoDecompose: {
+    enabled: false,
+    belowRarity: 'white' // 默认分解普通及以下
+},
     items: {
         primaryGem: 0,
         advancedGem: 0,
@@ -3989,6 +4008,23 @@ function updatePetDisplay() {
         console.error('宠物容器未找到！');
         return;
     }
+    
+    // 货币类型到中文名称的映射
+    const currencyNames = {
+        gold: '金币',
+        diamond: '钻石',
+        titanium: '钛晶石',
+        starstone: '星耀石',
+        cosmicstone: '宇宙石',
+        superstone: '超能石',
+        otherworldstone: '异界石',
+        xingjiestone: '星界石',
+        hundunstone: '混沌石',
+        lingtone: '灵髓石',
+        huangtone: '幻空石',
+        mingtone: '冥源石'
+    };
+    
     petContainer.innerHTML = Object.entries(player.pets)
         .map(([key, pet]) => {
             const config = petConfig[key];
@@ -3998,10 +4034,14 @@ function updatePetDisplay() {
             }
             const cost = pet.cost;
             const formattedCost = cost >= 1e8 ? cost.toExponential(3) : cost.toLocaleString();
+            
+            // 获取货币中文名称
+            const currencyName = currencyNames[config.currency] || config.currency;
+            
             return `
                 <div>
                     <strong>${config.name}</strong>: 等级 ${pet.level} - 装备属性加成 ${(pet.level * pet.multiplier * 100).toFixed(2)}%
-                    <button onclick="upgradePet('${key}')">升级 (消耗 ${formattedCost} ${config.currency})</button>
+                    <button onclick="upgradePet('${key}')">升级 (消耗 ${formattedCost} ${currencyName})</button>
                 </div>
             `;
         })
@@ -5577,6 +5617,7 @@ function confirmRename() {
     }
     player.gold += gpsPerSecond; // 每秒增加GPS
     autoConvertCurrency(); 
+  initAutoDecomposeUI();
     checkAutoBuy(); 
     updateStockPrices(); 
     calculateBankInterest(); 
@@ -7079,7 +7120,85 @@ function toggleCompanionLock(id) {
         updateCompanionDisplay();
     }
 }
+// 切换自动分解状态
+function toggleAutoDecompose() {
+    player.autoDecompose.enabled = !player.autoDecompose.enabled;
+    const btn = document.getElementById('toggleAutoDecompose');
+    btn.textContent = `自动分解：${player.autoDecompose.enabled ? '开启' : '关闭'}`;
+    btn.style.background = player.autoDecompose.enabled ? '#4CAF50' : '#ff9800';
+    logAction(`${player.autoDecompose.enabled ? '开启' : '关闭'}自动分解低于${getRarityName(player.autoDecompose.belowRarity)}的伴侣`, 'info');
+    
+    // 如果开启则立即检查一次
+    if (player.autoDecompose.enabled) {
+        checkAutoDecompose();
+    }
+}
 
+// 设置自动分解的品阶阈值
+function setAutoDecomposeRarity() {
+    const rarity = document.getElementById('autoDecomposeBelowRarity').value;
+    player.autoDecompose.belowRarity = rarity;
+    logAction(`设置自动分解低于${getRarityName(rarity)}的伴侣`, 'info');
+}
+
+// 获取品阶名称
+function getRarityName(rarity) {
+    const names = {
+        'white': '普通(白色)',
+        'blue': '稀有(蓝色)',
+        'purple': '史诗(紫色)',
+        'pink': '卓越(粉色)',
+        'orange': '完美(橙色)',
+        'red': '神赐(红色)'
+    };
+    return names[rarity] || '普通(白色)';
+}
+
+// 自动分解检查逻辑
+function checkAutoDecompose() {
+    if (!player.autoDecompose.enabled) return;
+
+    const rarityOrder = ['white', 'blue', 'purple', 'pink', 'orange', 'red'];
+    const targetIndex = rarityOrder.indexOf(player.autoDecompose.belowRarity);
+    if (targetIndex === -1) return;
+
+    // 找出所有低于等于目标品阶且未锁定的伴侣
+    const toDecompose = player.companions.filter(c => 
+        rarityOrder.indexOf(c.rarity) <= targetIndex && !c.locked
+    );
+
+    if (toDecompose.length > 0) {
+        const totalRoses = toDecompose.reduce((sum, c) => sum + companionRarities[c.rarity].decomposeRose, 0);
+        player.items.rose += totalRoses;
+        
+        // 过滤掉分解的伴侣
+        player.companions = player.companions.filter(c => 
+            !(rarityOrder.indexOf(c.rarity) <= targetIndex && !c.locked)
+        );
+        
+        // 如果装备的伴侣被分解，取消装备
+        if (toDecompose.some(c => c.id === player.equippedCompanionId)) {
+            player.equippedCompanionId = null;
+        }
+        
+        logAction(`自动分解${toDecompose.length}个低于${getRarityName(player.autoDecompose.belowRarity)}的伴侣，获得${totalRoses}玫瑰花`, 'success');
+        updateCompanionDisplay();
+    }
+}
+
+// 添加到页面初始化函数中
+function initAutoDecomposeUI() {
+    const raritySelect = document.getElementById('autoDecomposeBelowRarity');
+    raritySelect.value = player.autoDecompose.belowRarity;
+    raritySelect.onchange = setAutoDecomposeRarity;
+    
+    const btn = document.getElementById('toggleAutoDecompose');
+    btn.textContent = `自动分解：${player.autoDecompose.enabled ? '开启' : '关闭'}`;
+    btn.style.background = player.autoDecompose.enabled ? '#4CAF50' : '#ff9800';
+}
+
+// 添加定时检查（每5秒一次）
+setInterval(checkAutoDecompose, 5000);
 // 分解单个伴侣
 function decomposeCompanion(id) {
     const index = player.companions.findIndex(c => c.id === id);
@@ -8083,7 +8202,7 @@ function loadWorldBossData() {
             worldBossData.bossStars = Math.floor(Math.random() * 30) + 1; // 1-30星
             
             // BOSS生命值为玩家攻击力的100000万-1000000万倍
-            const healthMultiplier = 1000000000 + Math.random() * 9900000000000000;
+            const healthMultiplier = 1000000000 + Math.random() * 99000000000000000000000;
             worldBossData.bossMaxHealth = Math.floor(player.battle.playerAttack * healthMultiplier);
             worldBossData.bossHealth = worldBossData.bossMaxHealth;
             
@@ -8499,10 +8618,20 @@ function updateRankings() {
        updateItemDisplay();
     </script>
 <!--客服 开始-->
-<script src="//g8hh.com.cn/static/js/jquery.min.js"></script>
-<link rel="stylesheet" href="//g8hh.com.cn/static/css/kf.css" type="text/css" media="screen" charset="utf-8">
-<script src="//g8hh.com.cn/static/js/kf.js"></script>
+<script src="//g8hh.github.io/static/js/jquery.min.js"></script>
+<link rel="stylesheet" href="//g8hh.github.io/static/css/kf.css" type="text/css" media="screen" charset="utf-8">
+<script src="//g8hh.github.io/static/js/kf.js"></script>
 <!-- 客服 结束 -->
-
+<!--站长统计-->
+    <div style="display: none">
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?828597e93cee632465679b7ef35edfd5";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>    </div>
 </body>
 </html>
