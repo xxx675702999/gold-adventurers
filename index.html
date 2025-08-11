@@ -547,9 +547,11 @@
     border: 2px solid #ffd700;
     font-weight: bold;
 }
+
     </style>
  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </head>
+<body onload="resetItemDisplay()">
 <body>
     <h1>金币冒险者</h1>
  <div class="player-name">
@@ -611,6 +613,7 @@
     <button onclick="toggleClassSystem()">职业系统</button>
     <button onclick="showTitleDialog()">称号系统</button>
     <button onclick="toggleOfficialSystem()">官职系统</button>
+    <button onclick="openCompanionSystem()" style="margin-left: 10px;">伴侣系统</button>
     <button onclick="showRenameDialog()">名字修改</button>
     
     <button onclick="saveGame()">保存游戏</button>
@@ -834,6 +837,7 @@
             <p>13. 职业系统：有法师和战士不同搭配属性，对于关卡解锁属性，选择获得属性。</p>
             <p>14. 称号系统：解锁每一个都可以永久获得属性，自由搭配选择称号(不影响属性效果）。</p>
             <p>14. 官职系统：增加总和攻击，一共60级。</p>
+            <p>15. 伴侣系统：大幅度增加属性。天赋品阶初级→中级→高级→终极→圣级→神级→远古→太古→洪荒（伴侣钥匙和玫瑰花：打怪或者材料宝箱掉落）。</p>
         </div>
     </div>
     <div id="gameLogPage3">
@@ -1005,7 +1009,51 @@
     </div>
 </div>
 
-
+<!-- 伴侣系统界面 -->
+<div id="companionSystem" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1a1a1a; color: white; padding: 20px; border: 3px solid #4CAF50; border-radius: 10px; z-index: 1001; width: 800px; max-height: 600px; overflow-y: auto;">
+    <h2 style="text-align: center; color: #4CAF50;">伴侣系统</h2>
+    
+    <!-- 伴侣等级与升级 -->
+    <div style="margin: 15px 0; padding: 10px; background: #333; border-radius: 5px;">
+        <h3>伴侣等级: Lv. <span id="companionLevel">1</span></h3>
+        <p>升级消耗: <span id="upgradeCost">10</span> 玫瑰花</p>
+        <button onclick="upgradeCompanion()" style="background: #4CAF50; color: white; border: none; padding: 5px 15px; border-radius: 3px; cursor: pointer;">升级</button>
+    </div>
+    
+    <!-- 伴侣宝箱 -->
+    <div style="margin: 15px 0; padding: 10px; background: #333; border-radius: 5px;">
+        <h3>伴侣宝箱</h3>
+        <p>当前钥匙: <span id="companionKeyCount">0</span></p>
+        <button onclick="drawCompanion()" style="background: #2196F3; color: white; border: none; padding: 5px 15px; border-radius: 3px; cursor: pointer;">开启宝箱 (消耗1钥匙)</button>
+    </div>
+    
+    <!-- 伴侣列表 -->
+    <div style="margin: 15px 0;">
+        <h3>我的伴侣</h3>
+        <div id="companionList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px;max-height: 400px; overflow-y: auto;">
+            <!-- 伴侣卡片会动态生成在这里 -->
+        </div>
+    </div>
+    
+    <!-- 批量分解 -->
+    <div style="margin: 15px 0; padding: 10px; background: #333; border-radius: 5px;">
+        <h3>批量分解</h3>
+        <select id="decomposeRarity" style="padding: 5px; margin-right: 10px;">
+            <option value="white">普通(白色)</option>
+            <option value="blue">稀有(蓝色)</option>
+            <option value="purple">史诗(紫色)</option>
+            <option value="pink">卓越(粉色)</option>
+            <option value="orange">完美(橙色)</option>
+            <option value="red">神赐(红色)</option>
+        </select>
+        <button onclick="batchDecompose()" style="background: #f44336; color: white; border: none; padding: 5px 15px; border-radius: 3px; cursor: pointer;">批量分解选中品阶(未锁定)</button>
+    </div>
+    
+    <!-- 关闭按钮 -->
+    <div style="text-align: center; margin-top: 20px;">
+        <button onclick="closeCompanionSystem()" style="background: #555; color: white; border: none; padding: 8px 20px; border-radius: 3px; cursor: pointer;">关闭</button>
+    </div>
+</div>
 
   <div id="worldBossUI">
         <button class="boss-close-button" onclick="toggleWorldBossUI()">×</button>
@@ -1114,12 +1162,17 @@
         level: 1,
         power: 0, // 累计VIP能力值数量
     },
+        companions: [], // 伴侣列表
+    equippedCompanionId: null, // 当前装备的伴侣ID
+    companionLevel: 1, // 共享的伴侣等级
     items: {
         primaryGem: 0,
         advancedGem: 0,
         superiorGem: 0,
         divineGem: 0,
-        refineStone: 0
+        refineStone: 0,
+        rose: 0, // 玫瑰花
+        companionKey: 0 // 伴侣钥匙
     },
     collections: {
         lightSpeedHand: 0,
@@ -1964,7 +2017,10 @@ const vipConfig = [
     superiorGem: { name: '极品宝石', effect: 500.00, description: '增加装备属性+50000%' },
     divineGem: { name: '神级宝石', effect: 5000.00, description: '增加装备属性+500000%' },
     vipPower: { name: 'VIP能力值', effect: 1, description: '提升VIP等级的特殊道具' },
-    refineStone: { name: '洗炼石', effect: 0, description: '用于重铸副本装备的成长属性' } // 新增洗炼石
+    refineStone: { name: '洗炼石', effect: 0, description: '用于重铸副本装备的成长属性' }, // 新增洗炼石
+    rose: { name: '玫瑰花', effect: 1, description: '用于升级伴侣等级' },
+    companionKey: { name: '伴侣钥匙', effect: 0, description: '用于开启伴侣宝箱' } 
+     
 };
 
         // 收藏物配置
@@ -1983,7 +2039,7 @@ const vipConfig = [
         const materialChestProbabilities = [
      { type: 'lightSpeedHand', prob: 0.71188 },
     { type: 'empHand', prob: 0.2305 },
-    { type: 'godlyHand', prob: 0.0344 },
+    { type: 'godlyHand', prob: 0.0334 },
     { type: 'quickHand', prob: 0.01 },
     { type: 'shadowHand', prob: 0.005 },
     { type: 'quantumHand', prob: 0.0005 },
@@ -1994,7 +2050,9 @@ const vipConfig = [
     { type: 'superiorGem', prob: 0.00005 },
     { type: 'divineGem', prob: 0.00001 },
     { type: 'vipPower', prob: 0.001 },
-    { type: 'refineStone', prob: 0.001 } 
+    { type: 'refineStone', prob: 0.001 }, 
+    { type: 'companionKey', prob: 0.001 } 
+    
 ];
     const techniqueChestDrops = [
     // 第一档 22%~21.8%
@@ -2580,6 +2638,12 @@ function confirmActivationCode() {
             rewardMsg = "获得10个宇宙石";
             success = true;
             break;
+       case "BANLV":
+            player.items.companionKey += 10; 
+            player.items.rose += 520;
+            rewardMsg = "获得10个伴侣钥匙和520朵玫瑰花";
+            success = true;
+            break;        
         case "VIP666666":
         player.items.vipPower = (player.items.vipPower || 0) + 10;
         rewardMsg = "获得10个VIP能力值";
@@ -2599,8 +2663,8 @@ function confirmActivationCode() {
             }
             break;
         case "补偿宝石损失":
-        player.items.divineGem = (player.items.divineGem || 0) + 20;
-        rewardMsg = "获得20个神级宝石";
+        player.items.divineGem = (player.items.divineGem || 0) + 1;
+        rewardMsg = "获得1个神级宝石";
         success = true;
         break;
         default:
@@ -3955,6 +4019,11 @@ function resetTechniquesData() {
     });
 }
 
+
+
+
+
+
    // 重置道具页面
 function resetItemDisplay() {
     // 保留道具的数量
@@ -3967,7 +4036,9 @@ function resetItemDisplay() {
         superiorGem: itemCounts.superiorGem || 0,
         divineGem: itemCounts.divineGem || 0,
         vipPower: itemCounts.vipPower || 0,
-        refineStone: itemCounts.refineStone || 0
+        refineStone: itemCounts.refineStone || 0,
+        rose: itemCounts.rose || 0,
+        companionKey: itemCounts.companionKey || 0
        
     };
 
@@ -5910,6 +5981,16 @@ function dropItemsAfterBattle() {
         player.items.superiorGem++;
         logBattleAction('获得了极品宝石！');
     }
+
+     if (stage >= 1 && Math.random() < 0.001) {
+        player.items.rose++;
+        logBattleAction('获得了玫瑰花！');
+    }
+
+     if (stage >= 1 && Math.random() < 0.0005) {
+        player.items.companionKey++;
+        logBattleAction('获得了伴侣钥匙！');
+    }
     // 其他道具掉落逻辑可以在这里添加
 }
 
@@ -6241,7 +6322,7 @@ function simulateItemDrop(stage) {
     let hasDropped = false;
     
     // 洗炼石掉落（30关以上0.05%概率）
-    if (stage >= 30 && Math.random() < 0.0005) {
+    if (stage >= 30 && Math.random() < 0.0001) {
         player.items.refineStone++;
         hasDropped = true;
     }
@@ -6252,21 +6333,33 @@ function simulateItemDrop(stage) {
         hasDropped = true;
     }
     
-    // 初级宝石掉落（50关以上0.05%概率）
-    if (stage >= 50 && Math.random() < 0.0005) {
+    // 初级宝石掉落（50关以上0.04%概率）
+    if (stage >= 50 && Math.random() < 0.0004) {
         player.items.primaryGem++;
         hasDropped = true;
     }
     
-    // 高级宝石掉落（100关以上0.05%概率）
-    if (stage >= 100 && Math.random() < 0.0005) {
+    // 高级宝石掉落（100关以上0.03%概率）
+    if (stage >= 100 && Math.random() < 0.0003) {
         player.items.advancedGem++;
         hasDropped = true;
     }
     
-    // 极品宝石掉落（150关以上0.05%概率）
-    if (stage >= 150 && Math.random() < 0.0005) {
+    // 极品宝石掉落（150关以上0.01%概率）
+    if (stage >= 150 && Math.random() < 0.0001) {
         player.items.superiorGem++;
+        hasDropped = true;
+    }
+    
+    // 玫瑰花掉落（150关以上0.05%概率）
+    if (stage >= 1 && Math.random() < 0.001) {
+        player.items.rose++;
+        hasDropped = true;
+    }
+    
+    // 伴侣钥匙掉落（150关以上0.01%概率）
+    if (stage >= 1 && Math.random() < 0.00025) {
+        player.items.companionKey++;
         hasDropped = true;
     }
     
@@ -6472,48 +6565,53 @@ function updateTechniqueBonuses() {
     updatePlayerAttributesDisplay();
 }
 function updatePlayerBattleStats() {
-    // 1. 获取职业分支加成
+    // 1. 获取各类加成
     const classBonuses = calculateClassBonuses();
-     const bonuses = calculateTotalBonuses();
-  const officialBonus = getOfficialBonus();
-    // 新增：保存职业加成到player对象，供其他函数使用
+    const titleBonuses = calculateTotalBonuses(); // 重命名变量避免混淆
+    const officialBonus = getOfficialBonus();
+    const companionBonuses = getCompanionBonuses(); // 获取伴侣天赋加成
+
+    // 保存职业加成到player对象
     player.classBonuses = classBonuses;
 
-    // 2. 计算玩家属性时应用分支加成
-    // 生命 = 转生次数 * (1 + 生命功法加成 + 生命属性点加成) * 职业生命乘数
+    // 2. 计算玩家生命（应用伴侣生命加成）
     player.battle.playerHealth = Math.floor(
         player.reincarnationCount * 
         (1 + player.attributes.healthBonus + player.attributes.health * 0.01) *
-        classBonuses.healthMultiplier * bonuses.healthMultiplier  // 应用分支生命加成
+        classBonuses.healthMultiplier * titleBonuses.healthMultiplier *
+        companionBonuses.healthMultiplier // 应用伴侣生命加成
     );
-    
-    // 攻击 = 点击伤害 * (1 + 攻击功法加成 + 攻击属性点加成) * 职业攻击乘数
+
+    // 3. 计算玩家攻击（应用伴侣攻击加成）
     player.battle.playerAttack = Math.floor(
         getTotalClickValue() * 
         (1 + player.attributes.attackBonus + player.attributes.attack * 0.01) *
-        classBonuses.attackMultiplier * bonuses.attackMultiplier *
-    officialBonus // 应用分支攻击加成
+        classBonuses.attackMultiplier * titleBonuses.attackMultiplier *
+        officialBonus * companionBonuses.attackMultiplier // 应用伴侣攻击加成
     );
-    
-    // 暴击率 = 基础10% + 功法加成 + 属性点加成 + 分支暴击率加成 (不超过90%)
+
+    // 4. 计算暴击率（应用伴侣暴击率加成）
+    const baseCritRate = 0.1 + player.attributes.critRateBonus + player.attributes.critRate * 0.00025 +
+        classBonuses.critChance;
     player.battle.playerCritRate = Math.min(
         0.9,
-        0.1 + player.attributes.critRateBonus + player.attributes.critRate * 0.00025 +
-        classBonuses.critChance  // 应用分支暴击率加成
+        baseCritRate * companionBonuses.critRateMultiplier // 应用伴侣暴击率乘数
     );
-    
-    // 爆伤 = (基础150% + 功法加成 + 属性点加成) * 分支爆伤乘数
+
+    // 5. 计算爆伤（应用伴侣爆伤加成和全属性加成）
     player.battle.playerCritDamage = (1.5 + 
         player.attributes.critDamageBonus + 
         player.attributes.critDamage * 0.0025) *
-        classBonuses.critMultiplier * bonuses.critMultiplier;  // 应用分支爆伤加成
-    
-    // 连击次数 = 属性点加成 + 功法加成 (至少1次)
+        classBonuses.critMultiplier * titleBonuses.critMultiplier *
+        companionBonuses.critDamageMultiplier; // 应用伴侣爆伤加成
+
+    // 6. 计算连击次数（应用伴侣连击加成）
     player.battle.playerMultiAttack = Math.max(1,
         Math.floor(player.attributes.multiAttack / 300) + 
-        player.attributes.multiAttackBonus
+        player.attributes.multiAttackBonus +
+        companionBonuses.combo // 应用伴侣连击加成
     );
-  
+
     // 更新UI显示
     updateMonsterUI();
 }
@@ -6724,6 +6822,371 @@ function calculateTotalBonuses() {
             }
         }
     });
+    
+    return bonuses;
+}
+
+
+// 伴侣品阶配置
+const companionRarities = {
+    white: { 
+        name: "普通", 
+        color: "#FFFFFF", 
+        baseScore: 100,
+        upgradeMultiplier: 1,
+        talentCount: 4,
+        talentRange: [0, 3], // 初级到终极
+        decomposeRose: 5
+    },
+    blue: { 
+        name: "稀有", 
+        color: "#0000FF", 
+        baseScore: 500,
+        upgradeMultiplier: 3,
+        talentCount: 5,
+        talentRange: [0, 4], // 初级到圣级
+        decomposeRose: 20
+    },
+    purple: { 
+        name: "史诗", 
+        color: "#800080", 
+        baseScore: 1000,
+        upgradeMultiplier: 10,
+        talentCount: 6,
+        talentRange: [0, 5], // 初级到神级
+        decomposeRose: 50
+    },
+    pink: { 
+        name: "卓越", 
+        color: "#FF69B4", 
+        baseScore: 3000,
+        upgradeMultiplier: 20,
+        talentCount: 7,
+        talentRange: [0, 6], // 初级到远古
+        decomposeRose: 100
+    },
+    orange: { 
+        name: "完美", 
+        color: "#FFA500", 
+        baseScore: 5000,
+        upgradeMultiplier: 50,
+        talentCount: 8,
+        talentRange: [0, 7], // 初级到太古
+        decomposeRose: 200
+    },
+    red: { 
+        name: "神赐", 
+        color: "#FF0000", 
+        baseScore: 8000,
+        upgradeMultiplier: 100,
+        talentCount: 10,
+        talentRange: [0, 8], // 初级到洪荒
+        decomposeRose: 1000
+    }
+};
+
+// 天赋类型配置
+const talentTypes = [
+    {
+        name: "攻击",
+        base: 1,
+        perLevel: 5,
+        description: (level) => `玩家总和攻击+${(1 + 5 * level).toFixed(1)}倍`
+    },
+    {
+        name: "爆伤",
+        base: 1,
+        perLevel: 5,
+        description: (level) => `玩家总和爆伤+${(1 + 5 * level).toFixed(1)}倍`
+    },
+    {
+        name: "生命",
+        base: 0.001,
+        perLevel: 0.001,
+        description: (level) => `玩家总和生命+${(0.001 + 0.001 * level).toFixed(2)}倍`
+    },
+    {
+        name: "全属性",
+        base: 0.5,
+        perLevel: 2.5,
+        description: (level) => `玩家总和全属性+${(0.5 + 2.5 * level).toFixed(1)}倍`
+    },
+    {
+        name: "连击",
+        base: 1,
+        perLevel: 5,
+        description: (level) => `玩家连击+${1 + 5 * level}`
+    },
+    {
+        name: "暴击率",
+        base: 0.001,
+        perLevel: 0.001,
+        description: (level) => `玩家暴击率+${(0.001 + 0.001 * level).toFixed(2)}倍`
+    }
+];
+
+// 天赋品阶名称
+const talentRanks = ["初级", "中级", "高级", "终极", "圣级", "神级", "远古", "太古", "洪荒"];
+
+// 伴侣名字库
+const companionNames = ["闫闫", "茶茶", "沈砚山", "苏绾月", "林清瑶", "楚棠溪", "慕玄尘", "许清尘", "温玉珞", "林灵枢", "叶棠音", "陆剑尘", "楚絮晚", "陆星辞", "王富贵", "洛千尘", "白小纯", "白芷晴", "顾长歌", "沈青岚", "慕雨柔", "陆天行", "乔曦", "柳如烟", "香香", "尝试", "小萝莉", "通元", "鱼鱼"];
+
+// 抽奖概率
+const drawProbabilities = [
+    {rarity: "white", prob: 0.8},
+    {rarity: "blue", prob: 0.15},
+    {rarity: "purple", prob: 0.03},
+    {rarity: "pink", prob: 0.0199},
+    {rarity: "orange", prob: 0.001},
+    {rarity: "red", prob: 0.0001}
+];
+// 打开伴侣系统
+function openCompanionSystem() {
+    document.getElementById('companionSystem').style.display = 'block';
+    document.getElementById('companionOverlay').style.display = 'block';
+    updateCompanionDisplay();
+}
+
+// 关闭伴侣系统
+function closeCompanionSystem() {
+    document.getElementById('companionSystem').style.display = 'none';
+    document.getElementById('companionOverlay').style.display = 'none';
+}
+
+// 更新伴侣系统显示
+function updateCompanionDisplay() {
+    // 更新等级和消耗
+    document.getElementById('companionLevel').textContent = player.companionLevel;
+    document.getElementById('upgradeCost').textContent = 10 * player.companionLevel;
+    document.getElementById('companionKeyCount').textContent = player.items.companionKey;
+    
+    // 更新伴侣列表
+    const listContainer = document.getElementById('companionList');
+    listContainer.innerHTML = '';
+    
+    player.companions.forEach(companion => {
+        const isEquipped = player.equippedCompanionId === companion.id;
+        const stars = '★'.repeat(Math.min(10, Math.floor(companion.score / 1000)));
+        const emptyStars = '☆'.repeat(10 - Math.min(10, Math.floor(companion.score / 1000)));
+        
+        const card = document.createElement('div');
+        card.style = `background: #222; border: 2px solid ${companionRarities[companion.rarity].color}; border-radius: 5px; padding: 10px; position: relative;`;
+        card.innerHTML = `
+            <div style="position: absolute; top: 5px; right: 5px; color: ${companionRarities[companion.rarity].color};">
+                ${companionRarities[companion.rarity].name}
+            </div>
+            <h4 style="color: ${companionRarities[companion.rarity].color}; margin-top: 0;">${companion.name}</h4>
+            <div>${stars}${emptyStars} (${companion.score}/10000)</div>
+            <div style="margin: 5px 0; font-size: 0.8em; max-height: 80px; overflow-y: auto;">
+                ${companion.talents.map(t => `${talentRanks[t.rank]}${talentTypes[t.type].name}: ${talentTypes[t.type].description(t.rank)}`).join('<br>')}
+            </div>
+            <div style="margin-top: 10px; display: flex; gap: 5px;">
+                <button onclick="equipCompanion('${companion.id}')" style="flex: 1; background: ${isEquipped ? '#4CAF50' : '#555'}; color: white; border: none; padding: 3px; border-radius: 2px; font-size: 0.8em;">
+                    ${isEquipped ? '已装备' : '装备'}
+                </button>
+                <button onclick="toggleCompanionLock('${companion.id}')" style="width: 30px; background: ${companion.locked ? '#f44336' : '#555'}; color: white; border: none; padding: 3px; border-radius: 2px;">
+                    ${companion.locked ? '锁' : '开'}
+                </button>
+                <button onclick="decomposeCompanion('${companion.id}')" style="width: 30px; background: #f44336; color: white; border: none; padding: 3px; border-radius: 2px;" ${companion.locked ? 'disabled' : ''}>
+                    分
+                </button>
+            </div>
+        `;
+        listContainer.appendChild(card);
+    });
+}
+
+// 抽取伴侣
+function drawCompanion() {
+    if (player.items.companionKey < 1) {
+        logAction("伴侣钥匙不足！", "error");
+        return;
+    }
+    
+    player.items.companionKey--;
+    let rand = Math.random();
+    let rarity = "white";
+    
+    for (const p of drawProbabilities) {
+        if (rand < p.prob) {
+            rarity = p.rarity;
+            break;
+        }
+        rand -= p.prob;
+    }
+    
+    // 生成天赋
+    const talentCount = companionRarities[rarity].talentCount;
+    const [minRank, maxRank] = companionRarities[rarity].talentRange;
+    const talents = [];
+    
+    
+    while (talents.length < talentCount) {
+        const type = Math.floor(Math.random() * talentTypes.length);
+      
+
+        const rank = Math.floor(Math.random() * (maxRank - minRank + 1)) + minRank;
+        talents.push({ type, rank });
+    }
+    
+    // 计算评分
+    const baseScore = companionRarities[rarity].baseScore;
+    const talentScore = talents.reduce((sum, t) => sum + (t.rank + 1) * 50, 0);
+    const totalScore = Math.min(10000, baseScore + talentScore);
+    
+    // 生成伴侣
+    const companion = {
+        id: 'comp_' + Date.now() + Math.floor(Math.random() * 1000),
+        name: companionNames[Math.floor(Math.random() * companionNames.length)],
+        rarity,
+        talents,
+        score: totalScore,
+        locked: false
+    };
+    
+    player.companions.push(companion);
+    logAction(`获得了${companionRarities[rarity].name}伴侣：${companion.name}`, 'success');
+    updateCompanionDisplay();
+}
+
+// 升级伴侣等级
+function upgradeCompanion() {
+    const cost = 10 * player.companionLevel;
+    if (player.items.rose < cost) {
+        logAction("玫瑰花不足！", "error");
+        return;
+    }
+    
+    player.items.rose -= cost;
+    player.companionLevel++;
+    logAction(`伴侣等级提升至Lv.${player.companionLevel}`, 'success');
+    updateCompanionDisplay();
+}
+
+// 装备伴侣
+function equipCompanion(id) {
+    player.equippedCompanionId = id;
+    logAction(`已装备伴侣：${player.companions.find(c => c.id === id).name}`, 'success');
+    updateCompanionDisplay();
+}
+
+// 切换锁定状态
+function toggleCompanionLock(id) {
+    const companion = player.companions.find(c => c.id === id);
+    if (companion) {
+        companion.locked = !companion.locked;
+        logAction(`${companion.name}已${companion.locked ? '锁定' : '解锁'}`, 'success');
+        updateCompanionDisplay();
+    }
+}
+
+// 分解单个伴侣
+function decomposeCompanion(id) {
+    const index = player.companions.findIndex(c => c.id === id);
+    if (index === -1) return;
+    
+    const companion = player.companions[index];
+    if (companion.locked) return;
+    
+    const roses = companionRarities[companion.rarity].decomposeRose;
+    player.items.rose += roses;
+    player.companions.splice(index, 1);
+    
+    // 如果分解的是当前装备的伴侣，取消装备
+    if (player.equippedCompanionId === id) {
+        player.equippedCompanionId = null;
+    }
+    
+    logAction(`分解${companionRarities[companion.rarity].name}伴侣${companion.name}，获得${roses}玫瑰花`, 'success');
+    updateCompanionDisplay();
+}
+
+// 批量分解
+function batchDecompose() {
+    const rarity = document.getElementById('decomposeRarity').value;
+    const toDecompose = player.companions.filter(c => c.rarity === rarity && !c.locked);
+    if (toDecompose.length === 0) {
+        logAction("没有可分解的伴侣", "error");
+        return;
+    }
+    
+    const totalRoses = toDecompose.reduce((sum, c) => sum + companionRarities[c.rarity].decomposeRose, 0);
+    player.items.rose += totalRoses;
+    
+    // 过滤掉分解的伴侣
+    player.companions = player.companions.filter(c => !(c.rarity === rarity && !c.locked));
+    
+    // 如果装备的伴侣被分解，取消装备
+    if (toDecompose.some(c => c.id === player.equippedCompanionId)) {
+        player.equippedCompanionId = null;
+    }
+    
+    logAction(`批量分解${toDecompose.length}个${companionRarities[rarity].name}伴侣，获得${totalRoses}玫瑰花`, 'success');
+    updateCompanionDisplay();
+}
+
+// 计算伴侣天赋加成（需要整合到属性计算中）
+function getCompanionBonuses() {
+    if (!player.equippedCompanionId) return {
+        attackMultiplier: 1,
+        critDamageMultiplier: 1,
+        healthMultiplier: 1,
+        allStatsMultiplier: 1,
+        combo: 0,
+        critRateMultiplier: 1
+    };
+    
+    const companion = player.companions.find(c => c.id === player.equippedCompanionId);
+    if (!companion) return {
+        attackMultiplier: 1,
+        critDamageMultiplier: 1,
+        healthMultiplier: 1,
+        allStatsMultiplier: 1,
+        combo: 0,
+        critRateMultiplier: 1
+    };
+    
+    // 基础加成
+    let bonuses = {
+        attackMultiplier: 1,
+        critDamageMultiplier: 1,
+        healthMultiplier: 1,
+        allStatsMultiplier: 1,
+        combo: 0,
+        critRateMultiplier: 1
+    };
+    
+    // 应用天赋
+    companion.talents.forEach(talent => {
+        const rank = talent.rank;
+        const type = talentTypes[talent.type];
+        const multiplier = companionRarities[companion.rarity].upgradeMultiplier * player.companionLevel;
+        
+        switch (talent.type) {
+            case 0: // 攻击
+                bonuses.attackMultiplier += (type.base + type.perLevel * rank) * multiplier;
+                break;
+            case 1: // 爆伤
+                bonuses.critDamageMultiplier += (type.base + type.perLevel * rank) * multiplier;
+                break;
+            case 2: // 生命
+                bonuses.healthMultiplier += (type.base + type.perLevel * rank) * multiplier;
+                break;
+            case 3: // 全属性
+                bonuses.allStatsMultiplier += (type.base + type.perLevel * rank) * multiplier;
+                break;
+            case 4: // 连击
+                bonuses.combo += (type.base + type.perLevel * rank) * multiplier;
+                break;
+            case 5: // 暴击率
+                bonuses.critRateMultiplier += (type.base + type.perLevel * rank) * multiplier;
+                break;
+        }
+    });
+    
+    // 全属性加成应用到攻击和爆伤
+    bonuses.attackMultiplier += bonuses.allStatsMultiplier;
+    bonuses.critDamageMultiplier += bonuses.allStatsMultiplier;
     
     return bonuses;
 }
@@ -8032,11 +8495,14 @@ function updateRankings() {
         loadWorldBossData();
         updateOfficialSystemDisplay();
         updatePlayerClassNameDisplay();
+     updateCompanionDisplay();
+       updateItemDisplay();
     </script>
 <!--客服 开始-->
 <script src="//g8hh.com.cn/static/js/jquery.min.js"></script>
 <link rel="stylesheet" href="//g8hh.com.cn/static/css/kf.css" type="text/css" media="screen" charset="utf-8">
 <script src="//g8hh.com.cn/static/js/kf.js"></script>
 <!-- 客服 结束 -->
+
 </body>
 </html>
