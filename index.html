@@ -547,12 +547,89 @@
     border: 2px solid #ffd700;
     font-weight: bold;
 }
+/* 通天塔界面缩小样式 */
+#towerUI {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px; /* 缩小宽度 */
+    max-width: 90%; /* 响应式最大宽度 */
+    max-height: 70vh; /* 限制最大高度为屏幕的70% */
+    background: #f9f9f9;
+    border: 1px solid #ccc;
+    padding: 15px; /* 减少内边距 */
+    z-index: 1001;
+    display: none; /* 默认隐藏 */
+    overflow-y: auto; /* 内容过多时显示滚动条 */
+    border-radius: 6px;
+}
 
+#towerUI h3 {
+    font-size: 18px; /* 缩小标题字体 */
+    margin: 10px 0;
+    text-align: center;
+}
+
+#towerUI .floor-info {
+    font-size: 14px; /* 缩小信息字体 */
+    margin: 8px 0;
+    padding: 8px;
+    background: #f0f0f0;
+    border-radius: 4px;
+}
+
+#towerUI button {
+    padding: 6px 12px; /* 缩小按钮 */
+    font-size: 12px;
+    margin: 4px;
+}
+
+#towerUI .tower-log {
+    max-height: 150px; /* 缩小日志区域 */
+    overflow-y: auto;
+    font-size: 12px;
+    padding: 8px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+}
     </style>
  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </head>
 <body onload="resetItemDisplay(); resetPetDisplay()">
 <body>
+<div style="position: fixed; top: 10px; right: 10px; z-index: 9999; display: flex; flex-direction: column; align-items: flex-end;">
+    <!-- 公告切换按钮 -->
+    <button id="announcementToggle" style="background: #3498db; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px 3px 0 0;">
+        点击呼出新手必看↓
+    </button>
+    
+    <!-- 公告内容区域（默认隐藏） -->
+    <div id="gameLogPage2" style="display: none; background: white; border: 1px solid #ddd; padding: 10px; max-height: 400px; width: 300px; overflow-y: auto; border-radius: 0 0 3px 3px;">
+        <div class="log">
+            <h4>游戏公告介绍</h4>
+            <p>1. 转生系统：玩家可以通过转生重置游戏进度，并获得转生币，用于提升转生属性（转生要求必须普通装备10000级）。</p>
+            <p>   转生币等级兑换比例：普通10000=1  稀有5000=1 史诗1000=1 传说300=1 远古200=1 神圣125=1 奥术100=1 天空33=1 地狱20=1 星界12.5=1  原初10=1 超凡3=1 量子2=1 究极1=1  混沌1=3 永恒1=5 虚无1=10 创世1=20 神域1=30 终焉1=40 星辰1=50 起源1=60 时光1=70 造物1=80 银河1=90 天界1=100 星云1=200 星河1=300 纪元1=400 鸿蒙1=500 星穹1=600 亘古1=700 万象1=800 太虚1=900 九垓1=1000 </p>
+            <p>2. 宠物系统：玩家可以通过升级宠物来提升装备属性加成。</p>
+            <p>3. 离线系统：现在离线也能自动开宝箱和股票更新（关于普通装备不升级：下线前把自动兑换货币关了。）。</p>
+            <p>4. 新增股票系统，显示实时股价和持有情况，每10分钟股价随机波动±1%~10%，离线时间自动计算股价波动，所有交易使用转生币结算，实时显示价格变化趋势</p>
+            <p>5. 彩票系统：购买到心仪的数字就可以，1小时开奖1次。刮刮卡：直接生效，开奖结果看获取！</p>
+            <p>6. 银行系统：存钱每6分钟0.02%收益！</p>
+            <p>7. 副本装备系统：副本装备可以提升第一页装备的全属性，使用洗炼石（材料宝箱或者打怪掉）可以重铸副本装备的成长属性或者分解重新获取。成长数值上限：废品0.05%，倚天剑10%，青龙枪15%，白虎斧20%，朱雀弓25%，玄武盾30%，麒麟杖35%，凤凰剑40%，饕餮刀45%，穷奇戟50%，烛龙枪60%，白泽剑70%，混沌斧80%，太初刃90%   后续加深颜色多10%  比如：☆=100%★=110% ○=200% ●=210%  ◇=300%  ◆=310%  □=400%  ■=410%  △=500%  ▲=510%</p>
+            <p>8. 魂环系统：魂环可以永久提升装备属性，通过打怪掉落或消耗转生币升级。</p>
+            <p>9. 打怪模式：逃跑等于重置关卡消耗最大关卡*10转生币（加入扫荡：收取20%手续费）（如果第一次打不了买1次功法秘笈宝箱，或者点逃跑）。</p>
+            <p>10. 升级属性：第一次加载要转生一次，在点洗点就正常了（总数和实际不一样点一下洗点）。</p>
+            <p>11. 功法秘籍：后期比较强，加成属性直接算到玩家属性乘于里面（如果突然没效果了开一个秘法宝箱就好了，正常不会有问题）</p>
+            <p>11. 世界BOSS系统：20转才能打比较难，有连击后期简单。</p>
+            <p>12. VIP系统：每一级提升大属性，材料宝箱和打怪模式掉落。</p>
+            <p>13. 职业系统：有法师和战士不同搭配属性，对于关卡解锁属性，选择获得属性。</p>
+            <p>14. 称号系统：解锁每一个都可以永久获得属性，自由搭配选择称号(不影响属性效果）。</p>
+            <p>14. 官职系统：增加总和攻击，一共60级。</p>
+            <p>15. 伴侣系统：大幅度增加属性。天赋品阶初级→中级→高级→终极→圣级→神级→远古→太古→洪荒（伴侣钥匙和玫瑰花：打怪或者材料宝箱掉落）。</p>
+             <p>16. 通天塔：暂时只有通过一层加1属性，还有对应称号（100转才能打）。</p>
+        </div>
+    </div>
+</div>
     <h1>金币冒险者</h1>
  <div class="player-name">
     <span id="playerName">勇者</span> <span id="playerClassName" style="color: #00f;"></span><span id="currentTitle" style="margin-left: 10px; color: #ffd700;"></span>
@@ -588,11 +665,13 @@
     <div>点击收益: <span id="clickValue">1</span></div>
     <div>转生次数: <span id="reincarnationCount">0</span></div>
     <div>最高关卡: <span id="maxStage">0</span></div>
+    <div>通天塔层数: <span id="towerFloor">0</span></div>
     <div>当前官职: <span id="currentOfficialTitle">无</span></div>
 
     <button onclick="clickGold()">点击获取金币</button>
     <button onclick="reincarnate()">转生</button>
     <button onclick="toggleMonsterUI()">打怪模式</button>
+    <button onclick="toggleTowerUI()">通天塔</button>
     <button onclick="toggleWorldBossUI()" style="background: linear-gradient(to bottom, #d4af37, #a67c00); color: #000; font-weight: bold; padding: 6px 12px; font-size: 12px;">世界BOSS</button>
     <button onclick="buyChest(1)">普通宝箱（100金币）</button>
     <button onclick="buyChest(2)">高级宝箱（10钻石）</button>
@@ -809,35 +888,17 @@
     <div id="techniquesContainer" style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px;"></div>
  </div>
 
-    <!-- 新增：游戏日志分页 -->
+        <!-- 新增：游戏日志分页 -->
     <h3>游戏日志</h3>
     <div class="log-tab active" onclick="switchLogTab(1)">游戏记录</div>
-    <div class="log-tab" onclick="switchLogTab(2)">游戏公告</div>
+    <div class="log-tab" onclick="switchLogTab(2)">公告右上角</div>
     <div class="log-tab" onclick="switchLogTab(3)">开奖结果</div>    
     <div id="gameLogPage1" class="active">
         <div id="actionLog" class="log"></div>
     </div>
     <div id="gameLogPage2" style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px;">
         <div class="log">
-            <h4>新增加转生系统和宠物系统</h4>
-            <p>1. 转生系统：玩家可以通过转生重置游戏进度，并获得转生币，用于提升转生属性（转生要求必须普通装备10000级）。</p>
-            <p>   转生币等级兑换比例：普通10000=1  稀有5000=1 史诗1000=1 传说300=1 远古200=1 神圣125=1 奥术100=1 天空33=1 地狱20=1 星界12.5=1  原初10=1 超凡3=1 量子2=1 究极1=1  混沌1=3 永恒1=5 虚无1=10 创世1=20 神域1=30 终焉1=40 星辰1=50 起源1=60 时光1=70 造物1=80 银河1=90 天界1=100 星云1=200 星河1=300 纪元1=400 鸿蒙1=500 星穹1=600 亘古1=700 万象1=800 太虚1=900 九垓1=1000 </p>
-            <p>2. 宠物系统：玩家可以通过升级宠物来提升装备属性加成。</p>
-            <p>3. 离线系统：现在离线也能自动开宝箱和股票更新（关于普通装备不升级：下线前把自动兑换货币关了。）。</p>
-            <p>4. 新增股票系统，显示实时股价和持有情况，每10分钟股价随机波动±1%~10%，离线时间自动计算股价波动，所有交易使用转生币结算，实时显示价格变化趋势</p>
-            <p>5. 彩票系统：购买到心仪的数字就可以，1小时开奖1次。刮刮卡：直接生效，开奖结果看获取！</p>
-            <p>6. 银行系统：存钱每6分钟0.02%收益！</p>
-            <p>7. 副本装备系统：副本装备可以提升第一页装备的全属性，使用洗炼石（材料宝箱或者打怪掉）可以重铸副本装备的成长属性或者分解重新获取。成长数值上限：废品0.05%，倚天剑10%，青龙枪15%，白虎斧20%，朱雀弓25%，玄武盾30%，麒麟杖35%，凤凰剑40%，饕餮刀45%，穷奇戟50%，烛龙枪60%，白泽剑70%，混沌斧80%，太初刃90%   后续加深颜色多10%  比如：☆=100%★=110% ○=200% ●=210%  ◇=300%  ◆=310%  □=400%  ■=410%  △=500%  ▲=510%</p>
-            <p>8. 魂环系统：魂环可以永久提升装备属性，通过打怪掉落或消耗转生币升级。</p>
-            <p>9. 打怪模式：逃跑等于重置关卡消耗最大关卡*10转生币（加入扫荡：收取20%手续费）（如果第一次打不了买1次功法秘笈宝箱，或者点逃跑）。</p>
-            <p>10. 升级属性：第一次加载要转生一次，在点洗点就正常了（总数和实际不一样点一下洗点）。</p>
-            <p>11. 功法秘籍：后期比较强，加成属性直接算到玩家属性乘于里面（如果突然没效果了开一个秘法宝箱就好了，正常不会有问题）</p>
-            <p>11. 世界BOSS系统：20转才能打比较难，有连击后期简单。</p>
-            <p>12. VIP系统：每一级提升大属性，材料宝箱和打怪模式掉落。</p>
-            <p>13. 职业系统：有法师和战士不同搭配属性，对于关卡解锁属性，选择获得属性。</p>
-            <p>14. 称号系统：解锁每一个都可以永久获得属性，自由搭配选择称号(不影响属性效果）。</p>
-            <p>14. 官职系统：增加总和攻击，一共60级。</p>
-            <p>15. 伴侣系统：大幅度增加属性。天赋品阶初级→中级→高级→终极→圣级→神级→远古→太古→洪荒（伴侣钥匙和玫瑰花：打怪或者材料宝箱掉落）。</p>
+            
         </div>
     </div>
     <div id="gameLogPage3">
@@ -936,8 +997,8 @@
             <button onclick="attackMonster()">攻击</button>
             <button onclick="fleeFromBattle()">逃跑</button>
             <button onclick="sweepStages()">扫荡</button>
-            <input type="number" id="jumpStage" placeholder="跳关" min="1">
-            <button onclick="jumpToStage()">跳关</button>
+            <input type="number" id="jumpStage" placeholder="第一次打点逃跑" min="1">
+            <button onclick="jumpToStage()">必看</button>
         </div>
         <div class="battle-log">
             <h4>战斗记录</h4>
@@ -973,6 +1034,11 @@
         <div class="titleBranch">
             <h4>特殊称号</h4>
             <div class="titleRow" id="specialBranchContainer"></div>
+        </div>
+    <!-- 特殊分支 -->
+        <div class="titleBranch">
+            <h4>通天塔称号</h4>
+            <div class="titleRow" id="towerBranchContainer"></div>
         </div>
     </div>
     <button onclick="closeTitleDialog()" style="margin-top: 20px;">关闭</button>
@@ -1068,6 +1134,39 @@
     </div>
   </div>  
  
+<div id="towerUI" style="display: none; position: fixed; top: 20%; left: 20%; transform: translate(50%, -10%); width: 30%; max-width: 800px; background: #fff; border: 2px solid #333; border-radius: 10px; padding: 20px; z-index: 1000;">
+    <!-- 右上角关闭按钮 -->
+    <button onclick="toggleTowerUI()" style="position: absolute; top: 10px; right: 10px; background: #ff4444; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-size: 16px;">×</button>
+    <h3>通天塔</h3>
+    <div class="player-info">
+        <p>生命: <span id="towerPlayerHealth">0</span></p>
+        <p>攻击: <span id="towerPlayerAttack">0</span></p>
+        <p>暴击率: <span id="towerPlayerCritRate">0%</span></p>
+        <p>爆伤: <span id="towerPlayerCritDamage">0%</span></p>
+        <p>命中: <span id="towerPlayerAccuracy">0%</span></p>
+        <p>闪避: <span id="towerPlayerDodge">0%</span></p>
+    </div>
+    <div class="monster-info">
+        <p>当前层数: <span id="towerCurrentFloor">0</span></p>
+        <p>怪物名称: <span id="towerMonsterName">无</span></p>
+        <p>怪物品阶: <span id="towerMonsterRank">无</span></p>
+        <p>怪物生命: <span id="towerMonsterHealth">0</span></p>
+        <p>怪物攻击: <span id="towerMonsterAttack">0</span></p>
+        <p>怪物词条: <span id="towerMonsterModifiers">无</span></p>
+        <p>剩余复活次数: <span id="towerMonsterResurrections">20</span></p>
+    </div>
+    <div class="battle-controls">
+        <button onclick="attackTowerMonster()">攻击</button>
+        <button onclick="toggleTowerAutoAttack()">自动攻击: <span id="towerAutoAttackStatus">关</span></button>
+    </div><h4>如果属性是初始没加成，打一次打怪模式恢复在重新点击通天塔</h4>
+    <div class="battle-log" id="towerBattleLog"></div>
+</div>
+</div>
+</div>
+
+
+
+
 
 
   <div id="worldBossUI">
@@ -1177,6 +1276,18 @@
         level: 1,
         power: 0, // 累计VIP能力值数量
     },
+tower: {
+    currentFloor: 0,
+    maxFloor: 0,
+    isAutoAttacking: false,
+    autoAttackInterval: null,
+    battleLog: [],
+    playerHealth: 0,
+    playerAttack: 0,
+    playerCritRate: 0,
+    playerCritDamage: 0,
+    monster: null
+},
         companions: [], // 伴侣列表
     equippedCompanionId: null, // 当前装备的伴侣ID
     companionLevel: 1, // 共享的伴侣等级
@@ -2572,7 +2683,7 @@ const vipConfig = [
             player.reincarnationCount++;
 
             // 修改属性点计算逻辑
-            player.attributes.totalPoints = player.reincarnationCount * 1 + player.battle.maxStage * 10; // 总属性点 = 转生次数 * 1 + 最高关卡 * 10
+            player.attributes.totalPoints = player.reincarnationCount * 1 + player.battle.maxStage * 10 + player.tower.currentFloor * 1;
             player.attributes.remainingPoints += 1; // 每次转生增加1点剩余属性点
 
             // 检查转生成就
@@ -4121,7 +4232,13 @@ function updateItemDisplay() {
         </div>
     `).join('');
 }
-
+document.getElementById('announcementToggle').addEventListener('click', function() {
+    const announcementPanel = document.getElementById('gameLogPage2');
+    // 切换显示状态
+    announcementPanel.style.display = announcementPanel.style.display === 'none' ? 'block' : 'none';
+    // 切换按钮文本箭头方向
+    this.textContent = announcementPanel.style.display === 'block' ? '点击关闭新手必看↑' : '点击呼出新手必看↓';
+});
         // 升级宠物
         function upgradePet(petKey) {
     const pet = player.pets[petKey];
@@ -4749,7 +4866,6 @@ function withdrawAllFromBank() {
         ${player.dungeonEquipment.map((eq, index) => `
             <div class="equipment ${eq.rarity}">
                 ${eq.name} Lv.${eq.level} (数量: ${eq.quantity}/3, 成长属性: +${(eq.growthRate * 100).toFixed(2)}%)
-                <button onclick="upgradeDungeonEquipment(${index})">升级 (消耗 ${eq.level * 100} 转生币)</button>
                 <button onclick="refineDungeonEquipment(${index})">洗炼</button>
                 <button onclick="dismantleDungeonEquipment(${index})">分解</button>
             </div>
@@ -4822,8 +4938,7 @@ function checkSoulRingAchievements(type, level) {
                 <div class="equipment">
                     ${soulRingTypes[ring.type].name} Lv.${ring.level}
                     (全属性+${(ring.level * ring.multiplier * 100).toFixed(1)}%)
-                    <button onclick="upgradeSoulRing('${ring.type}')">
-                        升级 (消耗 ${(ring.level * 1000).toLocaleString()}转生币)
+
                     </button>
                 </div>
             `).join('');
@@ -6540,7 +6655,7 @@ function resetAttributes() {
 }
 function updatePlayerAttributesDisplay() {
     // 计算总属性点
-    const totalAttributePoints = player.reincarnationCount * 1 + player.battle.maxStage * 10;
+    const totalAttributePoints = player.reincarnationCount * 1 + player.battle.maxStage * 10 + player.tower.currentFloor * 1;
     player.attributes.totalPoints = totalAttributePoints;
 
     // 更新总属性点和剩余属性点
@@ -6658,6 +6773,25 @@ function updatePlayerBattleStats() {
 }
 // 称号配置（按分支分组）
 const titleConfig = {
+     towerBranch: [
+    { name: "关破厉鬼", condition: (p) => p.tower.maxFloor > 10, bonus: { healthMultiplier: 1.1 } },
+    { name: "阶碎无常", condition: (p) => p.tower.maxFloor > 100, bonus: { healthMultiplier: 1.1 } },
+    { name: "踏塔马面", condition: (p) => p.tower.maxFloor > 100, bonus: { healthMultiplier: 1.1 } },
+    { name: "魔修夜叉", condition: (p) => p.tower.maxFloor > 300, bonus: { healthMultiplier: 1.1 } },
+    { name: "破阶修罗", condition: (p) => p.tower.maxFloor > 500, bonus: { healthMultiplier: 1.1 } },
+    { name: "千层煞主", condition: (p) => p.tower.maxFloor > 1000, bonus: { healthMultiplier: 1.1 } },
+    { name: "踏关煞神", condition: (p) => p.tower.maxFloor > 2000, bonus: { healthMultiplier: 1.1 } },
+    { name: "关前冥王", condition: (p) => p.tower.maxFloor > 5000, bonus: { healthMultiplier: 1.1 } },
+    { name: "踏塔狂魔", condition: (p) => p.tower.maxFloor > 10000, bonus: { healthMultiplier: 1.1 } },
+    { name: "混世魔王", condition: (p) => p.tower.maxFloor > 20000, bonus: { healthMultiplier: 1.1 } },
+    { name: "屠戮之主", condition: (p) => p.tower.maxFloor > 30000, bonus: { healthMultiplier: 1.1 } },
+    { name: "杀戮之神", condition: (p) => p.tower.maxFloor > 40000, bonus: { healthMultiplier: 1.1 } },
+    { name: "十殿阎罗", condition: (p) => p.tower.maxFloor > 50000, bonus: { healthMultiplier: 1.1 } },
+    { name: "弑神修罗", condition: (p) => p.tower.maxFloor > 60000, bonus: { healthMultiplier: 1.1 } },
+    { name: "九幽魔尊", condition: (p) => p.tower.maxFloor > 70000, bonus: { healthMultiplier: 1.1 } },
+    { name: "永夜君主", condition: (p) => p.tower.maxFloor > 80000, bonus: { healthMultiplier: 1.1 } },
+    { name: "深渊主宰", condition: (p) => p.tower.maxFloor > 90000, bonus: { healthMultiplier: 1.1 } }
+],
     // 关卡分支
     stageBranch: [
         { name: "探险者", condition: (p) => p.battle.maxStage > 10, bonus: { attackMultiplier: 2 } },
@@ -6671,7 +6805,7 @@ const titleConfig = {
         { name: "天地共主", condition: (p) => p.battle.maxStage > 600, bonus: { attackMultiplier: 5 } },
         { name: "星河主宰", condition: (p) => p.battle.maxStage > 700, bonus: { attackMultiplier: 5 } },
         { name: "太虚之皇", condition: (p) => p.battle.maxStage > 800, bonus: { attackMultiplier: 5 } },
-        { name: "六道归一", condition: (p) => p.battle.maxStage > 900, bonus: { attackMultiplier: 10 } }
+        { name: "六道归一", condition: (p) => p.battle.maxStage > 900, bonus: { attackMultiplier: 5 } }
     ],
     // 转生分支
     reincarnationBranch: [
@@ -6698,7 +6832,7 @@ const titleConfig = {
         { name: "神级驯兽师", condition: (p) => p.pets?.yuyu2?.level > 10, bonus: { critMultiplier: 4 } },
         { name: "人级驯兽师", condition: (p) => p.pets?.yuyu3?.level > 10, bonus: { critMultiplier: 4 } },
         { name: "地级驯兽师", condition: (p) => p.pets?.yuyu4?.level > 10, bonus: { critMultiplier: 4 } },
-        { name: "天级驯兽师", condition: (p) => p.pets?.yuyu5?.level > 10, bonus: { critMultiplier: 10 } }
+        { name: "天级驯兽师", condition: (p) => p.pets?.yuyu5?.level > 10, bonus: { critMultiplier: 4 } }
     ],
     // 魂环分支
     soulRingBranch: [
@@ -6713,7 +6847,7 @@ const titleConfig = {
         { name: "魂斗罗", condition: (p) => hasSoulRing(p, "year23"), bonus: { attackMultiplier: 4 } },
         { name: "普通封号斗罗", condition: (p) => hasSoulRing(p, "year28"), bonus: { attackMultiplier: 4 } },
         { name: "巅峰斗罗", condition: (p) => hasSoulRing(p, "year33"), bonus: { attackMultiplier: 4 } },
-        { name: "绝世斗罗", condition: (p) => hasSoulRing(p, "year37"), bonus: { attackMultiplier: 10 } }
+        { name: "绝世斗罗", condition: (p) => hasSoulRing(p, "year37"), bonus: { attackMultiplier: 4 } }
     ],
     // 特殊分支
     specialBranch: [
@@ -6729,9 +6863,9 @@ const titleConfig = {
         { name: "鸿蒙剑祖", condition: (p) => getEquipLevel(p, "废品") > 10000000, bonus: { attackMultiplier: 4 } },
         { name: "万劫剑神", condition: (p) => getEquipLevel(p, "废品") > 50000000, bonus: { attackMultiplier: 4 } },
         { name: "无上剑神", condition: (p) => getEquipLevel(p, "废品") > 100000000, bonus: { attackMultiplier: 4 } },
-        { name: "剑狱之尊", condition: (p) => getEquipLevel(p, "废品") > 500000000, bonus: { attackMultiplier: 4 } },
-        { name: "剑主洪荒", condition: (p) => getEquipLevel(p, "废品") > 1000000000, bonus: { attackMultiplier: 4 } },
-        { name: "御诸剑神", condition: (p) => getEquipLevel(p, "废品") > 5000000000, bonus: { attackMultiplier: 10 } }
+        { name: "剑狱之尊", condition: (p) => getEquipLevel(p, "废品") > 200000000, bonus: { attackMultiplier: 4 } },
+        { name: "剑主洪荒", condition: (p) => getEquipLevel(p, "废品") > 300000000, bonus: { attackMultiplier: 4 } },
+        { name: "御诸剑神", condition: (p) => getEquipLevel(p, "废品") > 400000000, bonus: { attackMultiplier: 4 } }
     ]
 };
 // 辅助函数：检查是否拥有指定魂环
@@ -6970,16 +7104,16 @@ const talentTypes = [
 const talentRanks = ["初级", "中级", "高级", "终极", "圣级", "神级", "远古", "太古", "洪荒"];
 
 // 伴侣名字库
-const companionNames = ["闫闫", "茶茶", "沈砚山", "苏绾月", "林清瑶", "楚棠溪", "慕玄尘", "许清尘", "温玉珞", "林灵枢", "叶棠音", "陆剑尘", "楚絮晚", "陆星辞", "王富贵", "洛千尘", "白小纯", "白芷晴", "顾长歌", "沈青岚", "慕雨柔", "陆天行", "乔曦", "柳如烟", "香香", "尝试", "小萝莉", "通元", "鱼鱼"];
+const companionNames = ["闫闫", "茶茶", "沈砚山", "苏绾月", "林清瑶", "楚棠溪", "慕玄尘", "许清尘", "温玉珞", "林灵枢", "叶棠音", "陆剑尘", "楚絮晚", "陆星辞", "王富贵", "洛千尘", "白小纯", "白芷晴", "顾长歌", "沈青岚", "慕雨柔", "陆天行", "乔曦", "柳如烟", "香香", "尝试", "小萝莉", "通元", "鱼鱼", "花花"];
 
 // 抽奖概率
 const drawProbabilities = [
     {rarity: "white", prob: 0.8},
     {rarity: "blue", prob: 0.15},
-    {rarity: "purple", prob: 0.03},
-    {rarity: "pink", prob: 0.0199},
-    {rarity: "orange", prob: 0.001},
-    {rarity: "red", prob: 0.0001}
+    {rarity: "purple", prob: 0.01889},
+    {rarity: "pink", prob: 0.001},
+    {rarity: "orange", prob: 0.0001},
+    {rarity: "red", prob: 0.00001}
 ];
 // 打开伴侣系统
 function openCompanionSystem() {
@@ -7309,6 +7443,369 @@ function getCompanionBonuses() {
     
     return bonuses;
 }
+
+
+
+// 切换通天塔UI
+function toggleTowerUI() {
+    // 检查转生次数是否达到50次（和普通打怪模式一致）
+    if (player.reincarnationCount < 100) {
+        alert("需要达到100转才能开启通天塔模式！");
+        return;
+    }
+  
+    const towerUI = document.getElementById('towerUI');
+    towerUI.style.display = towerUI.style.display === 'none' ? 'block' : 'none';
+    if (towerUI.style.display === 'block') {
+        // 初始化玩家属性
+        generateTowerMonster();
+        initTowerPlayerStats();
+        player.tower.playerHealth = player.battle.playerHealth;
+    player.tower.playerAttack = player.battle.playerAttack;
+    player.tower.playerCritRate = player.battle.playerCritRate;
+    player.tower.playerCritDamage = player.battle.playerCritDamage;
+    player.tower.playerAccuracy = player.battle.playerAccuracy;
+    player.tower.playerDodge = player.battle.playerDodge;
+        // 如果没有当前怪物，生成一个
+        if (!player.tower.monster) {
+            generateTowerMonster();
+        }
+        updateTowerUI();
+    }
+}
+
+// 初始化通天塔玩家属性
+function initTowerPlayerStats() {
+    player.tower.playerHealth = player.battle.playerHealth;
+    player.tower.playerAttack = player.battle.playerAttack;
+    player.tower.playerCritRate = player.battle.playerCritRate;
+    player.tower.playerCritDamage = player.battle.playerCritDamage;
+    player.tower.playerMultiAttack = player.battle.playerMultiAttack;
+}
+
+// 生成通天塔怪物
+function generateTowerMonster() {
+    const floor = player.tower.currentFloor;
+    const monsterRanks = ['普通', '精英', '普通BOSS', '特殊BOSS', '领主BOSS', '霸主级BOSS', '王级BOSS', '皇级BOSS', '帝级BOSS', '神级BOSS', '圣级BOSS'];
+    const rankProbabilities = [0.45, 0.20, 0.10, 0.06, 0.05, 0.04, 0.03, 0.03, 0.02, 0.015, 0.005];
+
+    // 随机生成怪物品阶
+    let rankIndex = 0;
+    let rand = Math.random();
+    for (let i = 0; i < rankProbabilities.length; i++) {
+        rand -= rankProbabilities[i];
+        if (rand < 0) {
+            rankIndex = i;
+            break;
+        }
+    }
+    const rank = monsterRanks[rankIndex];
+
+    // 根据品阶选择词条
+    const modifierPool = monsterRankModifiers[rank].pool;
+    const selectCount = monsterRankModifiers[rank].selectCount;
+    const selectedModifiers = [];
+    const usedModifiers = new Set();
+
+    for (let i = 0; i < selectCount; i++) {
+        let modifier;
+        do {
+            modifier = modifierPool[Math.floor(Math.random() * modifierPool.length)];
+        } while (usedModifiers.has(modifier));
+        usedModifiers.add(modifier);
+        selectedModifiers.push(modifier);
+    }
+
+    // 计算怪物属性（通天塔特殊逻辑）
+    const baseHealth = 10000000000; // 初始1亿血量
+    const healthMultiplier = Math.pow(1.00693, floor); // 每层乘以1.00693
+    let attackMultiplier;
+    
+    if (floor <= 5) {
+        attackMultiplier = Math.floor(Math.random() * 50) + 30;
+    } else if (floor <= 150) {
+        attackMultiplier = Math.floor(Math.random() * 100) + 50;
+    } else if (floor <= 300) {
+        attackMultiplier = Math.floor(Math.random() * 100) + 100;
+    } else {
+        attackMultiplier = 150 + (floor - 299) * 50;
+    }
+
+    let attack = attackMultiplier * (10 + floor * 200);
+    let damageReduction = 0;
+    let dodgeChance = 0;
+    let blockCount = 0;
+    let attackCount = 1;
+    let damageTakenMultiplier = 1;
+
+    selectedModifiers.forEach(modifier => {
+        const effect = monsterModifiers[modifier];
+        if (effect.attackMultiplier) attack *= effect.attackMultiplier;
+        if (effect.damageReduction) damageReduction += effect.damageReduction;
+        if (effect.dodgeChance) dodgeChance += effect.dodgeChance;
+        if (effect.blockCount) blockCount += effect.blockCount;
+        if (effect.attackCount) attackCount = effect.attackCount;
+        if (effect.damageTakenMultiplier) damageTakenMultiplier *= effect.damageTakenMultiplier;
+    });
+
+    // 生成怪物，包含复活次数
+    player.tower.monster = {
+        name: `${getRandomMonsterName()} 等级${Math.floor(attackMultiplier * 2 + 7)}`,
+        rank: rank,
+        health: baseHealth * healthMultiplier,
+        maxHealth: baseHealth * healthMultiplier,
+        attack: attack,
+        modifiers: selectedModifiers,
+        damageReduction: damageReduction,
+        dodgeChance: dodgeChance,
+        blockCount: blockCount,
+        attackCount: attackCount,
+        damageTakenMultiplier: damageTakenMultiplier,
+        resurrectionsLeft: 20 // 20次复活机会
+    };
+}
+
+// 攻击通天塔怪物
+function attackTowerMonster() {
+// 使用打怪模式属性
+    const playerAttack = player.battle.playerAttack;
+    const playerCritRate = player.battle.playerCritRate;
+    const playerCritDamage = player.battle.playerCritDamage;
+    const playerMultiAttack = player.battle.playerMultiAttack;
+
+    if (!player.tower.monster) return;
+    
+    const monster = player.tower.monster;
+    let totalDamage = 0;
+    let normalDamage = 0;
+    let critDamage = 0;
+    let critCount = 0;
+    let dodgeCount = 0;
+    let totalAttacks = player.tower.playerMultiAttack || 1;
+    let battleLogs = [];
+    let monsterDefeated = false;
+
+    // 玩家攻击
+    for (let i = 0; i < totalAttacks; i++) {
+        // 检查是否已被击败
+        if (monster.health <= 0) break;
+        
+        // 检查闪避
+        if (Math.random() < monster.dodgeChance) {
+            dodgeCount++;
+            battleLogs.push(`${monster.name}闪避了你的攻击！`);
+            continue;
+        }
+        
+        // 计算基础伤害
+        let damage = player.tower.playerAttack;
+        
+        // 应用伤害减免
+        damage *= (1 - monster.damageReduction);
+        
+        // 应用伤害乘数
+        damage *= monster.damageTakenMultiplier;
+        
+        // 检查暴击
+        let isCrit = Math.random() < player.tower.playerCritRate;
+        if (isCrit) {
+            damage *= player.tower.playerCritDamage;
+            critCount++;
+            critDamage += damage;
+        } else {
+            normalDamage += damage;
+        }
+        
+        // 应用伤害
+        monster.health -= damage;
+        totalDamage += damage;
+        
+        battleLogs.push(`你对${monster.name}造成了${Math.floor(damage)}点伤害${isCrit ? '（暴击！）' : ''}`);
+        
+        // 检查怪物是否被击败
+        if (monster.health <= 0) {
+            // 检查是否还有复活次数
+            if (monster.resurrectionsLeft > 0) {
+                monster.resurrectionsLeft--;
+                monster.health = monster.maxHealth; // 复活回满血
+                battleLogs.push(`${monster.name}复活了！剩余复活次数: ${monster.resurrectionsLeft}`);
+                
+                // BOSS复活后立刻攻击玩家1次
+                towerMonsterCounterAttack();
+            } else {
+                battleLogs.push(`你击败了${monster.name}！`);
+                monsterDefeated = true;
+            }
+            break; // 结束当前连击
+          initTowerPlayerStats();
+         updateOfficialSystemDisplay();
+        updateMonsterUI(); // 更新UI显示
+        }
+    }
+
+    // 输出综合攻击日志
+    battleLogs.push(`你造成了${Math.floor(totalDamage)}点伤害 (${totalAttacks}连击) - 普通伤害: ${Math.floor(normalDamage)}, 闪避x${dodgeCount}, 暴击x${critCount}`);
+    
+    // 添加到战斗日志
+    battleLogs.forEach(log => {
+        addTowerBattleLog(log);
+    });
+
+    // 如果怪物被彻底击败（无复活次数）
+    if (monsterDefeated) {
+        player.tower.currentFloor++;
+        player.tower.maxFloor = Math.max(player.tower.maxFloor, player.tower.currentFloor);
+        addTowerBattleLog(`通关通天塔第${player.tower.currentFloor}层！`);
+        checkTitleUnlocks();
+        // 更新总属性点
+        player.attributes.totalPoints = player.reincarnationCount * 1 + player.battle.maxStage * 10 + player.tower.currentFloor * 1;
+        player.attributes.remainingPoints++; // 每通关一层增加1点剩余属性点
+        
+        // 自动进入下一关
+        generateTowerMonster();
+        updateTowerUI();
+        return;
+    }
+
+    // 怪物反击（如果还活着）
+    if (monster.health > 0) {
+        towerMonsterCounterAttack();
+    }
+
+    // 检查玩家是否被击败
+    if (player.tower.playerHealth <= 0) {
+        addTowerBattleLog('你被怪物击败了！');
+       // 重置当前层怪物
+        generateTowerMonster();
+        // 重置玩家状态
+        initTowerPlayerStats();
+      
+    }
+
+    updateTowerUI();
+
+}
+
+// 通天塔怪物反击
+function towerMonsterCounterAttack() {
+    const monster = player.tower.monster;
+    if (!monster || monster.health <= 0) return;
+    
+    for (let i = 0; i < monster.attackCount; i++) {
+        // 检查玩家闪避
+        if (Math.random() < (player.attributes.dodge * 0.001 || 0)) {
+            addTowerBattleLog(`你闪避了${monster.name}的攻击！`);
+            continue;
+        }
+        
+        // 玩家受到伤害
+        player.tower.playerHealth -= monster.attack;
+        addTowerBattleLog(`${monster.name}对你造成了${monster.attack}点伤害`);
+        
+        // 检查玩家是否被击败
+        if (player.tower.playerHealth <= 0) {
+            break;
+        }
+    }
+}
+
+// 切换通天塔自动攻击
+function toggleTowerAutoAttack() {
+    player.tower.isAutoAttacking = !player.tower.isAutoAttacking;
+    document.getElementById('towerAutoAttackStatus').textContent = player.tower.isAutoAttacking ? '开' : '关';
+    
+    if (player.tower.isAutoAttacking) {
+        startTowerAutoAttack();
+    } else {
+        stopTowerAutoAttack();
+    }
+}
+
+// 开始通天塔自动攻击
+function startTowerAutoAttack() {
+    // 先停止现有的自动攻击
+    stopTowerAutoAttack();
+    
+    // 每秒攻击10次
+    player.tower.autoAttackInterval = setInterval(() => {
+        if (player.tower.isAutoAttacking && player.tower.monster) {
+            attackTowerMonster();
+        }
+    }, 100);
+}
+
+// 停止通天塔自动攻击
+function stopTowerAutoAttack() {
+    if (player.tower.autoAttackInterval) {
+        clearInterval(player.tower.autoAttackInterval);
+        player.tower.autoAttackInterval = null;
+    }
+}
+
+// 添加通天塔战斗日志
+function addTowerBattleLog(message) {
+    player.tower.battleLog.push({
+        time: new Date(),
+        message: message
+    });
+    
+    // 限制日志长度
+    if (player.tower.battleLog.length > 10) {
+        player.tower.battleLog.shift();
+    }
+    
+    // 更新UI显示
+    updateTowerBattleLog();
+}
+
+// 更新通天塔战斗日志UI
+function updateTowerBattleLog() {
+    const logElement = document.getElementById('towerBattleLog');
+    logElement.innerHTML = '';
+    
+    player.tower.battleLog.forEach(entry => {
+        const logItem = document.createElement('div');
+        logItem.className = 'battle-log-entry';
+        logItem.textContent = entry.message;
+        logElement.appendChild(logItem);
+    });
+    
+    // 滚动到底部
+    logElement.scrollTop = logElement.scrollHeight;
+}
+
+// 更新通天塔UI
+function updateTowerUI() {
+    // 更新玩家信息
+    document.getElementById('towerPlayerHealth').textContent = Math.floor(player.tower.playerHealth).toLocaleString();
+    document.getElementById('towerPlayerAttack').textContent = player.tower.playerAttack.toExponential(3);
+    document.getElementById('towerPlayerCritRate').textContent = (player.tower.playerCritRate * 100).toFixed(1) + '%';
+    document.getElementById('towerPlayerCritDamage').textContent = ((player.tower.playerCritDamage - 1) * 100).toFixed(1) + '%';
+
+    // 更新通天塔层数显示
+    document.getElementById('towerFloor').textContent = player.tower.currentFloor;
+    document.getElementById('towerCurrentFloor').textContent = player.tower.currentFloor;
+    
+    // 更新怪物信息
+    if (player.tower.monster) {
+        const monster = player.tower.monster;
+        document.getElementById('towerMonsterName').textContent = monster.name;
+        document.getElementById('towerMonsterRank').textContent = monster.rank;
+        document.getElementById('towerMonsterHealth').textContent = Math.floor(monster.health).toLocaleString() + '/' + Math.floor(monster.maxHealth).toLocaleString();
+        document.getElementById('towerMonsterAttack').textContent = monster.attack.toLocaleString();
+        document.getElementById('towerMonsterModifiers').textContent = monster.modifiers.join(', ');
+        document.getElementById('towerMonsterResurrections').textContent = monster.resurrectionsLeft;
+    }
+    
+    // 更新自动攻击状态
+    document.getElementById('towerAutoAttackStatus').textContent = player.tower.isAutoAttacking ? '开' : '关';
+    // 更新战斗日志
+    updateTowerBattleLog();
+}
+
+
+
+
 
 
 // 官职配置
