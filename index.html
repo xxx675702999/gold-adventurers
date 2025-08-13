@@ -608,6 +608,7 @@
     <div id="gameLogPage2" style="display: none; background: white; border: 1px solid #ddd; padding: 10px; max-height: 400px; width: 300px; overflow-y: auto; border-radius: 0 0 3px 3px;">
         <div class="log">
             <h4>游戏公告介绍</h4>
+            <p>QQ群：864788026  有问题可以进群问</p>
             <p>1. 转生系统：玩家可以通过转生重置游戏进度，并获得转生币，用于提升转生属性（转生要求必须普通装备10000级）。</p>
             <p>   转生币等级兑换比例：普通10000=1  稀有5000=1 史诗1000=1 传说300=1 远古200=1 神圣125=1 奥术100=1 天空33=1 地狱20=1 星界12.5=1  原初10=1 超凡3=1 量子2=1 究极1=1  混沌1=3 永恒1=5 虚无1=10 创世1=20 神域1=30 终焉1=40 星辰1=50 起源1=60 时光1=70 造物1=80 银河1=90 天界1=100 星云1=200 星河1=300 纪元1=400 鸿蒙1=500 星穹1=600 亘古1=700 万象1=800 太虚1=900 九垓1=1000 </p>
             <p>2. 宠物系统：玩家可以通过升级宠物来提升装备属性加成。</p>
@@ -626,7 +627,9 @@
             <p>14. 称号系统：解锁每一个都可以永久获得属性，自由搭配选择称号(不影响属性效果）。</p>
             <p>14. 官职系统：增加总和攻击，一共60级。</p>
             <p>15. 伴侣系统：大幅度增加属性。天赋品阶初级→中级→高级→终极→圣级→神级→远古→太古→洪荒（伴侣钥匙和玫瑰花：打怪或者材料宝箱掉落）。</p>
-             <p>16. 通天塔：暂时只有通过一层加1属性，还有对应称号（100转才能打）。</p>
+            <p>16. 通天塔：只要通过每一层加1点玩家属性，每一层加0.1倍GPS,还有对应称号（100转才能打）。</p>
+            <p>17. 存档问题：换设备后存档导入一开始进去VIP和伴侣是空的，你直接退出在重新进就恢复了（点了导出按钮，会自动复制，你黏贴就可以了）</p>
+            <p>18. 网页存档问题：建议每一小时保存导出存档，游戏容易炸档（群里的版本没出现过炸档，就网页有）</p>
         </div>
     </div>
 </div>
@@ -1096,6 +1099,15 @@
         <h3>伴侣宝箱</h3>
         <p>当前钥匙: <span id="companionKeyCount">0</span></p>
         <button onclick="drawCompanion()" style="background: #2196F3; color: white; border: none; padding: 5px 15px; border-radius: 3px; cursor: pointer;">开启宝箱 (消耗1钥匙)</button>
+     <div style="margin-top: 15px; padding: 10px; background: #333; border-radius: 5px; font-size: 12px;">
+        <h4 style="margin-top: 0; font-size: 13px; color: #d4af37;">保底机制</h4>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px;">
+            <div>史诗(紫色): <span id="epicGuarantee">0</span>/100</div>
+            <div>卓越(粉色): <span id="pinkGuarantee">0</span>/500</div>
+            <div>完美(橙色): <span id="orangeGuarantee">0</span>/1000</div>
+            <div>神赐(红色): <span id="redGuarantee">0</span>/5000</div>
+        </div>
+    </div>
     </div>
     
     <!-- 批量分解 -->
@@ -1138,6 +1150,7 @@
     <!-- 右上角关闭按钮 -->
     <button onclick="toggleTowerUI()" style="position: absolute; top: 10px; right: 10px; background: #ff4444; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-size: 16px;">×</button>
     <h3>通天塔</h3>
+     <div>GPS总和加成: <span id="towerBonus">0%</span> (每层增加0.1倍)</div>
     <div class="player-info">
         <p>生命: <span id="towerPlayerHealth">0</span></p>
         <p>攻击: <span id="towerPlayerAttack">0</span></p>
@@ -1276,6 +1289,18 @@
         level: 1,
         power: 0, // 累计VIP能力值数量
     },
+   bossBattleSnapshot: {
+    playerAttack: 0,
+    playerMultiAttack: 0,
+    playerCritRate: 0,
+    playerCritDamage: 0
+},
+   companionChestGuarantee: {
+    epic: 0,     // 史诗保底计数器
+    pink: 0,     // 卓越保底计数器
+    orange: 0,  // 完美保底计数器
+    red: 0       // 神赐保底计数器
+},
 tower: {
     currentFloor: 0,
     maxFloor: 0,
@@ -3187,6 +3212,7 @@ function handleVipPowerGain() {
 
         // 核心游戏逻辑
         function getTotalGPS() {
+    const towerMultiplier = 1 + player.tower.currentFloor * 0.1;
     const gpsBonus = player.reincarnationStats.gpsBonus.level * 1.00; // 每级增加100% GPS
     const petMultiplier = Object.values(player.pets).reduce((sum, pet) => sum + pet.level * pet.multiplier, 1);
     // 改为使用带职业加成的总装备加成
@@ -3197,7 +3223,7 @@ function handleVipPowerGain() {
     return (1 + player.equipment.reduce((sum, eq) => sum + eq.gps * (1+eq.gemMultiplier + eq.collectionMultiplier), 0)) 
         * player.gpsMultiplier 
         * (1 + gpsBonus) 
-        * petMultiplier * (1 + dungeonBonus)* (1 + soulRingBonus);
+        * petMultiplier * (1 + dungeonBonus)* (1 + soulRingBonus) * towerMultiplier;
 }
 
 function getTotalClickValue() {
@@ -7115,6 +7141,13 @@ const drawProbabilities = [
     {rarity: "orange", prob: 0.0001},
     {rarity: "red", prob: 0.00001}
 ];
+const guaranteeThresholds = {
+    epic: 100,   // 100次保底史诗
+    pink: 500,   // 500次保底卓越
+    orange: 1000, // 1000次保底完美
+    red: 5000    // 5000次保底神赐
+};
+
 // 打开伴侣系统
 function openCompanionSystem() {
     document.getElementById('companionSystem').style.display = 'block';
@@ -7134,7 +7167,11 @@ function updateCompanionDisplay() {
     document.getElementById('companionLevel').textContent = player.companionLevel;
     document.getElementById('upgradeCost').textContent = 10 * player.companionLevel;
     document.getElementById('companionKeyCount').textContent = player.items.companionKey;
-    
+    // 更新保底计数器显示
+    document.getElementById('epicGuarantee').textContent = player.companionChestGuarantee.epic;
+    document.getElementById('pinkGuarantee').textContent = player.companionChestGuarantee.pink;
+    document.getElementById('orangeGuarantee').textContent = player.companionChestGuarantee.orange;
+    document.getElementById('redGuarantee').textContent = player.companionChestGuarantee.red;
     // 更新伴侣列表
     const listContainer = document.getElementById('companionList');
     listContainer.innerHTML = '';
@@ -7179,33 +7216,64 @@ function drawCompanion() {
     }
     
     player.items.companionKey--;
-    let rand = Math.random();
-    let rarity = "white";
     
-    for (const p of drawProbabilities) {
-        if (rand < p.prob) {
-            rarity = p.rarity;
-            break;
+    // 更新所有保底计数器 - 修复：确保每次开启都更新计数器
+    player.companionChestGuarantee.epic++;
+    player.companionChestGuarantee.pink++;
+    player.companionChestGuarantee.orange++;
+    player.companionChestGuarantee.red++;
+    
+    let selectedRarity;
+    let isGuaranteed = false;
+    
+    // 检查保底机制（优先级从高到低）
+    if (player.companionChestGuarantee.red >= guaranteeThresholds.red) {
+        selectedRarity = "red";
+        isGuaranteed = true;
+        player.companionChestGuarantee.red = 0; // 重置计数器
+        logAction("触发神赐品质保底！", "success");
+    } else if (player.companionChestGuarantee.orange >= guaranteeThresholds.orange) {
+        selectedRarity = "orange";
+        isGuaranteed = true;
+        player.companionChestGuarantee.orange = 0;
+        logAction("触发完美品质保底！", "success");
+    } else if (player.companionChestGuarantee.pink >= guaranteeThresholds.pink) {
+        selectedRarity = "pink";
+        isGuaranteed = true;
+        player.companionChestGuarantee.pink = 0;
+        logAction("触发卓越品质保底！", "success");
+    } else if (player.companionChestGuarantee.epic >= guaranteeThresholds.epic) {
+        selectedRarity = "epic";
+        isGuaranteed = true;
+        player.companionChestGuarantee.epic = 0;
+        logAction("触发史诗品质保底！", "success");
+    } else {
+        // 没有触发保底，按原概率抽取
+        let rand = Math.random();
+        let cumulativeProb = 0;
+        for (const { rarity, prob } of drawProbabilities) {
+            cumulativeProb += prob;
+            if (rand < cumulativeProb) {
+                selectedRarity = rarity;
+                break;
+            }
         }
-        rand -= p.prob;
     }
     
     // 生成天赋
-    const talentCount = companionRarities[rarity].talentCount;
-    const [minRank, maxRank] = companionRarities[rarity].talentRange;
+    const config = companionRarities[selectedRarity];
+    const talentCount = config.talentCount;
+    const [minRank, maxRank] = config.talentRange;
     const talents = [];
-    
     
     while (talents.length < talentCount) {
         const type = Math.floor(Math.random() * talentTypes.length);
-      
-
         const rank = Math.floor(Math.random() * (maxRank - minRank + 1)) + minRank;
         talents.push({ type, rank });
     }
     
     // 计算评分
-    const baseScore = companionRarities[rarity].baseScore;
+    const baseScore = config.baseScore;
     const talentScore = talents.reduce((sum, t) => sum + (t.rank + 1) * 50, 0);
     const totalScore = Math.min(10000, baseScore + talentScore);
     
@@ -7213,14 +7281,24 @@ function drawCompanion() {
     const companion = {
         id: 'comp_' + Date.now() + Math.floor(Math.random() * 1000),
         name: companionNames[Math.floor(Math.random() * companionNames.length)],
-        rarity,
+        rarity: selectedRarity,
         talents,
         score: totalScore,
         locked: false
     };
     
     player.companions.push(companion);
-    logAction(`获得了${companionRarities[rarity].name}伴侣：${companion.name}`, 'success');
+    
+    const rarityName = {
+        "white": "普通",
+        "blue": "稀有",
+        "epic": "史诗",
+        "pink": "卓越",
+        "orange": "完美",
+        "red": "神赐"
+    }[selectedRarity];
+    
+    logAction(`获得了${rarityName}品质伴侣：${companion.name}${isGuaranteed ? " (保底)" : ""}`, 'success');
     updateCompanionDisplay();
 }
 
@@ -7448,7 +7526,7 @@ function getCompanionBonuses() {
 
 // 切换通天塔UI
 function toggleTowerUI() {
-    // 检查转生次数是否达到50次（和普通打怪模式一致）
+    // 检查转生次数是否达到100次（和普通打怪模式一致）
     if (player.reincarnationCount < 100) {
         alert("需要达到100转才能开启通天塔模式！");
         return;
@@ -7522,16 +7600,34 @@ function generateTowerMonster() {
     let attackMultiplier;
     
     if (floor <= 5) {
-        attackMultiplier = Math.floor(Math.random() * 50) + 30;
+      attackMultiplier = Math.floor(Math.random() * 50) + 30;
     } else if (floor <= 150) {
-        attackMultiplier = Math.floor(Math.random() * 100) + 50;
+      attackMultiplier = Math.floor(Math.random() * 100) + 100;
     } else if (floor <= 300) {
-        attackMultiplier = Math.floor(Math.random() * 100) + 100;
+      attackMultiplier = 300 + (floor - 149) * 50;
+    } else if (floor <= 1000) {
+      attackMultiplier = 1000 + (floor - 299) * 100;
+    } else if (floor <= 5000) {
+      attackMultiplier = 5000 + (floor - 999) * 1000;
+    } else if (floor <= 10000) {
+      attackMultiplier = 10000 + (floor - 4999) * 10000;
+    } else if (floor <= 20000) {
+      attackMultiplier = 20000 + (floor - 9999) * 100000;
+    } else if (floor <= 30000) {
+      attackMultiplier = 30000 + (floor - 19999) * 1000000;
+    } else if (floor <= 50000) {
+      attackMultiplier = 50000 + (floor - 29999) * 10000000;
+    } else if (floor <= 60000) {
+      attackMultiplier = 60000 + (floor - 49999) * 100000000;
+   }  else if (floor <= 70000) {
+     attackMultiplier = 70000 + (floor - 59999) * 1000000000;
+    } else if (floor <= 80000) {
+     attackMultiplier = 80000 + (floor - 69999) * 10000000000;
     } else {
-        attackMultiplier = 150 + (floor - 299) * 50;
+      attackMultiplier = 90000 + (floor - 79999) * 100000000000;
     }
 
-    let attack = attackMultiplier * (10 + floor * 200);
+    let attack = attackMultiplier * (10 + floor * 500);
     let damageReduction = 0;
     let dodgeChance = 0;
     let blockCount = 0;
@@ -7660,7 +7756,7 @@ function attackTowerMonster() {
         // 更新总属性点
         player.attributes.totalPoints = player.reincarnationCount * 1 + player.battle.maxStage * 10 + player.tower.currentFloor * 1;
         player.attributes.remainingPoints++; // 每通关一层增加1点剩余属性点
-        
+        initTowerPlayerStats();
         // 自动进入下一关
         generateTowerMonster();
         updateTowerUI();
@@ -7679,6 +7775,7 @@ function attackTowerMonster() {
         generateTowerMonster();
         // 重置玩家状态
         initTowerPlayerStats();
+      stopTowerAutoAttack();
       
     }
 
@@ -7786,6 +7883,8 @@ function updateTowerUI() {
     document.getElementById('towerFloor').textContent = player.tower.currentFloor;
     document.getElementById('towerCurrentFloor').textContent = player.tower.currentFloor;
     
+    const bonus = player.tower.currentFloor * 0.1; // 每层增加0.1%
+    document.getElementById("towerBonus").textContent = bonus.toFixed(1) + "倍";
     // 更新怪物信息
     if (player.tower.monster) {
         const monster = player.tower.monster;
@@ -8609,12 +8708,18 @@ function loadWorldBossData() {
         // 更新BOSS界面
         function updateBossUI() {
             document.getElementById('bossSummonCount').textContent = worldBossData.summonCount;
-            
-            // 更新玩家属性显示
-            document.getElementById('playerBossAttack').textContent = formatNumber(player.battle.playerAttack);
-            document.getElementById('playerBossMultiAttack').textContent = player.battle.playerMultiAttack;
-            document.getElementById('playerBossCritRate').textContent = (player.battle.playerCritRate * 100).toFixed(1) + '%';
-            document.getElementById('playerBossCritDamage').textContent = ((player.battle.playerCritDamage - 1) * 100).toFixed(1) + '%';
+    if (worldBossData.isBossActive && player.bossBattleSnapshot) {
+        document.getElementById('playerBossAttack').textContent = formatNumber(player.bossBattleSnapshot.playerAttack);
+        document.getElementById('playerBossMultiAttack').textContent = player.bossBattleSnapshot.playerMultiAttack;
+        document.getElementById('playerBossCritRate').textContent = (player.bossBattleSnapshot.playerCritRate * 100).toFixed(1) + '%';
+        document.getElementById('playerBossCritDamage').textContent = ((player.bossBattleSnapshot.playerCritDamage - 1) * 100).toFixed(1) + '%';
+    } else {
+        // 显示实时属性
+        document.getElementById('playerBossAttack').textContent = formatNumber(player.battle.playerAttack);
+        document.getElementById('playerBossMultiAttack').textContent = player.battle.playerMultiAttack;
+        document.getElementById('playerBossCritRate').textContent = (player.battle.playerCritRate * 100).toFixed(1) + '%';
+        document.getElementById('playerBossCritDamage').textContent = ((player.battle.playerCritDamage - 1) * 100).toFixed(1) + '%';
+    }
             document.getElementById('playerBossDamage').textContent = formatNumber(worldBossData.playerDamage);
        if (!worldBossData.isBossActive) {
         document.getElementById('playerBossRank').textContent = "未开始";
@@ -8699,10 +8804,16 @@ function loadWorldBossData() {
             worldBossData.bossStars = Math.floor(Math.random() * 30) + 1; // 1-30星
             
             // BOSS生命值为玩家攻击力的100000万-1000000万倍
-            const healthMultiplier = 1000000000 + Math.random() * 99000000000000000000000;
+            const healthMultiplier = 1000000000 + Math.random() * 99000000000000000000000000;
             worldBossData.bossMaxHealth = Math.floor(player.battle.playerAttack * healthMultiplier);
             worldBossData.bossHealth = worldBossData.bossMaxHealth;
-            
+           // 保存玩家属性快照
+    player.bossBattleSnapshot = {
+        playerAttack: player.battle.playerAttack,
+        playerMultiAttack: player.battle.playerMultiAttack,
+        playerCritRate: player.battle.playerCritRate,
+        playerCritDamage: player.battle.playerCritDamage
+    };                   
             // 生成虚拟玩家
             generateVirtualPlayers();
             
@@ -8728,12 +8839,12 @@ function loadWorldBossData() {
             
             for (let i = 0; i < 60; i++) {
                 const name = virtualPlayerNames[i] || `玩家${i+1}`;
-                const attackMultiplier = 0.1 + Math.random() * 30; // 1-15倍
+                const attackMultiplier = 0.1 + Math.random() * 30; 
                 const attack = Math.floor(player.battle.playerAttack * attackMultiplier);
                 const multiAttack = Math.max(1, 
-                    Math.floor(player.battle.playerMultiAttack * (0.1 + Math.random() * 0.7))); // 玩家连击数的80%-120%
-                const critRate = 0.5 + Math.random() * 1.9; // 10%-30%
-                const critDamage = player.battle.playerCritDamage * (0.3 + Math.random() * 0.8);
+                    Math.floor(player.battle.playerMultiAttack * (0.4 + Math.random() * 0.9))); 
+                const critRate = 0.5 + Math.random() * 1.9; 
+                const critDamage = player.battle.playerCritDamage * (0.3 + Math.random() * 0.9);
                 
                 worldBossData.virtualPlayers.push({
                     name: name,
@@ -8856,12 +8967,14 @@ function calculateOfflineVirtualDamage() {
         function attackBoss() {
             if (!worldBossData.isBossActive) return;
             
-            const result = calculatePlayerDamage({
-                attack: player.battle.playerAttack,
-                multiAttack: player.battle.playerMultiAttack,
-                critRate: player.battle.playerCritRate,
-                critDamage: player.battle.playerCritDamage
-            });
+    // 使用保存的属性快照而不是实时属性
+    const result = calculatePlayerDamage({
+        attack: player.bossBattleSnapshot.playerAttack,
+        multiAttack: player.bossBattleSnapshot.playerMultiAttack,
+        critRate: player.bossBattleSnapshot.playerCritRate,
+        critDamage: player.bossBattleSnapshot.playerCritDamage
+    });
+    
             
             worldBossData.bossHealth = Math.max(0, worldBossData.bossHealth - result.total);
             worldBossData.playerDamage += result.total;
@@ -8901,19 +9014,34 @@ function calculateOfflineVirtualDamage() {
         }
 
         // 新增专用函数处理自动攻击
-        function startAutoAttack() {
-            // 先停止现有的自动攻击
-            stopAutoAttack();
-            
-            // 每秒攻击20次
-            worldBossData.attackInterval = setInterval(() => {
-                if (worldBossData.isBossActive && worldBossData.isAutoAttacking) {
-                    for (let i = 0; i < 20; i++) {
-                        attackBoss();
-                    }
+function startAutoAttack() {
+    // 先停止现有的自动攻击
+    stopAutoAttack();
+    
+    // 每秒攻击20次
+    worldBossData.attackInterval = setInterval(() => {
+        if (worldBossData.isBossActive && worldBossData.isAutoAttacking) {
+            for (let i = 0; i < 20; i++) {
+                // 使用属性快照攻击
+                const result = calculatePlayerDamage({
+                    attack: player.bossBattleSnapshot.playerAttack,
+                    multiAttack: player.bossBattleSnapshot.playerMultiAttack,
+                    critRate: player.bossBattleSnapshot.playerCritRate,
+                    critDamage: player.bossBattleSnapshot.playerCritDamage
+                });
+                
+                worldBossData.bossHealth = Math.max(0, worldBossData.bossHealth - result.total);
+                worldBossData.playerDamage += result.total;
+                
+                // 检查BOSS是否被击败
+                if (worldBossData.bossHealth <= 0) {
+                    endBossFight(true);
+                    break;
                 }
-            }, 1000);
+            }
         }
+    }, 1000);
+}
 
         function stopAutoAttack() {
             clearInterval(worldBossData.attackInterval);
@@ -9000,7 +9128,7 @@ function updateRankings() {
                 worldBossData.isAutoAttacking = false;
                 stopAutoAttack();
             }
-            
+             player.bossBattleSnapshot = null;
             // 发放奖励
             distributeRewards();
             
@@ -9098,7 +9226,7 @@ function updateRankings() {
             updateLotteryResultsDisplay();
         }
 
-        // 格式化数字显示
+       // 格式化数字显示
         function formatNumber(value) {
             if (value >= 1e8) {
                 return value.toExponential(3);
@@ -9106,6 +9234,7 @@ function updateRankings() {
                 return value.toLocaleString();
             }
         }
+
 
         // 在游戏加载时初始化世界BOSS系统
         loadWorldBossData();
@@ -9130,5 +9259,6 @@ var _hmt = _hmt || [];
   s.parentNode.insertBefore(hm, s);
 })();
 </script>    </div>
+
 </body>
 </html>
