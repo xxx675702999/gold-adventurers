@@ -612,7 +612,7 @@
             <p>1. 转生系统：玩家可以通过转生重置游戏进度，并获得转生币，用于提升转生属性（转生要求必须普通装备10000级）。</p>
             <p>   转生币等级兑换比例：普通10000=1  稀有5000=1 史诗1000=1 传说300=1 远古200=1 神圣125=1 奥术100=1 天空33=1 地狱20=1 星界12.5=1  原初10=1 超凡3=1 量子2=1 究极1=1  混沌1=3 永恒1=5 虚无1=10 创世1=20 神域1=30 终焉1=40 星辰1=50 起源1=60 时光1=70 造物1=80 银河1=90 天界1=100 星云1=200 星河1=300 纪元1=400 鸿蒙1=500 星穹1=600 亘古1=700 万象1=800 太虚1=900 九垓1=1000 </p>
             <p>2. 宠物系统：玩家可以通过升级宠物来提升装备属性加成。</p>
-            <p>3. 离线系统：现在离线也能自动开宝箱和股票更新（关于普通装备不升级：下线前把自动兑换货币关了。）。</p>
+            <p>3. 离线系统：现在离线也能银行和股票，彩票更新（下线前最好把100倍加速自动开宝箱关了）。</p>
             <p>4. 新增股票系统，显示实时股价和持有情况，每10分钟股价随机波动±1%~10%，离线时间自动计算股价波动，所有交易使用转生币结算，实时显示价格变化趋势</p>
             <p>5. 彩票系统：购买到心仪的数字就可以，1小时开奖1次。刮刮卡：直接生效，开奖结果看获取！</p>
             <p>6. 银行系统：存钱每6分钟0.02%收益！</p>
@@ -788,7 +788,7 @@
         <h3></h3>
         <div>
             <h4>传统数字彩票</h4>
-            <p>每30分钟开奖，1-50数字中6个500W，中5个30W，中4个5W，中3个1000，中2个100，中1个10（中奖奖励转生币）。</p>
+            <p>每30分钟开奖，1-50数字中6个1亿，中5个1000万，中4个50万，中3个10000，中2个1000，中1个100（中奖奖励转生币）。记得来一注！</p>
             <button onclick="buyTraditionalLottery()">购买传统数字彩票（10转生币）</button>
             <div id="traditionalLotteryNumbers"></div>
         </div>
@@ -1150,7 +1150,7 @@
     <!-- 右上角关闭按钮 -->
     <button onclick="toggleTowerUI()" style="position: absolute; top: 10px; right: 10px; background: #ff4444; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-size: 16px;">×</button>
     <h3>通天塔</h3>
-     <div>GPS总和加成: <span id="towerBonus">0%</span> (每层增加0.1倍)</div>
+     <div>GPS加成: <span id="towerBonus">0%</span> (每层增加0.1倍)</div>
     <div class="player-info">
         <p>生命: <span id="towerPlayerHealth">0</span></p>
         <p>攻击: <span id="towerPlayerAttack">0</span></p>
@@ -3028,8 +3028,8 @@ if (speedBoostBtn) {
         function simulateOfflineAutoBuy(offlineSeconds) {
     const maxOfflineTime = 86400; // 24小时（秒）
     const actualOfflineTime = Math.min(offlineSeconds, maxOfflineTime);
-    const minutes = Math.floor(actualOfflineTime / 60); // 转换为分钟数
-    const chestsPerMinute = 500; // 每分钟购买数量
+    const minutes = Math.floor(actualOfflineTime / 86400); // 转换为分钟数
+    const chestsPerMinute = 1; // 每分钟购买数量
 
     player.autoBuy.forEach((enabled, index) => {
         if (enabled) {
@@ -4539,22 +4539,22 @@ function sellAllStock() {
     let reward = 0;
     switch (matchedNumbers) {
         case 6:
-            reward = 5000000;
+            reward = 100000000;
             break;
         case 5:
-            reward = 300000;
+            reward = 10000000;
             break;
         case 4:
-            reward = 50000;
+            reward = 500000;
             break;
         case 3:
-            reward = 1000;
+            reward = 10000;
             break;
         case 2:
-            reward = 100;
+            reward = 1000;
             break;
         case 1:
-            reward = 10;
+            reward = 100;
             break;
       }
     player.reincarnationCoin += reward;
@@ -4742,9 +4742,18 @@ function withdrawAllFromBank() {
             }
         }
 
-        function updateBankDisplay() {
-    document.getElementById("bankDeposit").textContent = player.bank.deposit.toLocaleString();
-    document.getElementById("bankTotal").textContent = (player.bank.deposit).toLocaleString();
+       function formatSci(value) {
+    if (value >= 1e8) {
+        return value.toExponential(3);
+    } else {
+        return value.toLocaleString();
+    }
+}
+
+// 更新银行显示函数
+function updateBankDisplay() {
+    document.getElementById("bankDeposit").textContent = formatSci(player.bank.deposit);
+    document.getElementById("bankTotal").textContent = formatSci(player.bank.deposit);
 }
 
         // 新增：副本装备系统
@@ -5979,7 +5988,7 @@ function generateMonster() {
 }
 
        function updateMonsterUI() {
-    document.getElementById('playerHealth').textContent = player.battle.playerHealth.toLocaleString();
+    document.getElementById('playerHealth').textContent = player.battle.playerHealth.toExponential(3);
     document.getElementById('playerAttack').textContent = player.battle.playerAttack.toExponential(3);
     document.getElementById('playerCritRate').textContent = `${((player.battle.playerCritRate + player.attributes.critRate * 0.0005) * 100).toFixed(1)}%`; // 更新暴击率显示
     document.getElementById('playerCritDamage').textContent = `${((player.battle.playerCritDamage + player.attributes.critDamage * 0.005) * 100).toFixed(1)}%`; // 更新爆伤显示
@@ -7874,7 +7883,7 @@ function updateTowerBattleLog() {
 // 更新通天塔UI
 function updateTowerUI() {
     // 更新玩家信息
-    document.getElementById('towerPlayerHealth').textContent = Math.floor(player.tower.playerHealth).toLocaleString();
+    document.getElementById('towerPlayerHealth').textContent = Math.floor(player.tower.playerHealth).toExponential(3);
     document.getElementById('towerPlayerAttack').textContent = player.tower.playerAttack.toExponential(3);
     document.getElementById('towerPlayerCritRate').textContent = (player.tower.playerCritRate * 100).toFixed(1) + '%';
     document.getElementById('towerPlayerCritDamage').textContent = ((player.tower.playerCritDamage - 1) * 100).toFixed(1) + '%';
@@ -7890,8 +7899,8 @@ function updateTowerUI() {
         const monster = player.tower.monster;
         document.getElementById('towerMonsterName').textContent = monster.name;
         document.getElementById('towerMonsterRank').textContent = monster.rank;
-        document.getElementById('towerMonsterHealth').textContent = Math.floor(monster.health).toLocaleString() + '/' + Math.floor(monster.maxHealth).toLocaleString();
-        document.getElementById('towerMonsterAttack').textContent = monster.attack.toLocaleString();
+        document.getElementById('towerMonsterHealth').textContent = Math.floor(monster.health).toExponential(3); + '/' + Math.floor(monster.maxHealth).toExponential(3);
+        document.getElementById('towerMonsterAttack').textContent = monster.attack.toExponential(3);
         document.getElementById('towerMonsterModifiers').textContent = monster.modifiers.join(', ');
         document.getElementById('towerMonsterResurrections').textContent = monster.resurrectionsLeft;
     }
@@ -9259,6 +9268,5 @@ var _hmt = _hmt || [];
   s.parentNode.insertBefore(hm, s);
 })();
 </script>    </div>
-
 </body>
 </html>
