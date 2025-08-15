@@ -630,6 +630,7 @@
             <p>16. 通天塔：只要通过每一层加1点玩家属性，每一层加0.1倍GPS,还有对应称号（100转才能打）。</p>
             <p>17. 存档问题：换设备后存档导入一开始进去VIP和伴侣是空的，你直接退出在重新进就恢复了（点了导出按钮，会自动复制，你黏贴就可以了）</p>
             <p>18. 网页存档问题：建议每一小时保存导出存档，游戏容易炸档（群里的版本没出现过炸档，就网页有）</p>
+           <p>19. 奥秘系统：每阶段只生效第一个效果。</p>
         </div>
     </div>
 </div>
@@ -670,6 +671,7 @@
     <div>最高关卡: <span id="maxStage">0</span></div>
     <div>通天塔层数: <span id="towerFloor">0</span></div>
     <div>当前官职: <span id="currentOfficialTitle">无</span></div>
+    <div>当前奥秘: <span id="currentMysteryTitle">初级秘法师 1阶1级</span></div>
 
     <button onclick="clickGold()">点击获取金币</button>
     <button onclick="reincarnate()">转生</button>
@@ -696,6 +698,7 @@
     <button onclick="showTitleDialog()">称号系统</button>
     <button onclick="toggleOfficialSystem()">官职系统</button>
     <button onclick="openCompanionSystem()" style="margin-left: 10px;">伴侣系统</button>
+    <button onclick="toggleMysterySystem()">奥秘系统</button>
     <button onclick="showRenameDialog()">名字修改</button>
     
     <button onclick="saveGame()">保存游戏</button>
@@ -1178,6 +1181,43 @@
 </div>
 
 
+<!-- 奥秘系统界面 -->
+<div id="mysterySystemOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;"></div>
+<div id="mysterySystemUI" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; padding: 20px; border: 2px solid #333; z-index: 1001; max-width: 90%; max-height: 80vh; overflow-y: auto;">
+    <h3 style="margin-top: 0; text-align: center;">奥秘系统</h3>
+    
+    <div style="margin-bottom: 15px;">
+        当前奥秘: <span id="mysteryTitleDisplay">初级秘法师 1阶1级</span>
+    </div>
+    <div style="margin-bottom: 15px;">
+        当前加成: GPS加成 <span id="mysteryBonusDisplay">1</span> 倍（每一阶生效）
+    </div>
+    <div style="margin-bottom: 15px;">
+        当前经验: <span id="currentMysteryExp">0</span> / <span id="nextMysteryExp">1000</span>
+    </div>
+    <div style="margin-bottom: 15px;">
+        每分钟经验获取: <span id="expPerMinute">0</span> (通天塔层数 × VIP等级)
+    </div>
+    
+    <div style="margin: 15px 0;">
+        <h4>下一等级</h4>
+        <div id="nextMysteryInfo">初级秘法师 1阶2级 - 消耗: 1000经验</div>
+    </div>
+    
+    <div style="margin: 15px 0;">
+        <label for="mysteryUpgradeAmount">升级次数:</label>
+        <input type="number" id="mysteryUpgradeAmount" value="1" min="1" style="width: 60px;">
+        <button onclick="upgradeMysteryByAmount()">升级</button>
+        <button onclick="upgradeMysteryMaxPossible()">一键升级</button>
+    </div>
+    
+    <div style="margin-top: 20px; text-align: center;">
+        <button onclick="toggleMysterySystem()">关闭</button>
+    </div>
+</div>
+
+
+
 
 
 
@@ -1283,6 +1323,13 @@
     soulRingMultiplier: 1,    // 魂环总加成乘数（默认1倍）
     dungeonEquipMultiplier: 1 // 副本装备总加成乘数（默认1倍）
   },
+   mystery: {
+        stage: 1,
+        level: 1,
+        exp: 0,
+        bonus: 1, // 默认加成1倍
+        lastUpdateTime: Date.now() // 添加这个字段
+    },
     officialLevel: 0, // 官职等级，初始为0
     officialBonus: 1, // 初始加成1倍
     vip: {
@@ -2246,6 +2293,30 @@ const vipConfig = [
     { id: "zhouHeavenStarsFallingWay", prob: 0.0001 },  // 周天星陨道 0.01%
     { id: "ancientVoidRecord", prob: 0.00001 }          // 万古空冥录 0.001%
 ];
+ // 奥秘系统配置
+const mysteryConfig = [
+    { stage: 1, name: "初级秘法师", levelCost: 1000, totalBonus: 10 },
+    { stage: 2, name: "奥法转运者", levelCost: 10000, totalBonus: 50 },
+    { stage: 3, name: "奥术掌握者", levelCost: 100000, totalBonus: 100 },
+    { stage: 4, name: "秘能大师", levelCost: 500000, totalBonus: 500 },
+    { stage: 5, name: "奥术之灵", levelCost: 1000000, totalBonus: 10000 },
+    { stage: 6, name: "神圣秘灵师", levelCost: 5000000, totalBonus: 50000 },
+    { stage: 7, name: "神之奥术掌握者", levelCost: 10000000, totalBonus: 100000 },
+    { stage: 8, name: "先知大师", levelCost: 50000000, totalBonus: 500000 },
+    { stage: 9, name: "恒星秘法师", levelCost: 100000000, totalBonus: 1000000 },
+    { stage: 10, name: "暗能量宗师", levelCost: 200000000, totalBonus: 5000000 },
+    { stage: 11, name: "星光秘耀使者", levelCost: 300000000, totalBonus: 100000000 },
+    { stage: 12, name: "混沌秘能主宰", levelCost: 400000000, totalBonus: 500000000 },
+    { stage: 13, name: "维度漫游大师", levelCost: 500000000, totalBonus: 1000000000 },
+    { stage: 14, name: "终焉秘法先知", levelCost: 600000000, totalBonus: 5000000000 },
+    { stage: 15, name: "时律操纵者", levelCost: 800000000, totalBonus: 10000000000 },
+    { stage: 16, name: "创世星芒导师", levelCost: 1000000000, totalBonus: 500000000000 },
+    { stage: 17, name: "虚无之光缔造者", levelCost: 2000000000, totalBonus: 1000000000000 },
+    { stage: 18, name: "神谕秘能神", levelCost: 4000000000, totalBonus: 5000000000000 },
+    { stage: 19, name: "永恒奥术神", levelCost: 6000000000, totalBonus: 10000000000000 },
+    { stage: 20, name: "超维秘耀神", levelCost: 8000000000, totalBonus: 50000000000000 },
+    { stage: 21, name: "奥秘本身", levelCost: 10000000000, totalBonus: 1000000000000000 }
+];
         // 装备配置
         const equipmentTypes = {
             common: { name: '普通', gps: 1, click: 0, prob: 0.6, growthRate: 0.025 },
@@ -2937,7 +3008,14 @@ function calculateTotalGPS() {
         if (save) {
             player = migrateSaveData(save);
             player.equipment = validateEquipmentList(save.equipment);
-            
+        
+
+             // 确保加载通天塔数据
+            if (save.tower) {
+                player.tower = save.tower;
+            }
+           updateTowerUI();
+          calculateOfflineMysteryExp();
             // 重置并重新计算收藏物效果
             resetAllCollectionEffects();
          // 新增：加载存档后自动计算并更新VIP等级
@@ -2954,7 +3032,7 @@ function calculateTotalGPS() {
                     player.pets[petKey].multiplier = petConfig[petKey].multiplier;
                 }
             });
-
+       
             // 初始化自动购买按钮状态
             player.autoBuy.forEach((enabled, index) => {
                 const btn = document.getElementById(`autoChest${index + 1}`);
@@ -2983,6 +3061,8 @@ if (speedBoostBtn) {
             player.actionLogs = player.actionLogs.slice(0, 20);
             player.lotteryResults = player.lotteryResults.slice(0, 5);
 
+         
+
             // 计算离线时间
             const currentTime = Date.now();
             const maxOfflineTime = 86400 * 1000; // 24 小时（以毫秒为单位）
@@ -2990,19 +3070,29 @@ if (speedBoostBtn) {
             const offlineSeconds = Math.floor(offlineTime / 1000); // 将毫秒转换为秒
 
             if (offlineTime > 1000) {
+// 计算离线分钟数
+        const offlineMinutes = Math.floor(offlineSeconds / 60);
+        
+        // 每分钟为每件装备增加200级
+        player.equipment.forEach(eq => {
+            eq.level += offlineMinutes * 200;
+        });
                 // 模拟离线期间的自动购买
                 simulateOfflineAutoBuy(offlineSeconds);
-
+     
+               
                 // 计算离线收益
                 const offlineGPS = getTotalGPS();
                 const earnedGold = offlineSeconds * offlineGPS;
                 player.gold += earnedGold;
+            
+      
 
                 // 格式化离线收益
                 const formattedEarnedGold = earnedGold >= 1e8 ? earnedGold.toExponential(3) : earnedGold.toLocaleString();
 
                 logAction(`离线收益: +${formattedEarnedGold}金币 (${formatTime(offlineTime)})`, 'offline-reward');
-
+             
                 // 模拟离线期间的彩票开奖
                 if (player.traditionalLotteryNumbers.length > 0) {
                     const lotteryIntervals = Math.floor(offlineTime / 1800000); // 每 30 分钟开奖一次
@@ -3010,11 +3100,11 @@ if (speedBoostBtn) {
                         checkTraditionalLotteryResult();
                     }
                 }
-
+      
                 // 计算离线期间的银行利息
                 calculateBankInterest();
             }
-
+         
             // 更新彩票号码显示
             updateTraditionalLotteryDisplay();
         }
@@ -3023,6 +3113,10 @@ if (speedBoostBtn) {
     }
     player.lastUpdate = Date.now();
 }
+
+  
+
+
 
         // 模拟离线期间的自动购买
         function simulateOfflineAutoBuy(offlineSeconds) {
@@ -3074,6 +3168,9 @@ if (speedBoostBtn) {
             }
         }
     });
+
+
+
 
     // 材料宝箱类似处理
     if (player.autoBuyMaterialChest) {
@@ -3215,15 +3312,17 @@ function handleVipPowerGain() {
     const towerMultiplier = 1 + player.tower.currentFloor * 0.1;
     const gpsBonus = player.reincarnationStats.gpsBonus.level * 1.00; // 每级增加100% GPS
     const petMultiplier = Object.values(player.pets).reduce((sum, pet) => sum + pet.level * pet.multiplier, 1);
+
     // 改为使用带职业加成的总装备加成
     const dungeonBonus = getTotalDungeonEquipBonus();
     // 改为使用带职业加成的总魂环加成
     const soulRingBonus = getTotalSoulRingBonus();
-    
+ const mysteryBonus = player.mystery.bonus || 1;
+
     return (1 + player.equipment.reduce((sum, eq) => sum + eq.gps * (1+eq.gemMultiplier + eq.collectionMultiplier), 0)) 
         * player.gpsMultiplier 
         * (1 + gpsBonus) 
-        * petMultiplier * (1 + dungeonBonus)* (1 + soulRingBonus) * towerMultiplier;
+        * petMultiplier * (1 + dungeonBonus)* (1 + soulRingBonus) * towerMultiplier * mysteryBonus;
 }
 
 function getTotalClickValue() {
@@ -5174,6 +5273,8 @@ function confirmRename() {
     player.lastUpdate = Date.now(); // 确保保存时更新最后更新时间
     player.actionLogs = player.actionLogs.slice(0, 5);
     player.lotteryResults = player.lotteryResults.slice(0, 5);
+    player.mystery.lastUpdateTime = Date.now();
+    player.tower.lastUpdate = Date.now();
     localStorage.setItem('goldGameSave', JSON.stringify(player));
     logAction('游戏已保存', 'success');
 }
@@ -5182,6 +5283,7 @@ function confirmRename() {
         function loadGame() {
     loadSave();
     updateDisplay();
+   calculateTotalGPS();
     logAction('游戏已加载', 'success');
 }
  const ENCRYPTION_KEY = "your-secure-key-here-123";
@@ -6806,6 +6908,181 @@ function updatePlayerBattleStats() {
     // 更新UI显示
     updateMonsterUI();
 }
+
+// 计算离线经验
+// 新增：计算离线奥秘经验
+function calculateOfflineMysteryExp() {
+    if (!player.mystery || !player.mystery.lastUpdateTime) return;
+    
+    const now = Date.now();
+    const timeDiff = now - player.mystery.lastUpdateTime;
+    const minutesPassed = Math.floor(timeDiff / (1000 * 60));
+    
+    if (minutesPassed > 0) {
+        const towerFloor = player.tower.currentFloor || 0;
+        const vipLevel = player.vip.level || 1;
+        const expGained = minutesPassed * towerFloor * vipLevel;
+        
+        if (expGained > 0) {
+            player.mystery.exp += expGained;
+            logAction(`离线获得 ${expGained} 奥秘经验`, 'success');
+        }
+    }
+    
+    // 更新最后更新时间
+    player.mystery.lastUpdateTime = now;
+}
+
+// 定时增加经验
+setInterval(() => {
+    if (player.mystery) {
+        const towerFloor = parseInt(document.getElementById('towerFloor').textContent) || 0;
+        const vipLevel = parseInt(document.getElementById('vipLevel').textContent) || 1;
+        const expPerMinute = towerFloor * vipLevel;
+        
+        if (expPerMinute > 0) {
+            // 每分钟增加一次，这里按秒计算
+            player.mystery.exp += expPerMinute / 60;
+            player.mystery.lastUpdateTime = new Date().getTime();
+            updateMysterySystemDisplay();
+        }
+    }
+}, 1000);
+
+// 切换奥秘系统界面
+function toggleMysterySystem() {
+    calculateOfflineMysteryExp();
+    
+    const ui = document.getElementById('mysterySystemUI');
+    const overlay = document.getElementById('mysterySystemOverlay');
+    
+    if (ui.style.display === 'block') {
+        ui.style.display = 'none';
+        overlay.style.display = 'none';
+    } else {
+        ui.style.display = 'block';
+        overlay.style.display = 'block';
+        updateMysterySystemDisplay();
+    }
+}
+
+// 更新奥秘系统显示
+function updateMysterySystemDisplay() {
+    const currentStage = player.mystery.stage;
+    const currentLevel = player.mystery.level;
+    const currentConfig = mysteryConfig.find(c => c.stage === currentStage);
+    const nextLevel = currentLevel < 10 ? currentLevel + 1 : 1;
+    const nextStage = currentLevel < 10 ? currentStage : currentStage + 1;
+    const nextConfig = mysteryConfig.find(c => c.stage === nextStage);
+    
+    // 更新当前奥秘信息
+    const title = `${currentConfig.name} ${currentStage}阶${currentLevel}级`;
+    document.getElementById('mysteryTitleDisplay').textContent = title;
+    document.getElementById('currentMysteryTitle').textContent = title;
+    
+    // 更新加成显示
+    const maxStageReached = Math.min(currentStage, mysteryConfig.length);
+    const maxConfig = mysteryConfig.find(c => c.stage === maxStageReached);
+    document.getElementById('mysteryBonusDisplay').textContent = maxConfig ? maxConfig.totalBonus : 1;
+    
+    // 更新经验显示
+    document.getElementById('currentMysteryExp').textContent = Math.floor(player.mystery.exp);
+    document.getElementById('nextMysteryExp').textContent = currentConfig.levelCost;
+    
+    // 更新每分钟经验
+    const towerFloor = parseInt(document.getElementById('towerFloor').textContent) || 0;
+    const vipLevel = parseInt(document.getElementById('vipLevel').textContent) || 1;
+    document.getElementById('expPerMinute').textContent = towerFloor * vipLevel;
+    
+
+
+    // 更新下一等级信息
+    const nextMysteryInfo = document.getElementById('nextMysteryInfo');
+    if (nextConfig && currentStage < mysteryConfig.length) {
+        nextMysteryInfo.innerHTML = `${nextConfig.name} ${nextStage}阶${nextLevel}级 - 消耗: ${nextConfig.levelCost}经验`;
+    } else {
+        nextMysteryInfo.textContent = '已达到最高奥秘等级';
+      document.getElementById('mysteryBonusDisplay').textContent = player.mystery.bonus;
+ const offlineExpElement = document.createElement('div');
+    offlineExpElement.textContent = `离线经验: ${player.mystery.exp}`;
+    container.appendChild(offlineExpElement);
+    }
+}
+
+// 升级一次奥秘
+function upgradeMystery() {
+    const currentStage = player.mystery.stage;
+    const currentLevel = player.mystery.level;
+    const currentConfig = mysteryConfig.find(c => c.stage === currentStage);
+    
+    // 检查是否已达最高等级
+    if (currentStage >= mysteryConfig.length && currentLevel >= 10) {
+        logAction("已达到最高奥秘等级！", "error");
+        return false;
+    }
+    
+    // 检查经验是否足够
+    if (player.mystery.exp < currentConfig.levelCost) {
+        logAction("奥秘经验不足，无法升级！", "error");
+        return false;
+    }
+    
+    // 消耗经验
+    player.mystery.exp -= currentConfig.levelCost;
+    
+    // 升级处理
+    if (currentLevel < 10) {
+        player.mystery.level += 1;
+    } else {
+        player.mystery.level = 1;
+        player.mystery.stage += 1;
+    }
+    updateDisplay();
+    return true;
+}
+
+// 按指定次数升级奥秘
+function upgradeMysteryByAmount() {
+    calculateOfflineMysteryExp();
+    const amount = parseInt(document.getElementById('mysteryUpgradeAmount').value) || 1;
+    let upgraded = 0;
+    
+    for (let i = 0; i < amount; i++) {
+        if (!upgradeMystery()) {
+            break;
+        }
+        upgraded++;
+    }
+    
+    if (upgraded > 0) {
+        logAction(`成功升级${upgraded}级奥秘！`, 'success');
+        updateMysterySystemDisplay();
+        updateDisplay();
+    }
+}
+ // 升级后更新加成
+    const config = mysteryConfig.find(c => c.stage === player.mystery.stage);
+    if (config) {
+        player.mystery.bonus = config.totalBonus;
+    }
+// 一键升级奥秘到最大可能
+function upgradeMysteryMaxPossible() {
+    calculateOfflineMysteryExp();
+    let upgraded = 0;
+    
+    while (upgradeMystery()) {
+        upgraded++;
+    }
+    
+    if (upgraded > 0) {
+        logAction(`成功升级${upgraded}级奥秘！`, 'success');
+        updateMysterySystemDisplay();
+        updateDisplay();
+    }
+}
+
+
+
 // 称号配置（按分支分组）
 const titleConfig = {
      towerBranch: [
@@ -7769,6 +8046,7 @@ function attackTowerMonster() {
         // 自动进入下一关
         generateTowerMonster();
         updateTowerUI();
+        saveGame();
         return;
     }
 
@@ -9251,6 +9529,8 @@ function updateRankings() {
         updatePlayerClassNameDisplay();
      updateCompanionDisplay();
        updateItemDisplay();
+    updateMonsterUI();
+ updateMysterySystemDisplay();
     </script>
 <!--客服 开始-->
 <script src="//g8hh.github.io/static/js/jquery.min.js"></script>
