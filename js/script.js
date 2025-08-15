@@ -1,0 +1,6908 @@
+// 转生系统
+function reincarnate() {
+    // 检查是否存在普通装备且等级≥10000
+    const hasValidCommon = player.equipment.some(eq =>
+        eq.rarity === 'common' && eq.level >= 10000
+    );
+
+    if (!hasValidCommon) {
+        logAction("转生需要至少一件普通装备达到10000级！", "error");
+        return;
+    }
+
+    showCustomConfirm('确定要转生吗？需要普通装备≥10000级，所有装备等级将重置为1级，金币、钻石、钛晶石、星耀石、宇宙石、异界石、星界石和混沌石将被清空！', (confirmed) => {
+        if (confirmed) {
+            let totalReincarnationCoin = 0;
+
+            // 计算转生币奖励
+            player.equipment.forEach(eq => {
+                switch (eq.rarity) {
+                    case 'common':
+                        totalReincarnationCoin += eq.level * 0.0001;
+                        break;
+                    case 'rare':
+                        totalReincarnationCoin += eq.level * 0.0002;
+                        break;
+                    case 'epic':
+                        totalReincarnationCoin += eq.level * 0.001;
+                        break;
+                    case 'legendary':
+                        totalReincarnationCoin += eq.level * 0.003;
+                        break;
+                    case 'ancient':
+                        totalReincarnationCoin += eq.level * 0.005;
+                        break;
+                    case 'divine':
+                        totalReincarnationCoin += eq.level * 0.008;
+                        break;
+                    case 'arcane':
+                        totalReincarnationCoin += eq.level * 0.01;
+                        break;
+                    case 'celestial':
+                        totalReincarnationCoin += eq.level * 0.03;
+                        break;
+                    case 'infernal':
+                        totalReincarnationCoin += eq.level * 0.05;
+                        break;
+                    case 'astral':
+                        totalReincarnationCoin += eq.level * 0.08;
+                        break;
+                    case 'primeval':
+                        totalReincarnationCoin += eq.level * 0.1;
+                        break;
+                    case 'transcendental':
+                        totalReincarnationCoin += eq.level * 0.3;
+                        break;
+                    case 'quantum':
+                        totalReincarnationCoin += eq.level * 0.5;
+                        break;
+                    case 'ultimate':
+                        totalReincarnationCoin += eq.level * 1.0;
+                        break;
+                    case 'chaos':
+                        totalReincarnationCoin += eq.level * 3.0;
+                        break;
+                    case 'eternal':
+                        totalReincarnationCoin += eq.level * 5.0;
+                        break;
+                    case 'void':
+                        totalReincarnationCoin += eq.level * 10.0;
+                        break;
+                    case 'genesis':
+                        totalReincarnationCoin += eq.level * 20.0;
+                        break;
+                    case 'divineRealm':
+                        totalReincarnationCoin += eq.level * 30.0;
+                        break;
+                    case 'apocalypse':
+                        totalReincarnationCoin += eq.level * 40.0;
+                        break;
+                    case 'yeyu1':
+                        totalReincarnationCoin += eq.level * 50.0;
+                        break;
+                    case 'yeyu2':
+                        totalReincarnationCoin += eq.level * 60.0;
+                        break;
+                    case 'yeyu3':
+                        totalReincarnationCoin += eq.level * 70.0;
+                        break;
+                    case 'yeyu4':
+                        totalReincarnationCoin += eq.level * 80.0;
+                        break;
+                    case 'yeyu5':
+                        totalReincarnationCoin += eq.level * 90.0;
+                        break;
+                    case 'yeyu6':
+                        totalReincarnationCoin += eq.level * 100.0;
+                        break;
+                    case 'yeyu7':
+                        totalReincarnationCoin += eq.level * 200.0;
+                        break;
+                    case 'yeyu8':
+                        totalReincarnationCoin += eq.level * 300.0;
+                        break;
+                    case 'yeyu9':
+                        totalReincarnationCoin += eq.level * 400.0;
+                        break;
+                    case 'yeyu10':
+                        totalReincarnationCoin += eq.level * 400.0;
+                        break;
+                    case 'yeyu11':
+                        totalReincarnationCoin += eq.level * 600.0;
+                        break;
+                    case 'yeyu12':
+                        totalReincarnationCoin += eq.level * 700.0;
+                        break;
+                    case 'yeyu13':
+                        totalReincarnationCoin += eq.level * 800.0;
+                        break;
+                    case 'yeyu14':
+                        totalReincarnationCoin += eq.level * 900.0;
+                        break;
+                    case 'yeyu15':
+                        totalReincarnationCoin += eq.level * 1000.0;
+                        break;
+
+                }
+            });
+
+            // 重置装备等级
+            player.equipment.forEach(eq => {
+                eq.level = 1 + player.reincarnationStats.equipmentLevelBonus.level * 200; // 转生属性加成
+                eq.gps = equipmentTypes[eq.rarity].gps * (1 + player.reincarnationStats.gpsBonus.level); // 每级装备属性乘以100%
+                eq.click = equipmentTypes[eq.rarity].click * (1 + player.reincarnationStats.gpsBonus.level); // 每级装备属性乘以100%
+            });
+
+            // 清空货币
+            player.gold = 0;
+            player.diamond = 0;
+            player.titanium = 0;
+            player.starstone = 0;
+            player.cosmicstone = 0;
+            player.superstone = 0;
+            player.otherworldstone = 0;
+            player.xingjiestone = 0;
+            player.hundunstone = 0;
+            player.lingtone = 0;
+            player.huangtone = 0;
+            player.mingtone = 0;
+
+
+            // 重置材料宝箱购买成本
+            player.materialChestCost = 1;
+            player.techniqueChestCost = 1;
+
+            // 增加转生币
+            player.reincarnationCoin += totalReincarnationCoin;
+            player.reincarnationCount++;
+
+            // 修改属性点计算逻辑
+            player.attributes.totalPoints = player.reincarnationCount * 1 + player.battle.maxStage * 10 + player.tower.currentFloor * 1;
+            player.attributes.remainingPoints += 1; // 每次转生增加1点剩余属性点
+
+            // 检查转生成就
+            checkReincarnationAchievements();
+
+            logAction(`转生成功！获得转生币: ${totalReincarnationCoin.toFixed(4)}`, 'success');
+            updateDisplay();
+            updateTechniqueBonuses(); // 转生后更新功法加成
+            updatePlayerBattleStats(); // 更新战斗属性
+        }
+    });
+}
+// 检查转生成就
+function checkReincarnationAchievements() {
+    const achievements = [
+        { count: 10, key: 'reincarnation_10' },
+        { count: 100, key: 'reincarnation_100' },
+        { count: 1000, key: 'reincarnation_1000' },
+        { count: 10000, key: 'reincarnation_10000' }
+    ];
+
+    achievements.forEach(({ count, key }) => {
+        if (player.reincarnationCount >= count && !player.achievements[key]) {
+            player.achievements[key] = true;
+            const reward = achievementRewards[key];
+            if (reward) {
+                player.gpsMultiplier += reward.gpsMultiplier;
+                logAction(`成就达成：${reward.description}，GPS奖励 +${reward.gpsMultiplier * 100}%`, 'success');
+                updateAchievementsDisplay();
+            }
+        }
+    });
+}
+function showActivationCodeDialog() {
+    document.getElementById("activationCodeDialog").style.display = "block";
+    document.getElementById("activationCodeOverlay").style.display = "block";
+    document.getElementById("activationCodeInput").focus();
+}
+
+function cancelActivationCode() {
+    document.getElementById("activationCodeDialog").style.display = "none";
+    document.getElementById("activationCodeOverlay").style.display = "none";
+}
+
+function confirmActivationCode() {
+    const code = document.getElementById("activationCodeInput").value.trim().toUpperCase();
+    const usedCodes = player.usedActivationCodes || [];
+
+    if (!code) {
+        logAction("请输入激活码", "error");
+        return;
+    }
+
+    if (usedCodes.includes(code)) {
+        logAction("该激活码已使用过", "error");
+        cancelActivationCode();
+        return;
+    }
+
+    let rewardMsg = "";
+    let success = false;
+
+    switch (code) {
+        case "VIP666":
+            player.reincarnationCoin += 1000;
+            rewardMsg = "获得1000转生币";
+            success = true;
+            break;
+        case "VIP777":
+            // 假设洗炼石字段为refineStone，若实际字段不同请修改
+            player.items.refineStone = (player.items.refineStone || 0) + 10;
+            rewardMsg = "获得10个洗炼石";
+            success = true;
+            break;
+        case "VIP888":
+            player.items.advancedGem = (player.items.advancedGem || 0) + 5;
+            rewardMsg = "获得5个高级宝石";
+            success = true;
+            break;
+        case "YUYU":
+            player.cosmicstone += 10;
+            rewardMsg = "获得10个宇宙石";
+            success = true;
+            break;
+        case "BANLV":
+            player.items.companionKey += 10;
+            player.items.rose += 520;
+            rewardMsg = "获得10个伴侣钥匙和520朵玫瑰花";
+            success = true;
+            break;
+        case "VIP666666":
+            player.items.vipPower = (player.items.vipPower || 0) + 10;
+            rewardMsg = "获得10个VIP能力值";
+            success = true;
+            break;
+        case "VIP666777":
+            // 添加"公测玩家"称号
+            if (!player.titles.unlocked.includes("公测玩家")) {
+                player.titles.unlocked.push("公测玩家");
+                rewardMsg = "获得称号：公测玩家";
+                success = true;
+                // 自动选择新称号
+                player.titles.current = "公测玩家";
+                updateDisplay();
+            } else {
+                logAction("您已拥有此称号", "info");
+            }
+            break;
+        case "补偿宝石损失":
+            player.items.divineGem = (player.items.divineGem || 0) + 1;
+            rewardMsg = "获得1个神级宝石";
+            success = true;
+            break;
+        default:
+            logAction("无效的激活码", "error");
+            return;
+    }
+
+    if (success) {
+        // 记录已使用的激活码
+        usedCodes.push(code);
+        player.usedActivationCodes = usedCodes;
+
+        logAction(`激活码兑换成功：${rewardMsg}`, "success");
+        updateDisplay(); // 更新界面显示
+        cancelActivationCode();
+    }
+}
+// 添加VIP等级计算函数
+function calculateVipLevel() {
+    let currentLevel = 1;
+    const { power } = player.vip;
+
+    for (let i = vipConfig.length - 1; i >= 0; i--) {
+        if (power >= vipConfig[i].requiredPower) {
+            currentLevel = vipConfig[i].level;
+            break;
+        }
+    }
+
+    return currentLevel;
+}
+
+// 获取当前VIP等级的加成
+function getVipBonus() {
+    const level = player.vip.level;
+    const config = vipConfig.find(c => c.level === level) || vipConfig[0];
+    return config.bonus;
+}
+
+// 更新VIP显示
+function updateVipDisplay() {
+    const { level, power } = player.vip;
+    const currentConfig = vipConfig.find(c => c.level === level) || vipConfig[0];
+    const nextConfig = vipConfig.find(c => c.level === level + 1);
+
+    document.getElementById('vipLevel').textContent = level;
+
+    let progressPercent = 0;
+    let progressText = '';
+
+    if (nextConfig) {
+        const progress = power - currentConfig.requiredPower;
+        const total = nextConfig.requiredPower - currentConfig.requiredPower;
+        progressPercent = Math.min(100, (progress / total) * 100);
+        progressText = `${progress}/${total}`;
+    } else {
+        progressPercent = 100;
+        progressText = '已达最高级';
+    }
+
+    document.getElementById('vipProgressBar').style.width = `${progressPercent}%`;
+    document.getElementById('vipProgressText').textContent = progressText;
+
+    // 设置VIP等级渐变色
+    const hue = (level - 1) * (360 / 20); // 从0到360度的色相渐变
+    document.querySelector('.vip-level-display').style.background = `linear-gradient(to right, hsl(${hue}, 100%, 50%), hsl(${(hue + 60) % 360}, 100%, 50%))`;
+    document.querySelector('.vip-level-display').style.webkitBackgroundClip = 'text';
+}
+function useAllVipPower() {
+    if (player.items.vipPower && player.items.vipPower > 0) {
+        const useCount = player.items.vipPower;
+        player.items.vipPower = 0;
+        player.vip.power += useCount;
+
+        const newLevel = calculateVipLevel();
+        if (newLevel > player.vip.level) {
+            const oldLevel = player.vip.level;
+            player.vip.level = newLevel;
+            logAction(`VIP等级提升至${newLevel}级！全属性装备提升${vipConfig[newLevel - 1].bonus * 100}%`, 'success');
+
+            // 刷新所有装备属性
+            const newVipBonus = 1 + getVipBonus();
+            player.equipment.forEach(eq => {
+                eq.gps = safeNumber(eq.gps / (1 + getVipBonusByLevel(oldLevel)) * newVipBonus);
+                eq.click = safeNumber(eq.click / (1 + getVipBonusByLevel(oldLevel)) * newVipBonus);
+            });
+        }
+
+        updateVipDisplay();
+        updateDisplay();
+        logAction(`使用了${useCount}个VIP能力值`, "info");
+    } else {
+        logAction("VIP能力值不足！", "error");
+    }
+}
+
+// 辅助函数：根据等级获取旧的VIP加成（需要实现）
+function getVipBonusByLevel(level) {
+    const config = vipConfig.find(c => c.level === level) || vipConfig[0];
+    return config.bonus;
+}
+// 计算总GPS时，实时应用当前VIP加成
+function calculateTotalGPS() {
+    let totalGps = 0;
+    player.equipment.forEach(eq => {
+        totalGps += eq.gps * (1 + getVipBonus()); // 实时获取最新VIP加成
+    });
+    // 其他加成（如成就、转生等）
+    return totalGps;
+}
+// 加载存档
+function loadSave() {
+    try {
+        const save = JSON.parse(localStorage.getItem('goldGameSave'));
+        if (save) {
+            player = migrateSaveData(save);
+            player.equipment = validateEquipmentList(save.equipment);
+
+
+            // 确保加载通天塔数据
+            if (save.tower) {
+                player.tower = save.tower;
+            }
+            updateTowerUI();
+            calculateOfflineMysteryExp();
+            // 重置并重新计算收藏物效果
+            resetAllCollectionEffects();
+            // 新增：加载存档后自动计算并更新VIP等级
+            const actualVipLevel = calculateVipLevel();
+            player.vip.level = actualVipLevel;
+            updateVipDisplay(); // 立即更新VIP显示
+
+            // 确保自动购买状态被正确加载
+            player.autoBuy = save.autoBuy || [false, false, false, false, false, false, false, false, false, false, false, false];
+            player.autoBuyMaterialChest = save.autoBuyMaterialChest || false;
+            // 强制覆盖宠物的 multiplier，同时保留等级和其他数据
+            Object.keys(player.pets).forEach(petKey => {
+                if (petConfig[petKey]) {
+                    player.pets[petKey].multiplier = petConfig[petKey].multiplier;
+                }
+            });
+
+            // 初始化自动购买按钮状态
+            player.autoBuy.forEach((enabled, index) => {
+                const btn = document.getElementById(`autoChest${index + 1}`);
+                if (btn) {
+                    btn.textContent = `${['普通', '高级', '稀有', '史诗', '传说', '混沌', '终焉', '星辰', '银河', '星云', '鸿蒙', '太虚'][index]}宝箱自动购买：${enabled ? '开启' : '关闭'}`;
+                }
+            });
+
+            // 初始化材料宝箱自动购买按钮状态
+            const materialChestBtn = document.getElementById('autoMaterialChest');
+            if (materialChestBtn) {
+                materialChestBtn.textContent = `材料宝箱自动购买：${player.autoBuyMaterialChest ? '开启' : '关闭'}`;
+            }
+
+            // 在初始化自动购买按钮状态的地方添加
+            const speedBoostBtn = document.getElementById('autoBuySpeedBoost');
+            if (speedBoostBtn) {
+                speedBoostBtn.textContent = `在线自动购买加速100倍：${player.autoBuySpeedBoost ? '开启' : '关闭'}`;
+            }
+            const onlineBoostBtn = document.getElementById('toggleOnlineBoost');
+            if (onlineBoostBtn) {
+                onlineBoostBtn.textContent = `在线金币加速100倍: ${player.onlineBoostEnabled ? '开启' : '关闭'}`;
+            }
+
+            // 确保日志不超过 20 条
+            player.actionLogs = player.actionLogs.slice(0, 20);
+            player.lotteryResults = player.lotteryResults.slice(0, 5);
+
+
+
+            // 计算离线时间
+            const currentTime = Date.now();
+            const maxOfflineTime = 86400 * 1000; // 24 小时（以毫秒为单位）
+            const offlineTime = Math.min(currentTime - (player.lastUpdate || currentTime), maxOfflineTime); // 限制离线时间
+            const offlineSeconds = Math.floor(offlineTime / 1000); // 将毫秒转换为秒
+
+            if (offlineTime > 1000) {
+                // 计算离线分钟数
+                const offlineMinutes = Math.floor(offlineSeconds / 60);
+
+                // 每分钟为每件装备增加200级
+                player.equipment.forEach(eq => {
+                    eq.level += offlineMinutes * 200;
+                });
+                // 模拟离线期间的自动购买
+                simulateOfflineAutoBuy(offlineSeconds);
+
+
+                // 计算离线收益
+                const offlineGPS = getTotalGPS();
+                const earnedGold = offlineSeconds * offlineGPS;
+                player.gold += earnedGold;
+
+
+
+                // 格式化离线收益
+                const formattedEarnedGold = earnedGold >= 1e8 ? earnedGold.toExponential(3) : earnedGold.toLocaleString();
+
+                logAction(`离线收益: +${formattedEarnedGold}金币 (${formatTime(offlineTime)})`, 'offline-reward');
+
+                // 模拟离线期间的彩票开奖
+                if (player.traditionalLotteryNumbers.length > 0) {
+                    const lotteryIntervals = Math.floor(offlineTime / 1800000); // 每 30 分钟开奖一次
+                    for (let i = 0; i < lotteryIntervals; i++) {
+                        checkTraditionalLotteryResult();
+                    }
+                }
+
+                // 计算离线期间的银行利息
+                calculateBankInterest();
+            }
+
+            // 更新彩票号码显示
+            updateTraditionalLotteryDisplay();
+        }
+    } catch (e) {
+        console.warn('存档加载失败，使用默认数据:', e);
+    }
+    player.lastUpdate = Date.now();
+}
+
+
+
+
+
+// 模拟离线期间的自动购买
+function simulateOfflineAutoBuy(offlineSeconds) {
+    const maxOfflineTime = 86400; // 24小时（秒）
+    const actualOfflineTime = Math.min(offlineSeconds, maxOfflineTime);
+    const minutes = Math.floor(actualOfflineTime / 86400); // 转换为分钟数
+    const chestsPerMinute = 1; // 每分钟购买数量
+
+    player.autoBuy.forEach((enabled, index) => {
+        if (enabled) {
+            const type = index + 1;
+            const costConfig = [
+                { currency: "gold", amount: 100 },
+                { currency: "diamond", amount: 10 },
+                { currency: "titanium", amount: 1 },
+                { currency: "starstone", amount: 1 },
+                { currency: "cosmicstone", amount: 1 },
+                { currency: "superstone", amount: 1 },
+                { currency: "otherworldstone", amount: 1 },
+                { currency: "xingjiestone", amount: 1 },
+                { currency: "hundunstone", amount: 1 },
+                { currency: "lingtone", amount: 1 },
+                { currency: "huangtone", amount: 1 },
+                { currency: "mingtone", amount: 1 }
+            ][index];
+
+            // 计算最大可购买数量：分钟数 × 每分钟500个
+            const maxPossible = minutes * chestsPerMinute;
+            // 计算实际能购买的数量（受限于货币数量）
+            const affordable = Math.floor(player[costConfig.currency] / costConfig.amount);
+            const actualBuy = Math.min(maxPossible, affordable);
+
+            if (actualBuy > 0) {
+                // 扣除总消耗
+                player[costConfig.currency] -= actualBuy * costConfig.amount;
+
+                // 更新宝箱计数
+                const chestType = ['common', 'advanced', 'rare', 'epic', 'legendary', 'chaos', 'apocalypse', 'yeyu1', 'yeyu2', 'yeyu3', 'yeyu4', 'yeyu5'][index];
+                player.chestCounts[chestType] += actualBuy;
+
+                // 批量处理装备获取（这里简化处理，实际可根据需要调整概率计算）
+                for (let i = 0; i < actualBuy; i++) {
+                    const selectedRarity = selectRarity(type);
+                    handleEquipment(selectedRarity);
+                }
+
+                // 检查成就（会自动处理区间判断）
+                checkChestAchievements(chestType, player.chestCounts[chestType]);
+            }
+        }
+    });
+
+
+
+
+    // 材料宝箱类似处理
+    if (player.autoBuyMaterialChest) {
+        const maxPossible = minutes * chestsPerMinute;
+        let remaining = maxPossible;
+        let totalCost = 0;
+
+        // 计算材料宝箱可购买数量（考虑成本递增）
+        while (remaining > 0 && player.diamond >= player.materialChestCost + totalCost) {
+            totalCost += player.materialChestCost;
+            player.materialChestCost *= 2; // 成本翻倍
+            remaining--;
+        }
+
+        if (maxPossible - remaining > 0) {
+            player.diamond -= totalCost;
+            // 批量处理材料宝箱奖励
+            for (let i = 0; i < maxPossible - remaining; i++) {
+                const selectedItem = selectMaterialChestItem();
+                if (selectedItem.type in player.collections) {
+                    player.collections[selectedItem.type]++;
+                    applyCollectionEffect(selectedItem.type);
+                } else if (selectedItem.type in player.items) {
+                    player.items[selectedItem.type]++;
+                }
+            }
+        }
+    }
+
+    autoConvertCurrency();
+}
+function handleVipPowerGain() {
+    player.vip.power++;
+    const newLevel = calculateVipLevel();
+
+    if (newLevel > player.vip.level) {
+        const oldLevel = player.vip.level;
+        player.vip.level = newLevel;
+        logAction(`VIP等级提升至${newLevel}级！全属性装备提升${vipConfig[newLevel - 1].bonus * 100}%`, 'success');
+    }
+
+    updateVipDisplay();
+}
+// 数据迁移
+function migrateSaveData(oldSave) {
+    return {
+        ...player,
+        ...oldSave,
+        achievements: {
+            ...player.achievements, // 使用默认成就数据
+            ...(oldSave.achievements || {}) // 覆盖旧存档的成就数据
+        },
+        equipment: oldSave.equipment || [],
+        items: oldSave.items || { primaryGem: 0, advancedGem: 0, superiorGem: 0, divineGem: 0, vipPower: 0, refineStone: 0 },
+        collections: oldSave.collections || {
+            lightSpeedHand: 0,
+            empHand: 0,
+            godlyHand: 0,
+            quickHand: 0,
+            shadowHand: 0,
+            quantumHand: 0,
+            lightningHand: 0,
+            divineHand: 0
+        },
+        pets: oldSave.pets || {
+            thunderKirin: { level: 0, cost: 1, multiplier: 0.10 },
+            chaosTaotie: { level: 0, cost: 1, multiplier: 0.50 },
+            netherQiongqi: { level: 0, cost: 1, multiplier: 2.50 },
+            abyssKun: { level: 0, cost: 1, multiplier: 12.50 },
+            primordialZhuLong: { level: 0, cost: 1, multiplier: 62.50 },
+            wanJunSuanNi: { level: 0, cost: 1, multiplier: 312.50 },
+            yanYuBiAn: { level: 0, cost: 1, multiplier: 1562.50 },
+            yuyu1: { level: 0, cost: 1, multiplier: 7812.50 },
+            yuyu2: { level: 0, cost: 1, multiplier: 39062.50 },
+            yuyu3: { level: 0, cost: 1, multiplier: 195312.50 },
+            yuyu4: { level: 0, cost: 1, multiplier: 976562.50 },
+            yuyu5: { level: 0, cost: 1, multiplier: 5882812.50 }
+        },
+        dungeonEquipment: oldSave.dungeonEquipment || [],
+        soulRings: oldSave.soulRings || [],
+        achievements: oldSave.achievements || player.achievements,
+        autoBuy: oldSave.autoBuy || [false, false, false, false, false, false, false, false, false, false, false, false], // 新增宝箱自动购买状态
+        autoBuyMaterialChest: oldSave.autoBuyMaterialChest || false,
+        gpsMultiplier: oldSave.gpsMultiplier || 1,
+        clickMultiplier: oldSave.clickMultiplier || 1,
+        autoConvert: oldSave.autoConvert || false,
+        autoConvertCurrency: oldSave.autoConvertCurrency || { gold: false, diamond: false, titanium: false, starstone: false },
+        clickTimestamps: oldSave.clickTimestamps || [],
+        chestCounts: oldSave.chestCounts || { common: 0, advanced: 0, rare: 0, epic: 0, legendary: 0, chaos: 0, apocalypse: 0, yeyu1: 0, yeyu2: 0, yeyu3: 0, yeyu4: 0, yeyu5: 0 }, // 新增宝箱计数
+        reincarnationCoin: oldSave.reincarnationCoin || 0,
+        reincarnationCount: oldSave.reincarnationCount || 0,
+        reincarnationStats: oldSave.reincarnationStats || {
+            gpsBonus: { level: 0, cost: 1 },
+            equipmentLevelBonus: { level: 0, cost: 1 },
+            clickLimitBonus: { level: 0, cost: 1 }
+        },
+        materialChestCost: oldSave.materialChestCost || 1,
+        stockData: oldSave.stockData || {
+            stocks: [
+                { name: '青龙至尊股', basePrice: 1, currentPrice: 1, lastPrice: 1, shares: 0, avgCost: 0 },
+                { name: '白虎至尊股', basePrice: 10, currentPrice: 10, lastPrice: 10, shares: 0, avgCost: 0 },
+                { name: '朱雀至尊股', basePrice: 100, currentPrice: 100, lastPrice: 100, shares: 0, avgCost: 0 },
+                { name: '玄武至尊股', basePrice: 1000, currentPrice: 1000, lastPrice: 1000, shares: 0, avgCost: 0 },
+                { name: '瑞兽白泽股', basePrice: 10000, currentPrice: 10000, lastPrice: 10000, shares: 0, avgCost: 0 }
+            ],
+            lastStockUpdate: Date.now()
+        },
+        lotteryResults: oldSave.lotteryResults || [],
+        traditionalLotteryNumbers: oldSave.traditionalLotteryNumbers || [],
+        lastLotteryDraw: oldSave.lastLotteryDraw || Date.now(),
+        bank: oldSave.bank || {
+            deposit: 0,
+            lastInterestUpdate: Date.now()
+        }
+    };
+}
+
+// 装备验证
+function validateEquipmentList(equipmentList) {
+    return (equipmentList || []).map(eq => ({
+        name: eq.name || getEquipmentName(eq),
+        rarity: validateRarity(eq.rarity),
+        level: Math.max(1, parseInt(eq.level) || 1),
+        gps: safeNumber(eq.gps, 0),
+        click: safeNumber(eq.click, 0),
+        growthRate: safeNumber(eq.growthRate, getDefaultGrowthRate(eq.rarity)),
+        gemMultiplier: safeNumber(eq.gemMultiplier, 0),
+        collectionMultiplier: safeNumber(eq.collectionMultiplier, 0)
+    }));
+}
+
+// 安全数值处理
+function safeNumber(value, fallback = 0) {
+    return typeof value === 'number' ? value : parseFloat(value) || fallback;
+}
+
+// 核心游戏逻辑
+function getTotalGPS() {
+    const towerMultiplier = 1 + player.tower.currentFloor * 0.1;
+    const gpsBonus = player.reincarnationStats.gpsBonus.level * 1.00; // 每级增加100% GPS
+    const petMultiplier = Object.values(player.pets).reduce((sum, pet) => sum + pet.level * pet.multiplier, 1);
+
+    // 改为使用带职业加成的总装备加成
+    const dungeonBonus = getTotalDungeonEquipBonus();
+    // 改为使用带职业加成的总魂环加成
+    const soulRingBonus = getTotalSoulRingBonus();
+    const mysteryBonus = player.mystery.bonus || 1;
+
+    return (1 + player.equipment.reduce((sum, eq) => sum + eq.gps * (1 + eq.gemMultiplier + eq.collectionMultiplier), 0))
+        * player.gpsMultiplier
+        * (1 + gpsBonus)
+        * petMultiplier * (1 + dungeonBonus) * (1 + soulRingBonus) * towerMultiplier * mysteryBonus;
+}
+
+function getTotalClickValue() {
+    const petMultiplier = Object.values(player.pets).reduce((sum, pet) => sum + pet.level * pet.multiplier, 1);
+    // 改为使用带职业加成的总装备加成
+    const dungeonBonus = getTotalDungeonEquipBonus();
+    // 改为使用带职业加成的总魂环加成
+    const soulRingBonus = getTotalSoulRingBonus();
+    return (1 + player.equipment.reduce((sum, eq) => sum + eq.click * (1 + eq.gemMultiplier + eq.collectionMultiplier), 0))
+        * player.clickMultiplier
+        * petMultiplier
+        * (1 + dungeonBonus)  // 应用副本装备总加成（含职业乘数）
+        * (1 + soulRingBonus); // 应用魂环总加成（含职业乘数）
+}
+
+
+
+// 自动兑换货币
+function autoConvertCurrency() {
+    const conversions = [
+        { from: 'gold', to: 'diamond', rate: 1e5 },
+        { from: 'diamond', to: 'titanium', rate: 1e8 },
+        { from: 'titanium', to: 'starstone', rate: 1e8 },
+        { from: 'starstone', to: 'cosmicstone', rate: 1e8 },
+        { from: 'cosmicstone', to: 'superstone', rate: 1e9 },
+        { from: 'superstone', to: 'otherworldstone', rate: 1e15 },
+        { from: 'otherworldstone', to: 'xingjiestone', rate: 1e20 },
+        { from: 'xingjiestone', to: 'hundunstone', rate: 1e25 },
+        { from: 'hundunstone', to: 'lingtone', rate: 1e25 },
+        { from: 'lingtone', to: 'huangtone', rate: 1e25 },
+        { from: 'huangtone', to: 'mingtone', rate: 1e25 }
+    ];
+
+    conversions.forEach(({ from, to, rate }) => {
+        if (player.autoConvertCurrency[from]) {
+            const converted = Math.floor(player[from] / rate);
+            player[to] += converted;
+            player[from] %= rate;
+        }
+    });
+}
+
+// 点击获取金币，限制每秒10次
+function clickGold() {
+    const now = Date.now();
+    // 移除超过1秒的点击记录
+    player.clickTimestamps = player.clickTimestamps.filter(timestamp => now - timestamp < 1000);
+
+    const clickLimit = 10 + player.reincarnationStats.clickLimitBonus.level; // 每级增加1次点击上限
+    if (player.clickTimestamps.length >= clickLimit) {
+        logAction("点击速度过快，请稍后再试！", "error");
+        return;
+    }
+
+    player.clickTimestamps.push(now);
+
+    const value = getTotalClickValue();
+    player.gold += value;
+    logAction(`点击获取金币: +${value}`, 'info');
+    updateDisplay();
+}
+
+function buyChest(type) {
+    const costConfig = [
+        { currency: "gold", amount: 100 },
+        { currency: "diamond", amount: 10 },
+        { currency: "titanium", amount: 1 },
+        { currency: "starstone", amount: 1 },
+        { currency: "cosmicstone", amount: 1 },
+        { currency: "superstone", amount: 1 },
+        { currency: "otherworldstone", amount: 1 },
+        { currency: "xingjiestone", amount: 1 },
+        { currency: "hundunstone", amount: 1 },
+        { currency: "lingtone", amount: 1 },
+        { currency: "huangtone", amount: 1 },
+        { currency: "mingtone", amount: 1 }
+    ][type - 1];
+
+    if (player[costConfig.currency] >= costConfig.amount) {
+        player[costConfig.currency] -= costConfig.amount;
+        const selectedRarity = selectRarity(type);
+        console.log(`购买宝箱类型: ${type}, 掉落装备品质: ${selectedRarity}`); // 调试信息
+        handleEquipment(selectedRarity);
+        logAction(`购买${['普通', '高级', '稀有', '史诗', '传说', '混沌', '终焉', '星辰', '银河', '星云', '鸿蒙', '太虚'][type - 1]}宝箱`, 'success');
+
+        // 更新宝箱购买计数
+        const chestType = ['common', 'advanced', 'rare', 'epic', 'legendary', 'chaos', 'apocalypse', 'yeyu1', 'yeyu2', 'yeyu3', 'yeyu4', 'yeyu5'][type - 1];
+        player.chestCounts[chestType]++;
+        checkChestAchievements(chestType, player.chestCounts[chestType]);
+    } else {
+        logAction(`${costConfig.currency}不足！无法购买${['普通', '高级', '稀有', '史诗', '传说', '混沌', '终焉', '星辰', '银河', '星云', '鸿蒙', '太虚'][type - 1]}宝箱`, 'error');
+    }
+    updateDisplay();
+}
+
+// 检查宝箱成就
+function checkChestAchievements(chestType, count) {
+    const achievements = [
+        { count: 100, key: `${chestType}_chest_100` },
+        { count: 10000, key: `${chestType}_chest_10000` },
+        { count: 1000000, key: `${chestType}_chest_1000000` },
+        { count: 10000000, key: `${chestType}_chest_10000000` },
+        { count: 100000000, key: `${chestType}_chest_100000000` }
+    ];
+
+    achievements.forEach(({ count: targetCount, key }) => {
+        if (count >= targetCount && !player.achievements[key]) {
+            player.achievements[key] = true;
+            const reward = achievementRewards[key];
+            if (reward) {
+                player.gpsMultiplier += reward.gpsMultiplier;
+                logAction(`成就达成：${reward.description}，GPS奖励 +${reward.gpsMultiplier * 100}%`, 'success');
+                updateAchievementsDisplay();
+            }
+        }
+    });
+}
+
+function buyMaterialChest() {
+    const cost = player.materialChestCost;
+    if (player.diamond >= cost) {
+        player.diamond -= cost;
+        const selectedItem = selectMaterialChestItem();
+
+        if (selectedItem.type in player.collections) {
+            player.collections[selectedItem.type]++;
+            onCollectionAdded(selectedItem.type); // 应用效果
+            logAction(`获得收藏物：${collectionEffects[selectedItem.type].name}`, 'success');
+            updateCollectionDisplay(); // 更新收藏物页面
+        } else if (selectedItem.type in player.items) {
+            player.items[selectedItem.type]++;
+            logAction(`获得道具：${itemEffects[selectedItem.type].name}`, 'success');
+            updateItemDisplay(); // 更新道具页面
+        }
+        // 新增：处理VIP能力值道具
+        else if (selectedItem.type === 'vipPower') {
+            handleVipPowerGain(); // 调用VIP能力值处理函数
+        }
+        // 更新材料宝箱购买成本
+        player.materialChestCost *= 2;
+        updateDisplay();
+    } else {
+        logAction("钻石不足！无法购买材料宝箱", "error");
+    }
+}
+function buyTechniqueChest() {
+    const cost = player.techniqueChestCost;
+    if (player.reincarnationCoin >= cost) {
+        player.reincarnationCoin -= cost;
+        player.techniqueChestCost *= 2;  // 下次消耗翻倍
+        player.techniqueChestLevel++;
+
+        // 根据概率随机选择功法
+        const roll = Math.random();
+        let cumulativeProb = 0;
+
+        for (const drop of techniqueChestDrops) {
+            cumulativeProb += drop.prob;
+            if (roll <= cumulativeProb) {
+                addTechnique(drop.id);
+                break;
+            }
+        }
+
+        logAction("打开了功法秘笈宝箱！", "success");
+        updateDisplay();
+    } else {
+        logAction("转生币不足！", "error");
+
+    }
+}
+// 初始化或重置时调用
+function resetAllCollectionEffects() {
+    // 重置所有装备的收藏物加成
+    player.equipment.forEach(eq => {
+        eq.collectionMultiplier = 0;
+    });
+
+    // 重新应用所有收藏物效果
+    applyAllCollectionEffects();
+}
+
+// 应用所有收藏物效果
+function applyAllCollectionEffects() {
+    // 先重置所有效果
+    player.equipment.forEach(eq => {
+        eq.collectionMultiplier = 0;
+    });
+
+    // 累加所有收藏物效果
+    Object.entries(player.collections).forEach(([type, count]) => {
+        if (count > 0) {
+            const effect = collectionEffects[type].effect * count;
+            player.equipment.forEach(eq => {
+                eq.collectionMultiplier += effect;
+            });
+        }
+    });
+
+    updateCollectionDisplay();
+}
+
+// 获得新收藏物时调用
+function onCollectionAdded(collectionType) {
+    const effect = collectionEffects[collectionType].effect;
+    player.equipment.forEach(eq => {
+        eq.collectionMultiplier += effect;
+    });
+    updateCollectionDisplay();
+}
+
+
+// 选择材料宝箱掉落物品
+function selectMaterialChestItem() {
+    let totalProb = materialChestProbabilities.reduce((sum, p) => sum + p.prob, 0);
+    let rand = Math.random() * totalProb;
+    for (const { type, prob } of materialChestProbabilities) {
+        if (rand < prob) return { type };
+        rand -= prob;
+    }
+    return { type: 'lightSpeedHand' }; // 默认掉落
+}
+
+function selectRarity(type) {
+    const probConfig = chestProbabilities[type];
+    let totalProb = probConfig.reduce((sum, p) => sum + p.prob, 0);
+    let rand = Math.random() * totalProb;
+    for (const { rarity, prob } of probConfig) {
+        if (rand < prob) return validateRarity(rarity);
+        rand -= prob;
+    }
+    return 'common';
+}
+
+function handleEquipment(rarity) {
+    const existingIndex = player.equipment.findIndex(eq => eq.rarity === rarity);
+    if (existingIndex >= 0) {
+        upgradeExistingEquipment(existingIndex, rarity);
+    } else {
+        addNewEquipment(rarity);
+    }
+    checkAchievement(rarity);
+}
+
+function upgradeExistingEquipment(index, rarity) {
+    const eq = player.equipment[index];
+    const config = equipmentTypes[rarity];
+    eq.level++;
+    const vipBonus = 1 + getVipBonus();
+    eq.gps = safeNumber(config.gps * (1 + config.growthRate * eq.level) * (1 + player.reincarnationStats.gpsBonus.level) * vipBonus); // 每级装备属性乘以100%
+    eq.click = safeNumber(config.click * (1 + config.growthRate * eq.level) * (1 + player.reincarnationStats.gpsBonus.level) * vipBonus); // 每级装备属性乘以100%
+    logAction(`升级 ${eq.name}装备 至 Lv.${eq.level}`, rarity);
+}
+
+function addNewEquipment(rarity) {
+    const config = equipmentTypes[rarity] || equipmentTypes.common;
+    const newEq = {
+        name: config.name,
+        gps: config.gps * (1 + player.reincarnationStats.gpsBonus.level), // 每级装备属性乘以100%
+        click: config.click * (1 + player.reincarnationStats.gpsBonus.level), // 每级装备属性乘以100%
+        rarity: rarity,
+        level: 1 + player.reincarnationStats.equipmentLevelBonus.level * 200, // 转生属性加成
+        growthRate: config.growthRate,
+        gemMultiplier: 0,
+        collectionMultiplier: 0
+    };
+    player.equipment.push(newEq);
+    logAction(`获得 ${newEq.name}装备`, rarity);
+}
+
+function upgradeEquipment(index) {
+    const eq = player.equipment[index];
+    const cost = Math.floor(100 * Math.pow(1.5, eq.level));
+    if (player.gold >= cost) {
+        player.gold -= cost;
+        eq.level++;
+        const vipBonus = 1 + getVipBonus();
+        eq.gps = safeNumber(eq.gps * (1 + eq.growthRate) * (1 + player.reincarnationStats.gpsBonus.level) * vipBonus); // 每级装备属性乘以100%
+        eq.click = safeNumber(eq.click * (1 + eq.growthRate) * (1 + player.reincarnationStats.gpsBonus.level) * vipBonus); // 每级装备属性乘以100%
+        logAction(`主动升级 ${eq.name}装备 至 Lv.${eq.level}`, eq.rarity);
+        updateDisplay();
+        updateVipDisplay();
+    } else {
+        logAction("金币不足！", "error");
+    }
+}
+
+// 自动购买逻辑
+function checkAutoBuy() {
+    // 添加加速倍率计算
+    const speedMultiplier = player.autoBuySpeedBoost ? 100 : 1;
+    player.autoBuy.forEach((enabled, index) => {
+        if (enabled) {
+            const type = index + 1;
+            const costConfig = [
+                { currency: "gold", amount: 100 },
+                { currency: "diamond", amount: 10 },
+                { currency: "titanium", amount: 1 },
+                { currency: "starstone", amount: 1 },
+                { currency: "cosmicstone", amount: 1 },
+                { currency: "superstone", amount: 1 },
+                { currency: "otherworldstone", amount: 1 },
+                { currency: "xingjiestone", amount: 1 },
+                { currency: "hundunstone", amount: 1 },
+                { currency: "lingtone", amount: 1 },
+                { currency: "huangtone", amount: 1 },
+                { currency: "mingtone", amount: 1 }
+            ][index];
+
+            if (player[costConfig.currency] >= costConfig.amount) {
+                // 应用加速倍率，一次性购买多个
+                const maxBuy = speedMultiplier;
+                const affordable = Math.floor(player[costConfig.currency] / costConfig.amount);
+                const actualBuy = Math.min(maxBuy, affordable);
+
+                for (let i = 0; i < actualBuy; i++) {
+                    buyChest(type);
+                }
+            }
+        }
+    });
+
+    // 新增：自动购买材料宝箱
+    if (player.autoBuyMaterialChest && player.diamond >= player.materialChestCost) {
+        buyMaterialChest();
+    }
+}
+
+// 切换自动购买状态
+function toggleAutoBuy(typeIndex) {
+    const index = typeIndex - 1; // 将宝箱类型转换为数组索引
+    player.autoBuy[index] = !player.autoBuy[index]; // 切换状态
+    const btn = document.getElementById(`autoChest${typeIndex}`);
+    btn.textContent = `${['普通', '高级', '稀有', '史诗', '传说', '混沌', '终焉', '星辰', '银河', '星云', '鸿蒙', '太虚'][index]}宝箱自动购买：${player.autoBuy[index] ? '开启' : '关闭'}`;
+    logAction(`${player.autoBuy[index] ? '开启' : '关闭'}自动购买${['普通', '高级', '稀有', '史诗', '传说', '混沌', '终焉', '星辰', '银河', '星云', '鸿蒙', '太虚'][index]}宝箱`, 'info');
+}
+
+// 切换自动购买材料宝箱状态
+function toggleAutoBuyMaterialChest() {
+    player.autoBuyMaterialChest = !player.autoBuyMaterialChest;
+    const btn = document.getElementById('autoMaterialChest');
+    btn.textContent = `材料宝箱自动购买：${player.autoBuyMaterialChest ? '开启' : '关闭'}`;
+    logAction(`${player.autoBuyMaterialChest ? '开启' : '关闭'}自动购买材料宝箱`, 'info');
+}
+function toggleOnlineBoost() {
+    player.onlineBoostEnabled = !player.onlineBoostEnabled;
+    const btn = document.getElementById('toggleOnlineBoost');
+    btn.textContent = `在线金币加速100倍: ${player.onlineBoostEnabled ? '开启' : '关闭'}`;
+    logAction(`${player.onlineBoostEnabled ? '开启' : '关闭'}在线金币100倍加速`, 'info');
+}
+function toggleAutoBuySpeedBoost() {
+    player.autoBuySpeedBoost = !player.autoBuySpeedBoost;
+    const btn = document.getElementById('autoBuySpeedBoost');
+    btn.textContent = `在线自动购买加速100倍：${player.autoBuySpeedBoost ? '开启' : '关闭'}`;
+    logAction(`${player.autoBuySpeedBoost ? '开启' : '关闭'}在线自动购买加速（100倍速度）`, 'info');
+}
+
+// 切换自动兑换货币状态
+function toggleAutoConvertCurrency(currency) {
+    player.autoConvertCurrency[currency] = !player.autoConvertCurrency[currency];
+    const btn = document.getElementById(`autoConvert${currency.charAt(0).toUpperCase() + currency.slice(1)}`);
+    // 货币名称映射表
+    const currencyNames = {
+        'gold': '金币',
+        'diamond': '钻石',
+        'titanium': '钛晶石',
+        'starstone': '星耀石',
+        'cosmicstone': '宇宙石',
+        'superstone': '超能石',
+        'otherworldstone': '异界石',
+        'xingjiestone': '星界石',
+        'hundunstone': '混沌石',
+        'lingtone': '灵髓石',
+        'huangtone': '幻空石'
+    };
+    // 使用中文名称
+    btn.textContent = `${currencyNames[currency]}自动兑换：${player.autoConvertCurrency[currency] ? '开启' : '关闭'}`;
+    logAction(`${currencyNames[currency]}自动兑换${player.autoConvertCurrency[currency] ? '开启' : '关闭'}`, 'info');
+}
+// 成就检查
+function checkAchievement(rarity) {
+    if (!player.achievements[rarity]) {
+        player.achievements[rarity] = true;
+        const reward = achievementRewards[rarity];
+        if (reward) {
+            player.gpsMultiplier += reward.gpsMultiplier;
+            logAction(`成就达成：获得${equipmentTypes[rarity].name}装备，GPS奖励 +${reward.gpsMultiplier * 100}%`, 'success');
+            updateAchievementsDisplay();
+        }
+    }
+}
+
+// 更新成就显示
+function updateAchievementsDisplay() {
+    const achievementsContainer = document.getElementById('achievements');
+    const unlockedAchievements = Object.entries(player.achievements)
+        .filter(([key, unlocked]) => unlocked)
+        .map(([key]) => key);
+
+    // 定义排序优先级
+    const achievementOrder = [
+        'common', 'rare', 'epic', 'legendary',
+        'ancient', 'divine', 'arcane', 'celestial',
+        'infernal', 'astral', 'primeval', 'transcendental',
+        'quantum', 'ultimate', 'chaos', 'eternal',
+        'void', 'genesis', 'divineRealm', 'apocalypse', 'yeyu1', 'yeyu2', 'yeyu3', 'yeyu4', 'yeyu5', 'yeyu6', 'yeyu7', 'yeyu8', 'yeyu9', 'yeyu10', 'yeyu11', 'yeyu12', 'yeyu13', 'yeyu14', 'yeyu15',
+        'common_chest_100',
+        'common_chest_10000',
+        'common_chest_1000000',
+        'common_chest_10000000',
+        'common_chest_100000000',
+        'advanced_chest_100',
+        'advanced_chest_10000',
+        'advanced_chest_1000000',
+        'advanced_chest_10000000',
+        'advanced_chest_100000000',
+        'rare_chest_100',
+        'rare_chest_10000',
+        'rare_chest_1000000',
+        'rare_chest_10000000',
+        'rare_chest_100000000',
+        'epic_chest_100',
+        'epic_chest_10000',
+        'epic_chest_1000000',
+        'epic_chest_10000000',
+        'epic_chest_100000000',
+        'legendary_chest_100',
+        'legendary_chest_10000',
+        'legendary_chest_1000000',
+        'legendary_chest_10000000',
+        'legendary_chest_100000000',
+        'chaos_chest_100',
+        'chaos_chest_10000',
+        'chaos_chest_1000000',
+        'chaos_chest_10000000',
+        'chaos_chest_100000000',
+        'apocalypse_chest_100',
+        'apocalypse_chest_10000',
+        'apocalypse_chest_1000000',
+        'apocalypse_chest_10000000',
+        'apocalypse_chest_100000000',
+        'yeyu1_chest_100',
+        'yeyu1_chest_10000',
+        'yeyu1_chest_1000000',
+        'yeyu1_chest_10000000',
+        'yeyu1_chest_100000000',
+        'yeyu2_chest_100',
+        'yeyu2_chest_10000',
+        'yeyu2_chest_1000000',
+        'yeyu2_chest_10000000',
+        'yeyu2_chest_100000000',
+        'yeyu3_chest_100',
+        'yeyu3_chest_10000',
+        'yeyu3_chest_1000000',
+        'yeyu3_chest_10000000',
+        'yeyu3_chest_100000000',
+        'yeyu4_chest_100',
+        'yeyu4_chest_10000',
+        'yeyu4_chest_1000000',
+        'yeyu4_chest_10000000',
+        'yeyu4_chest_100000000',
+        'yeyu5_chest_100',
+        'yeyu5_chest_10000',
+        'yeyu5_chest_1000000',
+        'yeyu5_chest_10000000',
+        'yeyu5_chest_100000000',
+        'max_stage_10', 'max_stage_30', 'max_stage_60', 'max_stage_90',
+        'max_stage_120', 'max_stage_200', 'max_stage_300', 'max_stage_400',
+        'max_stage_500', 'max_stage_600', 'max_stage_700', 'max_stage_800',
+        'max_stage_900', 'max_stage_1000',
+        'thunderKirin_10',
+        'thunderKirin_50',
+        'thunderKirin_100',
+        'chaosTaotie_10',
+        'chaosTaotie_50',
+        'chaosTaotie_100',
+        'netherQiongqi_10',
+        'netherQiongqi_50',
+        'netherQiongqi_100',
+        'abyssKun_10',
+        'abyssKun_50',
+        'abyssKun_100',
+        'primordialZhuLong_10',
+        'primordialZhuLong_50',
+        'primordialZhuLong_100',
+        'wanJunSuanNi_10',
+        'wanJunSuanNi_50',
+        'wanJunSuanNi_100',
+        'yanYuBiAn_10',
+        'yanYuBiAn_50',
+        'yanYuBiAn_100',
+        'yuyu1_10',
+        'yuyu1_50',
+        'yuyu1_100',
+        'yuyu2_10',
+        'yuyu2_50',
+        'yuyu2_100',
+        'yuyu3_10',
+        'yuyu3_50',
+        'yuyu3_100',
+        'yuyu4_10',
+        'yuyu4_50',
+        'yuyu4_100',
+        'yuyu5_10',
+        'yuyu5_50',
+        'yuyu5_100',
+        'year1_10',
+        'year10_10',
+        'year100_10',
+        'year1000_10',
+        'year10000_10',
+        'year100000_10',
+        'year1000000_10',
+        'year10000000_10',
+        'year100000000_10',
+        'year1_100',
+        'year10_100',
+        'year100_100',
+        'year1000_100',
+        'year10000_100',
+        'year100000_100',
+        'year1000000_100',
+        'year10000000_100',
+        'year100000000_100',
+        'year1_1000',
+        'year10_1000',
+        'year100_1000',
+        'year1000_1000',
+        'year10000_1000',
+        'year100000_1000',
+        'year1000000_1000',
+        'year10000000_1000',
+        'year100000000_1000',
+        'year1_10000',
+        'year10_10000',
+        'year100_10000',
+        'year1000_10000',
+        'year10000_10000',
+        'year100000_10000',
+        'year1000000_10000',
+        'year10000000_10000',
+        'year100000000_10000',
+        'year2_10',
+        'year2_100',
+        'year2_1000',
+        'year2_10000',
+        'year3_10',
+        'year3_100',
+        'year3_1000',
+        'year3_10000',
+        'year4_10',
+        'year4_100',
+        'year4_1000',
+        'year4_10000',
+        'year5_10',
+        'year5_100',
+        'year5_1000',
+        'year5_10000',
+        'year6_10',
+        'year6_100',
+        'year6_1000',
+        'year6_10000',
+        'year7_10',
+        'year7_100',
+        'year7_1000',
+        'year7_10000',
+        'year8_10',
+        'year8_100',
+        'year8_1000',
+        'year8_10000',
+        'year9_10',
+        'year9_100',
+        'year9_1000',
+        'year9_10000',
+        'year11_10',
+        'year11_100',
+        'year11_1000',
+        'year11_10000',
+        'year12_10',
+        'year12_100',
+        'year12_1000',
+        'year12_10000',
+        'year13_10',
+        'year13_100',
+        'year13_1000',
+        'year13_10000',
+        'year14_10',
+        'year14_100',
+        'year14_1000',
+        'year14_10000',
+        'year15_10',
+        'year15_100',
+        'year15_1000',
+        'year15_10000',
+        'year16_10',
+        'year16_100',
+        'year16_1000',
+        'year16_10000',
+        'year17_10',
+        'year17_100',
+        'year17_1000',
+        'year17_10000',
+        'year18_10',
+        'year18_100',
+        'year18_1000',
+        'year18_10000',
+        'year19_10',
+        'year19_100',
+        'year19_1000',
+        'year19_10000',
+        'year20_10',
+        'year20_100',
+        'year20_1000',
+        'year20_10000',
+        'year21_10',
+        'year21_100',
+        'year21_1000',
+        'year21_10000',
+        'year22_10',
+        'year22_100',
+        'year22_1000',
+        'year22_10000',
+        'year23_10',
+        'year23_100',
+        'year23_1000',
+        'year23_10000',
+        'year24_10',
+        'year24_100',
+        'year24_1000',
+        'year24_10000',
+        'year25_10',
+        'year25_100',
+        'year25_1000',
+        'year25_10000',
+        'year26_10',
+        'year26_100',
+        'year26_1000',
+        'year26_10000',
+        'year27_10',
+        'year27_100',
+        'year27_1000',
+        'year27_10000',
+        'year28_10',
+        'year28_100',
+        'year28_1000',
+        'year28_10000',
+        'year29_10',
+        'year29_100',
+        'year29_1000',
+        'year29_10000',
+        'year30_10',
+        'year30_100',
+        'year30_1000',
+        'year30_10000',
+        'year31_10',
+        'year31_100',
+        'year31_1000',
+        'year31_10000',
+        'year32_10',
+        'year32_100',
+        'year32_1000',
+        'year32_10000',
+        'year33_10',
+        'year33_100',
+        'year33_1000',
+        'year33_10000',
+        'year34_10',
+        'year34_100',
+        'year34_1000',
+        'year34_10000',
+        'year35_10',
+        'year35_100',
+        'year35_1000',
+        'year35_10000',
+        'year36_10',
+        'year36_100',
+        'year36_1000',
+        'year36_10000',
+        'year37_10',
+        'year37_100',
+        'year37_1000',
+        'year37_10000',
+        'reincarnation_10', 'reincarnation_100',
+        'reincarnation_1000', 'reincarnation_10000', 'world_boss_1st', 'world_boss_top5', 'world_boss_top10', 'world_boss_participant'
+    ];
+
+    // 按定义顺序过滤并排序已解锁成就
+    const sortedAchievements = achievementOrder
+        .filter(key => unlockedAchievements.includes(key))
+        .map(key => ({
+            key,
+            ...achievementRewards[key]
+        }));
+
+    achievementsContainer.innerHTML = Object.entries(player.achievements)
+        .filter(([key, value]) => value && achievementRewards[key]) // 只显示已解锁的成就
+        .map(([key, value]) => {
+            const reward = achievementRewards[key];
+            return `<div class="achievement unlocked">${reward.description}</div>`;
+        })
+        .join('');
+}
+
+// 切换装备、道具和收藏物页面
+function switchTab(tab) {
+    document.getElementById('equipmentList').style.display = tab === 'equipment' ? 'block' : 'none';
+    document.getElementById('itemList').style.display = tab === 'items' ? 'block' : 'none';
+    document.getElementById('collectionList').style.display = tab === 'collections' ? 'block' : 'none';
+    document.getElementById('reincarnationList').style.display = tab === 'reincarnation' ? 'block' : 'none';
+    document.getElementById('petList').style.display = tab === 'pets' ? 'block' : 'none';
+    document.getElementById('stockList').style.display = tab === 'stocks' ? 'block' : 'none';
+    document.getElementById('lotteryList').style.display = tab === 'lottery' ? 'block' : 'none';
+    document.getElementById('bankList').style.display = tab === 'bank' ? 'block' : 'none';
+    document.getElementById('dungeonEquipmentList').style.display = tab === 'dungeonEquipment' ? 'block' : 'none'; // 新增副本装备页面
+    document.getElementById('soulRingList').style.display = tab === 'soulRings' ? 'block' : 'none'; // 新增魂环页面
+    document.getElementById('playerAttributesList').style.display = tab === 'playerAttributes' ? 'block' : 'none';
+    document.getElementById('techniquesList').style.display = tab === 'techniques' ? 'block' : 'none';
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active');
+    if (tab === 'items') updateItemDisplay();
+    if (tab === 'collections') updateCollectionDisplay();
+    if (tab === 'reincarnation') updateReincarnationDisplay();
+    if (tab === 'pets') updatePetDisplay();
+    if (tab === 'stocks') updateStockDisplay();
+    if (tab === 'bank') updateBankDisplay();
+    if (tab === 'dungeonEquipment') updateDungeonEquipmentDisplay(); // 新增：更新副本装备显示
+    if (tab === 'soulRings') updateSoulRingDisplay(); // 新增：更新魂环显示
+    if (tab === 'techniques') updateTechniquesDisplay();
+    if (tab === 'playerAttributes') updatePlayerAttributesDisplay();
+}
+
+// 更新道具显示
+function updateItemDisplay() {
+    const itemContainer = document.getElementById('itemList');
+    itemContainer.innerHTML = Object.entries(player.items)
+        .map(([key, value]) => {
+            const item = itemEffects[key];
+            return `<div>${item.name}: ${value} - ${item.description}</div>`;
+        })
+        .join('');
+}
+
+// 重置收藏物显示
+function resetCollectionDisplay() {
+    resetCollectionEffects();
+    logAction("已完全重置收藏物效果计算", "success");
+}
+// 重新计算所有收藏物效果（确保加法叠加）
+Object.keys(player.collections).forEach(collectionType => {
+    const effect = collectionEffects[collectionType].effect;
+    const count = player.collections[collectionType];
+    const totalEffect = count * effect;
+
+    player.equipment.forEach(eq => {
+        eq.collectionMultiplier = totalEffect;
+    });
+});
+
+updateCollectionDisplay();
+logAction("已重置收藏物效果计算", "info");
+
+// 更新后的收藏物显示函数
+function updateCollectionDisplay() {
+    const container = document.getElementById("collectionInfoContainer");
+
+    // 计算全部收藏物总加成
+    const totalEffect = player.equipment.length > 0 ?
+        player.equipment[0].collectionMultiplier * 100 : 0;
+
+    // 顶部总加成显示（保持不变）
+    container.innerHTML = `
+        <div style="margin-bottom: 15px; font-weight: bold;">
+            当前全部收藏物总加成: +${totalEffect.toFixed(5)}%
+        </div>
+    `;
+
+    // 每个收藏物的详细显示（增加总效果）
+    container.innerHTML += Object.entries(player.collections)
+        .map(([key, value]) => {
+            const collection = collectionEffects[key];
+            const singleEffect = collection.effect * 100;
+            const totalEffect = value * singleEffect;
+
+            return `
+                <div style="margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #eee;">
+                    <strong>${collection.name}</strong>: 
+                    <span>数量: ${value}</span> | 
+                    <span>单个效果: +${singleEffect.toFixed(5)}%</span> |
+                    <span>总效果: +${totalEffect.toFixed(5)}%</span>
+                    <div style="color:#666; font-size:0.9em; margin-top: 3px;">${collection.description}</div>
+                </div>
+            `;
+        })
+        .join('');
+}
+// 更新转生属性显示
+function updateReincarnationDisplay() {
+    const reincarnationContainer = document.getElementById('reincarnationList');
+    reincarnationContainer.innerHTML = `
+        <div>
+            <h3>转生属性</h3>
+            <div>
+                <strong>收益加成</strong>: 每级装备属性 +${player.reincarnationStats.gpsBonus.level * 100}% (等级: ${player.reincarnationStats.gpsBonus.level})
+                <button onclick="upgradeReincarnationStat('gpsBonus')">升级 (消耗 ${player.reincarnationStats.gpsBonus.cost} 转生币)</button>
+            </div>
+            <div>
+                <strong>装备等级</strong>: 全部装备初始等级 +${player.reincarnationStats.equipmentLevelBonus.level * 200} 级 (等级: ${player.reincarnationStats.equipmentLevelBonus.level})
+                <button onclick="upgradeReincarnationStat('equipmentLevelBonus')">升级 (消耗 ${player.reincarnationStats.equipmentLevelBonus.cost} 转生币)</button>
+            </div>
+            <div>
+                <strong>点击上限</strong>: 每秒点击上限 +${player.reincarnationStats.clickLimitBonus.level} 次 (等级: ${player.reincarnationStats.clickLimitBonus.level})
+                <button onclick="upgradeReincarnationStat('clickLimitBonus')">升级 (消耗 ${player.reincarnationStats.clickLimitBonus.cost} 转生币)</button>
+            </div>
+        </div>
+    `;
+}
+function updateTechniquesDisplay() {
+    const container = document.getElementById('techniquesContainer');
+
+    // 按预定顺序筛选已获得的功法
+    const sortedTechniques = TECHNIQUE_DISPLAY_ORDER
+        .filter(id => player.techniques[id])
+        .map(id => {
+            const tech = techniqueConfig[id];
+            return {
+                id,
+                name: tech.name,
+                level: player.techniques[id],
+                description: tech.description,
+                effect: tech.effect,
+                type: tech.type
+            };
+        });
+
+    // 生成HTML
+    container.innerHTML = sortedTechniques.map(tech => `
+        <div class="technique ${tech.type}">
+            <h4>${tech.name} [Lv.${tech.level}]</h4>
+            <p>${tech.description}</p>
+            <div class="tech-effect">
+                当前效果: ${tech.type === 'multiAttack'
+            ? `攻击次数+${tech.level * tech.effect}`
+            : `${(tech.level * tech.effect * 100).toFixed(tech.type === 'critRate' ? 3 : 2)}%`
+        }
+            </div>
+        </div>
+    `).join('');
+}
+
+// 添加功法秘笈获取函数
+function addTechnique(type) {
+    if (player.techniques[type]) {
+        player.techniques[type]++;
+    } else {
+        player.techniques[type] = 1;
+    }
+    logAction(`获得功法: ${techniqueConfig[type].name} Lv.${player.techniques[type]}`, 'success');
+    updateTechniqueBonuses(); // 新增调用
+    updateTechniquesDisplay();
+}
+
+function calculateTechniqueBonuses() {
+    // 重置所有加成
+    const bonuses = {
+        health: 0,
+        attack: 0,
+        critRate: 0,
+        critDamage: 0,
+        multiAttack: 0
+    };
+
+    // 计算所有功法加成
+    Object.entries(player.techniques).forEach(([techId, level]) => {
+        const tech = techniqueConfig[techId];
+        if (tech && tech.effect) {
+            bonuses[tech.type] += level * tech.effect;
+        }
+    });
+
+    return bonuses;
+}
+// 重置宠物页面
+function resetPetDisplay() {
+    // 保留宠物的等级和升级成本
+    const petData = {};
+    Object.keys(player.pets).forEach(petKey => {
+        petData[petKey] = {
+            level: player.pets[petKey].level, // 保留等级
+            cost: player.pets[petKey].cost    // 保留升级成本
+        };
+    });
+
+    // 重置宠物页面（重新生成宠物数据）
+    player.pets = {
+        thunderKirin: { level: petData.thunderKirin?.level || 0, cost: petData.thunderKirin?.cost || 1, multiplier: 0.10 },
+        chaosTaotie: { level: petData.chaosTaotie?.level || 0, cost: petData.chaosTaotie?.cost || 1, multiplier: 0.50 },
+        netherQiongqi: { level: petData.netherQiongqi?.level || 0, cost: petData.netherQiongqi?.cost || 1, multiplier: 2.50 },
+        abyssKun: { level: petData.abyssKun?.level || 0, cost: petData.abyssKun?.cost || 1, multiplier: 12.50 },
+        primordialZhuLong: { level: petData.primordialZhuLong?.level || 0, cost: petData.primordialZhuLong?.cost || 1, multiplier: 62.50 },
+        wanJunSuanNi: { level: petData.wanJunSuanNi?.level || 0, cost: petData.wanJunSuanNi?.cost || 1, multiplier: 312.50 },
+        yanYuBiAn: { level: petData.yanYuBiAn?.level || 0, cost: petData.yanYuBiAn?.cost || 1, multiplier: 1562.50 },
+        yuyu1: { level: petData.yuyu1?.level || 0, cost: petData.yuyu1?.cost || 1, multiplier: 7812.50 },
+        yuyu2: { level: petData.yuyu2?.level || 0, cost: petData.yuyu2?.cost || 1, multiplier: 39062.50 },
+        yuyu3: { level: petData.yuyu3?.level || 0, cost: petData.yuyu3?.cost || 1, multiplier: 195312.50 },
+        yuyu4: { level: petData.yuyu4?.level || 0, cost: petData.yuyu4?.cost || 1, multiplier: 976562.50 },
+        yuyu5: { level: petData.yuyu5?.level || 0, cost: petData.yuyu5?.cost || 1, multiplier: 5882812.50 }
+    };
+
+    // 更新宠物页面显示
+    updatePetDisplay();
+    logAction('宠物页面已重置，等级和升级消耗保留', 'success');
+}
+
+// 更新宠物页面显示
+function updatePetDisplay() {
+    const petContainer = document.getElementById('petContainer');
+    if (!petContainer) {
+        console.error('宠物容器未找到！');
+        return;
+    }
+
+    // 货币类型到中文名称的映射
+    const currencyNames = {
+        gold: '金币',
+        diamond: '钻石',
+        titanium: '钛晶石',
+        starstone: '星耀石',
+        cosmicstone: '宇宙石',
+        superstone: '超能石',
+        otherworldstone: '异界石',
+        xingjiestone: '星界石',
+        hundunstone: '混沌石',
+        lingtone: '灵髓石',
+        huangtone: '幻空石',
+        mingtone: '冥源石'
+    };
+
+    petContainer.innerHTML = Object.entries(player.pets)
+        .map(([key, pet]) => {
+            const config = petConfig[key];
+            if (!config) {
+                console.error(`宠物配置未找到：${key}`);
+                return '';
+            }
+            const cost = pet.cost;
+            const formattedCost = cost >= 1e8 ? cost.toExponential(3) : cost.toLocaleString();
+
+            // 获取货币中文名称
+            const currencyName = currencyNames[config.currency] || config.currency;
+
+            return `
+                <div>
+                    <strong>${config.name}</strong>: 等级 ${pet.level} - 装备属性加成 ${(pet.level * pet.multiplier * 100).toFixed(2)}%
+                    <button onclick="upgradePet('${key}')">升级 (消耗 ${formattedCost} ${currencyName})</button>
+                </div>
+            `;
+        })
+        .join('');
+}
+// 如果需要真正的重置功能（保留等级但刷新效果），可以添加这个函数
+function resetTechniquesData() {
+    showCustomConfirm('确定要重置功法数据吗？这将保留等级但重置所有效果计算！', (confirmed) => {
+        if (confirmed) {
+            // 重新计算所有功法效果
+            updateTechniqueBonuses();
+            updateTechniquesDisplay();
+            logAction('功法数据已重置，效果重新计算', 'success');
+        }
+    });
+}
+
+
+
+
+
+
+// 重置道具页面
+function resetItemDisplay() {
+    // 保留道具的数量
+    const itemCounts = { ...player.items }; // 复制当前道具数量
+
+    // 重置道具页面（重新生成道具数据）
+    player.items = {
+        primaryGem: itemCounts.primaryGem || 0,
+        advancedGem: itemCounts.advancedGem || 0,
+        superiorGem: itemCounts.superiorGem || 0,
+        divineGem: itemCounts.divineGem || 0,
+        vipPower: itemCounts.vipPower || 0,
+        refineStone: itemCounts.refineStone || 0,
+        rose: itemCounts.rose || 0,
+        companionKey: itemCounts.companionKey || 0
+
+    };
+
+    // 更新道具页面显示
+    updateItemDisplay();
+    logAction('道具页面已重置，道具数量保留', 'success');
+}
+
+// 更新道具页面显示
+function updateItemDisplay() {
+    const itemContainer = document.getElementById('itemContainer');
+    if (!itemContainer) {
+        console.error('道具容器未找到！');
+        return;
+    }
+    itemContainer.innerHTML = Object.entries(player.items)
+        .map(([key, value]) => {
+            const item = itemEffects[key];
+            if (!item) {
+                console.error(`道具配置未找到：${key}`);
+                return '';
+            }
+            return `
+                <div>
+                    <strong>${item.name}</strong>: ${value} - ${item.description}
+                </div>
+            `;
+        })
+        .join('');
+}
+// 更新股票显示
+function updateStockDisplay() {
+    const container = document.getElementById('stocksContainer');
+    container.innerHTML = player.stockData.stocks.map((stock, index) => `
+        <div class="stock-item" data-index="${index}" onclick="this.parentNode.querySelectorAll('.stock-item').forEach(e=>e.classList.remove('selected'));this.classList.add('selected')">
+            <strong>${stock.name}</strong><br>
+            当前价: ${stock.currentPrice.toFixed(2)} | 涨跌幅: ${((stock.currentPrice / stock.lastPrice - 1) * 100).toFixed(2)}%<br>
+            持有: ${stock.shares}股 | 均价: ${stock.avgCost.toFixed(2)}<br>
+            市值: ${(stock.shares * stock.currentPrice).toFixed(2)} | 收益率: ${stock.avgCost ? ((stock.currentPrice / stock.avgCost - 1) * 100).toFixed(2) + '%' : '-'}
+        </div>
+    `).join('');
+}
+document.getElementById('announcementToggle').addEventListener('click', function () {
+    const announcementPanel = document.getElementById('gameLogPage2');
+    // 切换显示状态
+    announcementPanel.style.display = announcementPanel.style.display === 'none' ? 'block' : 'none';
+    // 切换按钮文本箭头方向
+    this.textContent = announcementPanel.style.display === 'block' ? '点击关闭新手必看↑' : '点击呼出新手必看↓';
+});
+// 升级宠物
+function upgradePet(petKey) {
+    const pet = player.pets[petKey];
+    const config = petConfig[petKey];
+    if (player[config.currency] >= pet.cost) {
+        player[config.currency] -= pet.cost;
+        pet.level++;
+        pet.cost *= 2; // 每次升级成本翻倍
+
+        // 检查宠物成就
+        checkPetAchievements(petKey, pet.level);
+
+        logAction(`升级 ${config.name} 成功！`, 'success');
+        updatePetDisplay();
+        updateDisplay();
+    } else {
+        logAction(`${config.currency}不足！`, "error");
+    }
+}
+
+function checkPetAchievements(petKey, level) {
+    const achievements = [
+        { level: 10, key: `${petKey}_10` },
+        { level: 50, key: `${petKey}_50` },
+        { level: 100, key: `${petKey}_100` },
+    ];
+
+    achievements.forEach(({ level: targetLevel, key }) => {
+        if (level >= targetLevel && !player.achievements[key]) {
+            player.achievements[key] = true;
+            const reward = achievementRewards[key];
+            if (reward) {
+                player.gpsMultiplier += reward.gpsMultiplier;
+                logAction(`成就达成：${reward.description}，GPS奖励 +${reward.gpsMultiplier * 100}%`, 'success');
+                updateAchievementsDisplay();
+            }
+        }
+    });
+}
+
+// 升级转生属性
+function upgradeReincarnationStat(stat) {
+    const statData = player.reincarnationStats[stat];
+    if (player.reincarnationCoin >= statData.cost) {
+        player.reincarnationCoin -= statData.cost;
+        statData.level++;
+        if (stat === 'equipmentLevelBonus') {
+            statData.cost *= 5; // 装备等级加成每次升级消耗增加5倍
+        } else {
+            statData.cost *= 1.2; // 其他属性每次升级消耗增加20%
+        }
+        logAction(`升级 ${stat} 成功！`, 'success');
+        updateReincarnationDisplay();
+        updateDisplay();
+    } else {
+        logAction("转生币不足！", "error");
+    }
+}
+
+function resetGemEffects() {
+    player.equipment.forEach(eq => {
+        eq.gemMultiplier = 0;
+    });
+    logAction("已重置所有宝石效果", "info");
+    updateDisplay();
+}
+// 使用宝石升级装备
+function useGem(index, gemType) {
+    const eq = player.equipment[index];
+    const gem = itemEffects[gemType];
+
+    if (player.items[gemType] > 0) {
+        player.items[gemType]--;
+        // 改为加法叠加
+        eq.gemMultiplier += gem.effect;
+
+        logAction(`使用${gem.name}升级 ${eq.name}装备 (当前加成: +${(eq.gemMultiplier * 100).toFixed(2)}%)`, 'success');
+        updateDisplay();
+    } else {
+        logAction(`${gem.name}不足！`, "error");
+    }
+}
+// 新增一键使用宝石函数
+function useAllGems(index, gemType) {
+    const eq = player.equipment[index];
+    const gem = itemEffects[gemType];
+    const count = player.items[gemType];
+
+    if (count > 0) {
+        // 计算总加成
+        const totalEffect = gem.effect * count;
+        // 减少宝石数量
+        player.items[gemType] = 0;
+        // 增加装备宝石加成
+        eq.gemMultiplier += totalEffect;
+
+        logAction(`一键使用${count}个${gem.name}升级 ${eq.name}装备 (当前总加成: +${(eq.gemMultiplier * 100).toFixed(2)}%)`, 'success');
+        updateDisplay();
+    } else {
+        logAction(`${gem.name}不足！`, "error");
+    }
+}
+// 股票价格波动函数
+function updateStockPrices() {
+    const now = Date.now();
+    const elapsed = now - player.stockData.lastStockUpdate;
+    const intervals = Math.floor(elapsed / (10 * 60 * 1000));
+
+    player.stockData.stocks.forEach(stock => {
+        for (let i = 0; i < intervals; i++) {
+            stock.lastPrice = stock.currentPrice;
+
+            // 计算当前价格与初始价格的比例
+            const priceRatio = stock.currentPrice / stock.basePrice;
+
+            // 根据比例动态调整涨跌概率
+            let riseProbability; // 涨的概率
+            if (priceRatio <= 0.7) {
+                riseProbability = 0.8;
+            } else if (priceRatio <= 0.8) {
+                riseProbability = 0.7;
+            } else if (priceRatio <= 0.9) {
+                riseProbability = 0.6;
+            } else if (priceRatio >= 1.6) {
+                riseProbability = 0.35;
+            } else if (priceRatio >= 1.8) {
+                riseProbability = 0.25;
+            } else if (priceRatio >= 2.0) {
+                riseProbability = 0.1;
+            } else {
+                riseProbability = 0.5;
+            }
+
+            // 根据涨跌概率决定价格波动
+            const willRise = Math.random() < riseProbability; // 是否上涨
+            const fluctuation = willRise ? Math.random() * 0.1 : -Math.random() * 0.1; // 涨跌幅度
+            stock.currentPrice *= 1 + fluctuation;
+
+            // 价格保护机制
+            const minPrice = stock.basePrice * 0.3;
+            if (stock.currentPrice < minPrice) stock.currentPrice = minPrice;
+        }
+    });
+    player.stockData.lastStockUpdate = now - (elapsed % (10 * 60 * 1000));
+}
+
+// 股票购买逻辑
+function buyStock() {
+    const amount = parseInt(document.getElementById('stockAmount').value) || 0;
+    const selectedIndex = document.querySelector('.stock-item.selected')?.dataset.index;
+
+    if (selectedIndex === undefined || amount < 1) {
+        logAction("请先选择股票并输入有效数量", "error");
+        return;
+    }
+
+    const stock = player.stockData.stocks[selectedIndex];
+    const totalCost = stock.currentPrice * amount;
+
+    if (player.reincarnationCoin >= totalCost) {
+        player.reincarnationCoin -= totalCost;
+        const totalShares = stock.shares + amount;
+        stock.avgCost = (stock.avgCost * stock.shares + totalCost) / totalShares;
+        stock.shares += amount;
+        logAction(`成功购买${stock.name} ${amount}股`, "success");
+    } else {
+        logAction("转生币不足！", "error");
+    }
+    updateStockDisplay();
+}
+
+// 股票出售逻辑
+function sellStock() {
+    const amount = parseInt(document.getElementById('stockAmount').value) || 0;
+    const selectedIndex = document.querySelector('.stock-item.selected')?.dataset.index;
+
+    if (selectedIndex === undefined || amount < 1) {
+        logAction("请先选择股票并输入有效数量", "error");
+        return;
+    }
+
+    const stock = player.stockData.stocks[selectedIndex];
+    if (stock.shares < amount) {
+        logAction("持有份额不足！", "error");
+        return;
+    }
+
+    const totalValue = stock.currentPrice * amount;
+    player.reincarnationCoin += totalValue;
+    stock.shares -= amount;
+    logAction(`成功出售${stock.name} ${amount}股`, "success");
+
+    if (stock.shares === 0) stock.avgCost = 0;
+    updateStockDisplay();
+}
+// 购买所有股票
+function buyAllStock() {
+    const selectedIndex = document.querySelector('.stock-item.selected')?.dataset.index;
+    if (selectedIndex === undefined) {
+        logAction("请先选择股票", "error");
+        return;
+    }
+
+    const stock = player.stockData.stocks[selectedIndex];
+    const maxShares = Math.floor(player.reincarnationCoin / stock.currentPrice);
+
+    if (maxShares > 0) {
+        const totalCost = stock.currentPrice * maxShares;
+        player.reincarnationCoin -= totalCost;
+        const totalShares = stock.shares + maxShares;
+        stock.avgCost = (stock.avgCost * stock.shares + totalCost) / totalShares;
+        stock.shares += maxShares;
+        logAction(`成功购买${stock.name} ${maxShares}股`, "success");
+    } else {
+        logAction("转生币不足，无法购买任何股票", "error");
+    }
+    updateStockDisplay();
+}
+
+// 出售所有股票
+function sellAllStock() {
+    const selectedIndex = document.querySelector('.stock-item.selected')?.dataset.index;
+    if (selectedIndex === undefined) {
+        logAction("请先选择股票", "error");
+        return;
+    }
+
+    const stock = player.stockData.stocks[selectedIndex];
+    if (stock.shares <= 0) {
+        logAction("没有持有该股票", "error");
+        return;
+    }
+
+    const totalValue = stock.currentPrice * stock.shares;
+    player.reincarnationCoin += totalValue;
+    logAction(`成功出售${stock.name} ${stock.shares}股`, "success");
+    stock.shares = 0;
+    stock.avgCost = 0;
+    updateStockDisplay();
+}
+
+// 购买传统数字彩票
+function buyTraditionalLottery() {
+    if (player.reincarnationCoin >= 10) {
+        player.reincarnationCoin -= 10;
+        const numbers = generateTraditionalLotteryNumbers();
+        player.traditionalLotteryNumbers = numbers;
+        updateTraditionalLotteryDisplay();
+        logAction(`购买了传统数字彩票，号码为：${numbers.join(', ')}`, 'info');
+        setTimeout(checkTraditionalLotteryResult, 1800000); // 30分钟后开奖
+    } else {
+        logAction("转生币不足！无法购买传统数字彩票", "error");
+    }
+}
+
+// 生成传统数字彩票号码
+function generateTraditionalLotteryNumbers() {
+    const numbers = [];
+    while (numbers.length < 6) {
+        const num = Math.floor(Math.random() * 50) + 1; // 生成1到50的随机数
+        if (!numbers.includes(num)) { // 确保号码不重复
+            numbers.push(num);
+        }
+    }
+    return numbers.sort((a, b) => a - b); // 返回排序后的号码
+}
+
+// 检查传统数字彩票结果
+function checkTraditionalLotteryResult() {
+    const winningNumbers = generateTraditionalLotteryNumbers();
+    const matchedNumbers = player.traditionalLotteryNumbers.filter(num => winningNumbers.includes(num)).length;
+    let reward = 0;
+    switch (matchedNumbers) {
+        case 6:
+            reward = 100000000;
+            break;
+        case 5:
+            reward = 10000000;
+            break;
+        case 4:
+            reward = 500000;
+            break;
+        case 3:
+            reward = 10000;
+            break;
+        case 2:
+            reward = 1000;
+            break;
+        case 1:
+            reward = 100;
+            break;
+    }
+    player.reincarnationCoin += reward;
+
+    // 添加开奖结果
+    player.lotteryResults.unshift({
+        type: '传统数字彩票',
+        numbers: winningNumbers,
+        matched: matchedNumbers,
+        reward
+    });
+
+    // 保持开奖结果不超过 20 条
+    if (player.lotteryResults.length > 20) {
+        player.lotteryResults.pop(); // 移除最旧的一条开奖结果
+    }
+
+    logAction(`传统数字彩票开奖结果：中奖号码为 ${winningNumbers.join(', ')}，你中了 ${matchedNumbers} 个号码，获得 ${reward} 转生币`, 'success');
+    updateLotteryResultsDisplay();
+}
+
+// 购买蛇年刮刮卡
+function buySnakeScratchCard() {
+    if (player.reincarnationCoin >= 50) {
+        player.reincarnationCoin -= 50;
+        const reward = getSnakeScratchCardReward();
+        player.reincarnationCoin += reward;
+
+        // 添加开奖结果
+        player.lotteryResults.unshift({
+            type: '蛇年刮刮卡',
+            reward
+        });
+
+        // 保持开奖结果不超过 20 条
+        if (player.lotteryResults.length > 20) {
+            player.lotteryResults.pop(); // 移除最旧的一条开奖结果
+        }
+        logAction(`购买了蛇年刮刮卡，获得 ${reward} 转生币`, 'info');
+        updateLotteryResultsDisplay();
+    } else {
+        logAction("转生币不足！无法购买蛇年刮刮卡", "error");
+    }
+}
+
+// 获取蛇年刮刮卡奖励
+function getSnakeScratchCardReward() {
+    const rand = Math.random();
+    if (rand < 0.6) return 0;
+    if (rand < 0.95) return Math.floor(Math.random() * 91) + 10; // 10-100
+    if (rand < 0.989) return Math.floor(Math.random() * 401) + 100; // 100-500
+    if (rand < 0.999) return Math.floor(Math.random() * 1501) + 500; // 500-2000
+    return Math.floor(Math.random() * 8001) + 2000; // 2000-10000
+}
+
+// 购买发财刮刮卡
+function buyFortuneScratchCard() {
+    if (player.reincarnationCoin >= 500) {
+        player.reincarnationCoin -= 500;
+        const reward = getFortuneScratchCardReward();
+        player.reincarnationCoin += reward;
+
+        // 添加开奖结果
+        player.lotteryResults.unshift({
+            type: '发财刮刮卡',
+            reward
+        });
+
+        // 保持开奖结果不超过 20 条
+        if (player.lotteryResults.length > 20) {
+            player.lotteryResults.pop(); // 移除最旧的一条开奖结果
+        }
+        logAction(`购买了发财刮刮卡，获得 ${reward} 转生币`, 'info');
+        updateLotteryResultsDisplay();
+    } else {
+        logAction("转生币不足！无法购买发财刮刮卡", "error");
+    }
+}
+
+// 获取发财刮刮卡奖励
+function getFortuneScratchCardReward() {
+    const rand = Math.random();
+    if (rand < 0.6) return 0;
+    if (rand < 0.95) return Math.floor(Math.random() * 901) + 100; // 100-1000
+    if (rand < 0.989) return Math.floor(Math.random() * 4001) + 1000; // 1000-5000
+    if (rand < 0.999) return Math.floor(Math.random() * 15001) + 5000; // 5000-20000
+    return Math.floor(Math.random() * 80001) + 20000; // 20000-100000
+}
+
+// 更新传统数字彩票显示
+function updateTraditionalLotteryDisplay() {
+    const container = document.getElementById('traditionalLotteryNumbers');
+    if (player.traditionalLotteryNumbers && player.traditionalLotteryNumbers.length > 0) {
+        container.textContent = `你的号码：${player.traditionalLotteryNumbers.join(', ')}`;
+    } else {
+        container.textContent = "你还没有购买彩票";
+    }
+}
+
+// 更新开奖结果显示
+function updateLotteryResultsDisplay() {
+    const container = document.getElementById('lotteryResults');
+    container.innerHTML = player.lotteryResults
+        .slice(0, 20)
+        .map(result => {
+            if (result.type === '传统数字彩票') {
+                return `<div>${result.type} - 中奖号码: ${result.numbers.join(', ')}，你中了 ${result.matched} 个号码，获得 ${result.reward} 转生币</div>`;
+            } else {
+                return `<div>${result.type} - 获得 ${result.reward} 转生币</div>`;
+            }
+        })
+        .join('');
+}
+
+// 银行系统逻辑
+function depositToBank() {
+    const amount = parseInt(document.getElementById('bankAmount').value) || 0;
+    if (amount < 1) {
+        logAction("请输入有效的存款金额", "error");
+        return;
+    }
+    if (player.reincarnationCoin >= amount) {
+        player.reincarnationCoin -= amount;
+        player.bank.deposit += amount;
+        logAction(`成功存款 ${amount} 转生币`, "success");
+        updateBankDisplay();
+    } else {
+        logAction("转生币不足！", "error");
+    }
+}
+
+function withdrawFromBank() {
+    const amount = parseInt(document.getElementById('bankAmount').value) || 0;
+    if (amount < 1) {
+        logAction("请输入有效的取款金额", "error");
+        return;
+    }
+    if (player.bank.deposit >= amount) {
+        player.bank.deposit -= amount;
+        player.reincarnationCoin += amount;
+        logAction(`成功取款 ${amount} 转生币`, "success");
+        updateBankDisplay();
+    } else {
+        logAction("存款不足！", "error");
+    }
+}
+// 存款所有转生币
+function depositAllToBank() {
+    const amount = player.reincarnationCoin; // 获取当前所有转生币
+    if (amount < 1) {
+        logAction("没有可存款的转生币", "error");
+        return;
+    }
+
+    player.reincarnationCoin -= amount;
+    player.bank.deposit += amount;
+    logAction(`成功存款所有 ${amount} 转生币`, "success");
+    updateBankDisplay();
+}
+
+// 取款所有转生币
+function withdrawAllFromBank() {
+    const amount = player.bank.deposit; // 获取当前所有存款
+    if (amount < 1) {
+        logAction("没有可取款的转生币", "error");
+        return;
+    }
+
+    player.bank.deposit -= amount;
+    player.reincarnationCoin += amount;
+    logAction(`成功取款所有 ${amount} 转生币`, "success");
+    updateBankDisplay();
+}
+function calculateBankInterest() {
+    const now = Date.now();
+    const elapsed = now - player.bank.lastInterestUpdate;
+    const intervals = Math.floor(elapsed / (6 * 60 * 1000)); // 每6分钟计算一次利息
+
+    if (intervals > 0) {
+        const interestRate = 0.002; // 0.2% 利息
+        const interest = player.bank.deposit * interestRate * intervals;
+        player.bank.deposit += interest;
+        player.bank.lastInterestUpdate = now - (elapsed % (6 * 60 * 1000));
+        logAction(`银行利息: +${interest.toFixed(2)} 转生币`, "info");
+    }
+}
+
+function formatSci(value) {
+    if (value >= 1e8) {
+        return value.toExponential(3);
+    } else {
+        return value.toLocaleString();
+    }
+}
+
+// 更新银行显示函数
+function updateBankDisplay() {
+    document.getElementById("bankDeposit").textContent = formatSci(player.bank.deposit);
+    document.getElementById("bankTotal").textContent = formatSci(player.bank.deposit);
+}
+
+// 新增：副本装备系统
+function addDungeonEquipment(rarity) {
+    const config = dungeonEquipmentTypes[rarity];
+    const growthRate = Math.random() * (config.growthRange[1] - config.growthRange[0]) + config.growthRange[0];
+
+    // 检查是否已经有相同的副本装备
+    const existingEq = player.dungeonEquipment.find(eq => eq.rarity === rarity);
+    if (existingEq) {
+        existingEq.quantity = (existingEq.quantity || 1) + 1; // 增加数量
+        if (existingEq.quantity >= 3) {
+            existingEq.level++; // 升级装备等级
+            existingEq.quantity = 0; // 重置数量
+            logAction(`副本装备 ${existingEq.name} 升级至 Lv.${existingEq.level}`, 'success');
+        } else {
+            logAction(`获得副本装备：${existingEq.name} (数量: ${existingEq.quantity})`, 'info');
+        }
+    } else {
+        // 如果没有相同的副本装备，则添加新的装备
+        const newEq = {
+            name: config.name,
+            rarity: rarity,
+            level: 1,
+            growthRate: growthRate,
+            quantity: 1 // 初始化数量
+        };
+        player.dungeonEquipment.push(newEq);
+        logAction(`获得副本装备：${newEq.name}`, rarity);
+    }
+
+    updateDungeonEquipmentDisplay(); // 更新副本装备显示
+}
+
+function upgradeDungeonEquipment(index) {
+    const eq = player.dungeonEquipment[index];
+    const cost = eq.level * 100;
+    if (player.reincarnationCoin >= cost) {
+        player.reincarnationCoin -= cost;
+        eq.level++;
+        logAction(`升级副本装备：${eq.name} 至 Lv.${eq.level}`, eq.rarity);
+        updateDungeonEquipmentDisplay(); // 刷新副本装备页面
+        updateDisplay();
+    } else {
+        logAction("转生币不足！", "error");
+    }
+}
+
+function refineDungeonEquipment(index) {
+    const eq = player.dungeonEquipment[index];
+    if (player.items.refineStone > 0) {
+        player.items.refineStone--;
+        const config = dungeonEquipmentTypes[eq.rarity];
+        eq.growthRate = Math.random() * (config.growthRange[1] - config.growthRange[0]) + config.growthRange[0];
+        logAction(`洗炼副本装备：${eq.name}，新的成长属性为 ${(eq.growthRate * 100).toFixed(2)}%`, 'success');
+        updateDungeonEquipmentDisplay(); // 刷新副本装备页面
+        updateDisplay();
+    } else {
+        logAction("洗炼石不足！", "error");
+    }
+}
+
+function updateDungeonEquipmentDisplay() {
+
+    const container = document.getElementById('dungeonEquipmentContainer');
+    const rarityOrder = [
+        'common',
+        'rare',
+        'epic',
+        'legendary',
+        'ancient',
+        'divine',
+        'arcane',
+        'celestial',
+        'infernal',
+        'astral',
+        'primeval',
+        'transcendental',
+        'quantum',
+        'ultimate',
+        'ultimate1',
+        'ultimate2',
+        'ultimate3',
+        'ultimate4',
+        'ultimate5',
+        'ultimate6',
+        'ultimate7',
+        'ultimate8',
+        'ultimate9',
+        'ultimate10',
+        'ultimate11',
+        'ultimate12',
+        'ultimate13',
+        'ultimate14',
+        'ultimate15',
+        'ultimate16',
+        'ultimate17',
+        'ultimate18',
+        'ultimate19',
+        'ultimate20',
+        'ultimate21',
+        'ultimate22',
+        'ultimate23',
+        'ultimate24',
+        'ultimate25',
+        'ultimate26',
+        'ultimate27',
+        'ultimate28',
+        'ultimate29',
+        'ultimate30',
+        'ultimate31',
+        'ultimate32',
+        'ultimate33',
+        'ultimate34',
+        'ultimate35',
+        'ultimate36',
+        'ultimate37',
+        'ultimate38',
+        'ultimate39',
+        'ultimate40',
+        'ultimate41',
+        'ultimate42',
+        'ultimate43',
+        'ultimate44',
+        'ultimate45',
+        'ultimate46',
+        'ultimate47',
+        'ultimate48',
+        'ultimate49',
+        'ultimate50'
+    ];
+
+    // 按品质排序
+    const sortedEquipment = player.dungeonEquipment.sort((a, b) => {
+        // 先按品质排序
+        const rarityDiff = rarityOrder.indexOf(a.rarity) - rarityOrder.indexOf(b.rarity);
+        if (rarityDiff !== 0) return rarityDiff;
+
+        // 同品质按成长属性降序
+        return b.growthRate - a.growthRate;
+    });
+    const totalBonus = player.dungeonEquipment.reduce((sum, eq) => sum + eq.level * eq.growthRate, 0);
+    container.innerHTML = `
+        <div>总加成: +${(totalBonus * 100).toFixed(2)}%</div>
+        ${player.dungeonEquipment.map((eq, index) => `
+            <div class="equipment ${eq.rarity}">
+                ${eq.name} Lv.${eq.level} (数量: ${eq.quantity}/3, 成长属性: +${(eq.growthRate * 100).toFixed(2)}%)
+                <button onclick="refineDungeonEquipment(${index})">洗炼</button>
+                <button onclick="dismantleDungeonEquipment(${index})">分解</button>
+            </div>
+        `).join('')}
+    `;
+}
+
+// 分解副本装备
+function dismantleDungeonEquipment(index) {
+    const eq = player.dungeonEquipment[index];
+    player.dungeonEquipment.splice(index, 1);
+    logAction(`分解了副本装备：${eq.name}`, 'success');
+    updateDungeonEquipmentDisplay();
+}
+
+// 新增：魂环系统
+function addSoulRing(type) {
+    const existing = player.soulRings.find(r => r.type === type);
+    if (existing) {
+        existing.level++;
+    } else {
+        player.soulRings.push({
+            type: type,
+            level: 1,
+            multiplier: soulRingTypes[type].baseMult
+        });
+    }
+}
+
+function upgradeSoulRing(type) {
+    const ring = player.soulRings.find(r => r.type === type);
+    const cost = ring.level * soulRingTypes[type].costBase * 1000;
+
+    if (player.reincarnationCoin >= cost) {
+        player.reincarnationCoin -= cost;
+        ring.level++;
+
+        // 检查魂环成就
+        checkSoulRingAchievements(type, ring.level);
+
+        logAction(`${soulRingTypes[type].name} 升级到 Lv.${ring.level}`, 'success');
+    } else {
+        logAction("转生币不足！", "error");
+    }
+}
+
+function checkSoulRingAchievements(type, level) {
+    const achievements = [
+        { level: 10, key: `${type}_10` },
+        { level: 100, key: `${type}_100` },
+        { level: 1000, key: `${type}_1000` },
+        { level: 10000, key: `${type}_10000` },
+    ];
+
+    achievements.forEach(({ level: targetLevel, key }) => {
+        if (level >= targetLevel && !player.achievements[key]) {
+            player.achievements[key] = true;
+            const reward = achievementRewards[key];
+            if (reward) {
+                player.gpsMultiplier += reward.gpsMultiplier;
+                logAction(`成就达成：${reward.description}，GPS奖励 +${reward.gpsMultiplier * 100}%`, 'success');
+                updateAchievementsDisplay();
+            }
+        }
+    });
+}
+function updateSoulRingDisplay() {
+    const container = document.getElementById('soulRingsContainer');
+    container.innerHTML = player.soulRings.map(ring => `
+                <div class="equipment">
+                    ${soulRingTypes[ring.type].name} Lv.${ring.level}
+                    (全属性+${(ring.level * ring.multiplier * 100).toFixed(1)}%)
+
+                    </button>
+                </div>
+            `).join('');
+}
+function showRenameDialog() {
+    document.getElementById("renameDialog").style.display = "block";
+    document.getElementById("renameOverlay").style.display = "block";
+    document.getElementById("newNameInput").value = player.name;
+    document.getElementById("newNameInput").focus();
+}
+
+function cancelRename() {
+    document.getElementById("renameDialog").style.display = "none";
+    document.getElementById("renameOverlay").style.display = "none";
+}
+
+function confirmRename() {
+    const newName = document.getElementById("newNameInput").value.trim();
+    if (newName && newName.length <= 10) {
+        player.name = newName;
+        document.getElementById("playerName").textContent = newName;
+        saveGame();  // 确保保存玩家数据
+        cancelRename();
+    } else {
+        alert("请输入有效的名字（1-10个字符）");
+    }
+}
+
+// 界面更新
+function updateDisplay() {
+    const soulRingRingBonus = getTotalSoulRingBonus();
+    const dungeonEquipBonus = getTotalDungeonEquipBonus();
+    document.getElementById("playerName").textContent = player.name;
+    const currentTitleEl = document.getElementById("currentTitle");
+    currentTitleEl.textContent = player.titles.current ? `[${player.titles.current}]` : "";
+    // 数值显示
+    const display = (value) => {
+        if (value >= 1e8) {  // 当数值大于等于 100,000,000 时使用科学计数法
+            return value.toExponential(3);
+        } else {
+            return value.toLocaleString();  // 否则使用常规的数值显示
+        }
+    };
+
+
+    // 更新显示
+    document.getElementById("gold").textContent = display(player.gold);
+    document.getElementById("diamond").textContent = display(player.diamond);
+    document.getElementById("titanium").textContent = display(player.titanium);
+    document.getElementById("starstone").textContent = display(player.starstone);
+    document.getElementById("cosmicstone").textContent = display(player.cosmicstone);
+    document.getElementById("superstone").textContent = display(player.superstone);
+    document.getElementById("otherworldstone").textContent = display(player.otherworldstone);
+    document.getElementById("xingjiestone").textContent = display(player.xingjiestone);
+    document.getElementById("hundunstone").textContent = display(player.hundunstone);
+    document.getElementById("lingtone").textContent = display(player.lingtone);
+    document.getElementById("huangtone").textContent = display(player.huangtone);
+    document.getElementById("mingtone").textContent = display(player.mingtone);
+    document.getElementById("reincarnationCoin").textContent = display(player.reincarnationCoin);
+    document.getElementById("reincarnationCount").textContent = player.reincarnationCount;
+    document.getElementById("maxStage").textContent = player.battle.maxStage;
+    document.getElementById("gps").textContent = display(getTotalGPS());
+    document.getElementById("clickValue").textContent = display(getTotalClickValue());
+    document.getElementById("vipPowerCount").textContent = player.items.vipPower || 0;
+
+
+
+    // 更新材料宝箱购买成本显示
+    document.getElementById("materialChestCost").textContent = display(player.materialChestCost);
+
+    // 更新宝箱成本显示
+    document.getElementById("techniqueChestCost").textContent = player.techniqueChestCost;
+
+    // 更新怪物生命和攻击显示
+    if (player.battle.monster) {
+        document.getElementById("monsterHealth").textContent = display(player.battle.monster.health);
+        document.getElementById("monsterAttack").textContent = display(player.battle.monster.attack);
+    }
+
+    // 更新玩家攻击显示
+    document.getElementById("playerAttack").textContent = display(player.battle.playerAttack);
+
+    // 装备列表
+    const fragment = document.createDocumentFragment();
+    player.equipment.forEach((eq, index) => {
+        const div = document.createElement("div");
+        div.className = `equipment ${eq.rarity}`;
+        div.innerHTML = `
+        ${getEquipmentName(eq)} Lv.${eq.level}
+        (GPS +${eq.gps.toFixed(1)} 点击 +${eq.click.toFixed(1)})
+        <button onclick="useGem(${index}, 'primaryGem')">使用初级宝石</button>
+        <button onclick="useAllGems(${index}, 'primaryGem')">一键使用初级宝石</button>
+        <button onclick="useGem(${index}, 'advancedGem')">使用高级宝石</button>
+        <button onclick="useAllGems(${index}, 'advancedGem')">一键使用高级宝石</button>
+        <button onclick="useGem(${index}, 'superiorGem')">使用极品宝石</button>
+        <button onclick="useAllGems(${index}, 'superiorGem')">一键使用极品宝石</button>
+        <button onclick="useGem(${index}, 'divineGem')">使用神级宝石</button>
+        <button onclick="useAllGems(${index}, 'divineGem')">一键使用神级宝石</button>
+        <div class="tooltip">
+                品质: ${eq.name}<br>
+                等级: ${eq.level}<br>
+                成长率: +${(eq.growthRate * 100).toFixed(1)}%/级<br>
+                宝石加成: +${(eq.gemMultiplier * 100).toFixed(2)}%<br>
+                收藏物加成: +${(eq.collectionMultiplier * 100).toFixed(5)}%<br>
+                转生加成: 每级装备属性 +${player.reincarnationStats.gpsBonus.level * 100}%<br>
+                转生加成: 装备初始等级 +${player.reincarnationStats.equipmentLevelBonus.level * 200} 级<br>
+                转生加成: 点击上限 +${player.reincarnationStats.clickLimitBonus.level} 次/秒<br>
+                宠物加成: ${Object.entries(player.pets).map(([key, pet]) => `${petConfig[key].name}: +${(pet.level * pet.multiplier * 100).toFixed(2)}%`).join('<br>')}
+            </div>
+        `;
+        fragment.appendChild(div);
+    });
+    document.getElementById("equipmentList").innerHTML = "";
+    document.getElementById("equipmentList").appendChild(fragment);
+
+    // 日志
+    document.getElementById("actionLog").innerHTML = player.actionLogs
+        .map(log => `<div class="${log.type}">[${log.timestamp}] ${log.message}</div>`)
+        .join("");
+
+    // 成就
+    updateAchievementsDisplay();
+    localStorage.setItem("goldGameSave", JSON.stringify(player));
+}
+
+// 辅助函数
+function getEquipmentName(eq) {
+    return eq.name || equipmentTypes[eq.rarity]?.name || '神秘装备';
+}
+
+function validateRarity(rarity) {
+    return equipmentTypes[rarity] ? rarity : 'common';
+}
+
+function getDefaultGrowthRate(rarity) {
+    return equipmentTypes[rarity]?.growthRate || 0.01;
+}
+function formatSci(number) {
+    if (number >= 1e9) {
+        return number.toExponential(3)
+            .replace(/(\.\d+?)0+e/, '$1e')
+            .replace(/\.?e\+?/, 'e');
+    }
+    return Math.floor(number).toLocaleString();
+}
+
+
+function formatTime(ms) {
+    const seconds = Math.floor(ms / 1000);
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+
+    return [hours && `${hours}小时`, minutes && `${minutes}分`, `${secs}秒`]
+        .filter(Boolean).join(' ');
+}
+
+function logAction(message, type = 'info') {
+    const timestamp = new Date().toLocaleTimeString();
+
+    // 辅助函数：将大数值转换为科学计数法
+    const formatNumber = (value) => {
+        if (value >= 1e8) { // 当数值大于等于 100,000,000 时使用科学计数法
+            return value.toExponential(3);
+        } else {
+            return value.toLocaleString(); // 否则使用常规的数值显示
+        }
+    };
+
+    // 格式化消息中的数值
+    const formattedMessage = message.replace(/\d+(\.\d+)?/g, (match) => {
+        const number = parseFloat(match);
+        return formatNumber(number);
+    });
+
+    // 添加到统一日志数组
+    player.actionLogs.unshift({ message: formattedMessage, type, timestamp });
+    // 保持日志长度不超过 20 条
+    if (player.actionLogs.length > 20) {
+        player.actionLogs.pop(); // 移除最旧的一条日志
+    }
+
+    // 原有 DOM 更新逻辑保持不变...
+    const logEntry = document.createElement('div');
+    logEntry.className = type;
+    logEntry.textContent = `[${timestamp}] ${message}`;
+
+    const logContainer = document.getElementById('actionLog');
+    logContainer.insertBefore(logEntry, logContainer.firstChild);
+
+    if (logContainer.children.length > 20) {
+        logContainer.removeChild(logContainer.lastChild);
+    }
+}
+
+// 保存游戏
+function saveGame() {
+    player.lastUpdate = Date.now(); // 确保保存时更新最后更新时间
+    player.actionLogs = player.actionLogs.slice(0, 5);
+    player.lotteryResults = player.lotteryResults.slice(0, 5);
+    player.mystery.lastUpdateTime = Date.now();
+    player.tower.lastUpdate = Date.now();
+    localStorage.setItem('goldGameSave', JSON.stringify(player));
+    logAction('游戏已保存', 'success');
+}
+
+// 加载游戏
+function loadGame() {
+    loadSave();
+    updateDisplay();
+    calculateTotalGPS();
+    logAction('游戏已加载', 'success');
+}
+const ENCRYPTION_KEY = "your-secure-key-here-123";
+// 导出存档
+function exportSave() {
+    try {
+        // 转换玩家数据为JSON字符串
+        const saveData = JSON.stringify(player);
+        // 使用AES加密
+        const encryptedData = CryptoJS.AES.encrypt(
+            saveData,
+            ENCRYPTION_KEY
+        ).toString();
+
+        // 复制加密后的数据到剪贴板
+        const textArea = document.createElement('textarea');
+        textArea.value = encryptedData;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        logAction('加密存档已复制到剪贴板', 'success');
+    } catch (error) {
+        logAction('存档导出失败', 'error');
+        console.error('导出错误:', error);
+    }
+}
+
+// 导入存档
+function importSave() {
+    showCustomPrompt('请输入加密存档代码：', (encryptedData) => {
+        if (encryptedData) {
+            try {
+                // 解密数据
+                const bytes = CryptoJS.AES.decrypt(encryptedData, ENCRYPTION_KEY);
+                const saveData = bytes.toString(CryptoJS.enc.Utf8);
+
+                // 解析并迁移存档
+                const save = JSON.parse(saveData);
+                player = migrateSaveData(save);
+                updateDisplay();
+                logAction('加密存档已导入', 'success');
+            } catch (error) {
+                logAction('存档导入失败（可能是无效的存档或密钥错误）', 'error');
+                console.error('导入错误:', error);
+            }
+        }
+    });
+}
+function resetItems() {
+    showCustomConfirm('确定要重置道具数据吗？所有道具将被清除！', (confirmed) => {
+        if (confirmed) {
+            // 重置道具数据
+            player.items = {
+                primaryGem: 0,
+                advancedGem: 0,
+                superiorGem: 0,
+                divineGem: 0,
+                vipPower: 0,
+                refineStone: 0
+            };
+
+            // 更新道具页面
+            updateItemDisplay();
+            logAction('道具数据已重置', 'success');
+        }
+    });
+}
+// 重置游戏
+function resetGame() {
+    showCustomConfirm('确定要重置游戏吗？所有进度将丢失！', (confirmed) => {
+        if (confirmed) {
+            localStorage.removeItem('goldGameSave');
+            player = {
+                gold: 0,
+                diamond: 0,
+                titanium: 0,
+                starstone: 0,
+                cosmicstone: 0,
+                superstone: 0,
+                otherworldstone: 0,
+                xingjiestone: 0,
+                hundunstone: 0,
+                lingtone: 0,
+                huangtone: 0,
+                mingtone: 0,
+                reincarnationCoin: 0,
+                reincarnationCount: 0,
+                equipment: [],
+                vip: {
+                    level: 1,
+                    power: 0, // 累计VIP能力值数量
+                },
+                items: {
+                    primaryGem: 0,
+                    advancedGem: 0,
+                    superiorGem: 0,
+                    divineGem: 0,
+                    vipPower: 0,
+                    refineStone: 0 // 新增洗炼石
+                },
+                collections: {
+                    lightSpeedHand: 0,
+                    empHand: 0,
+                    godlyHand: 0,
+                    quickHand: 0,
+                    shadowHand: 0,
+                    quantumHand: 0,
+                    lightningHand: 0,
+                    divineHand: 0
+                },
+                pets: {
+                    thunderKirin: { level: 0, cost: 1, multiplier: 0.10 },
+                    chaosTaotie: { level: 0, cost: 1, multiplier: 0.50 },
+                    netherQiongqi: { level: 0, cost: 1, multiplier: 2.50 },
+                    abyssKun: { level: 0, cost: 1, multiplier: 12.50 },
+                    primordialZhuLong: { level: 0, cost: 1, multiplier: 62.50 },
+                    wanJunSuanNi: { level: 0, cost: 1, multiplier: 312.50 },
+                    yanYuBiAn: { level: 0, cost: 1, multiplier: 1562.50 },
+                    yuyu1: { level: 0, cost: 1, multiplier: 7812.50 },
+                    yuyu2: { level: 0, cost: 1, multiplier: 39062.50 },
+                    yuyu3: { level: 0, cost: 1, multiplier: 195312.50 },
+                    yuyu4: { level: 0, cost: 1, multiplier: 976562.50 },
+                    yuyu5: { level: 0, cost: 1, multiplier: 5882812.50 }
+
+                },
+                dungeonEquipment: [], // 新增副本装备
+                soulRings: [], // 新增魂环系统
+                techniques: {},
+                attributes: {
+                    totalPoints: 0,
+                    remainingPoints: 0,
+                    health: 0,
+                    attack: 0,
+                    critRate: 0,
+                    critDamage: 0,
+                    multiAttack: 0,
+                    block: 0
+                },
+                lastUpdate: Date.now(),
+                achievements: {
+                    first_equipment: false,
+                    first_rare: false,
+                    first_epic: false,
+                    first_legendary: false,
+                    first_ancient: false,
+                    first_divine: false,
+                    first_arcane: false,
+                    first_celestial: false,
+                    first_infernal: false,
+                    first_astral: false,
+                    first_primeval: false,
+                    first_transcendental: false,
+                    first_quantum: false,
+                    first_ultimate: false,
+                    first_chaos: false,
+                    first_eternal: false,
+                    first_void: false,
+                    first_genesis: false,
+                    first_divineRealm: false,
+                    first_apocalypse: false,
+                    first_yeyu1: false,
+                    first_yeyu2: false,
+                    first_yeyu3: false,
+                    first_yeyu4: false,
+                    first_yeyu5: false,
+                    first_yeyu6: false,
+                    first_yeyu7: false,
+                    first_yeyu8: false,
+                    first_yeyu9: false,
+                    first_yeyu10: false,
+                    first_yeyu11: false,
+                    first_yeyu12: false,
+                    first_yeyu13: false,
+                    first_yeyu14: false,
+                    first_yeyu15: false,
+
+                    // 宝箱成就
+                    common_chest_100: false,
+                    common_chest_10000: false,
+                    common_chest_1000000: false,
+                    common_chest_10000000: false,
+                    common_chest_100000000: false,
+                    advanced_chest_100: false,
+                    advanced_chest_10000: false,
+                    advanced_chest_1000000: false,
+                    advanced_chest_10000000: false,
+                    advanced_chest_100000000: false,
+                    rare_chest_100: false,
+                    rare_chest_10000: false,
+                    rare_chest_1000000: false,
+                    rare_chest_10000000: false,
+                    rare_chest_100000000: false,
+                    epic_chest_100: false,
+                    epic_chest_10000: false,
+                    epic_chest_1000000: false,
+                    epic_chest_10000000: false,
+                    epic_chest_100000000: false,
+                    legendary_chest_100: false,
+                    legendary_chest_10000: false,
+                    legendary_chest_1000000: false,
+                    legendary_chest_10000000: false,
+                    legendary_chest_100000000: false,
+                    chaos_chest_100: false,
+                    chaos_chest_10000: false,
+                    chaos_chest_1000000: false,
+                    chaos_chest_10000000: false,
+                    chaos_chest_100000000: false,
+                    apocalypse_chest_100: false,
+                    apocalypse_chest_10000: false,
+                    apocalypse_chest_1000000: false,
+                    apocalypse_chest_10000000: false,
+                    apocalypse_chest_100000000: false,
+                    yeyu1_chest_100: false,
+                    yeyu1_chest_10000: false,
+                    yeyu1_chest_1000000: false,
+                    yeyu1_chest_10000000: false,
+                    yeyu1_chest_100000000: false,
+                    yeyu2_chest_100: false,
+                    yeyu2_chest_10000: false,
+                    yeyu2_chest_1000000: false,
+                    yeyu2_chest_10000000: false,
+                    yeyu2_chest_100000000: false,
+                    yeyu3_chest_100: false,
+                    yeyu3_chest_10000: false,
+                    yeyu3_chest_1000000: false,
+                    yeyu3_chest_10000000: false,
+                    yeyu3_chest_100000000: false,
+                    yeyu4_chest_100: false,
+                    yeyu4_chest_10000: false,
+                    yeyu4_chest_1000000: false,
+                    yeyu4_chest_10000000: false,
+                    yeyu4_chest_100000000: false,
+                    yeyu5_chest_100: false,
+                    yeyu5_chest_10000: false,
+                    yeyu5_chest_1000000: false,
+                    yeyu5_chest_10000000: false,
+                    yeyu5_chest_100000000: false,
+
+                    "max_stage_10": false,
+                    "max_stage_30": false,
+                    "max_stage_60": false,
+                    "max_stage_90": false,
+                    "max_stage_120": false,
+                    "max_stage_200": false,
+                    "max_stage_300": false,
+                    "max_stage_400": false,
+                    "max_stage_500": false,
+                    "max_stage_600": false,
+                    "max_stage_700": false,
+                    "max_stage_800": false,
+                    "max_stage_900": false,
+                    "max_stage_1000": false,
+
+                    // 新增宠物成就状态
+                    "thunderKirin_10": false,
+                    "thunderKirin_50": false,
+                    "thunderKirin_100": false,
+                    "chaosTaotie_10": false,
+                    "chaosTaotie_50": false,
+                    "chaosTaotie_100": false,
+                    "netherQiongqi_10": false,
+                    "netherQiongqi_50": false,
+                    "netherQiongqi_100": false,
+                    "abyssKun_10": false,
+                    "abyssKun_50": false,
+                    "abyssKun_100": false,
+                    "primordialZhuLong_10": false,
+                    "primordialZhuLong_50": false,
+                    "primordialZhuLong_100": false,
+                    "wanJunSuanNi_10": false,
+                    "wanJunSuanNi_50": false,
+                    "wanJunSuanNi_100": false,
+                    "yanYuBiAn_10": false,
+                    "yanYuBiAn_50": false,
+                    "yanYuBiAn_100": false,
+                    "yuyu1_10": false,
+                    "yuyu1_50": false,
+                    "yuyu1_100": false,
+                    "yuyu2_10": false,
+                    "yuyu2_50": false,
+                    "yuyu2_100": false,
+                    "yuyu3_10": false,
+                    "yuyu3_50": false,
+                    "yuyu3_100": false,
+                    "yuyu4_10": false,
+                    "yuyu4_50": false,
+                    "yuyu4_100": false,
+                    "yuyu5_10": false,
+                    "yuyu5_50": false,
+                    "yuyu5_100": false,
+                    // 新增魂环成就状态
+                    "year1_10": false,
+                    "year10_10": false,
+                    "year100_10": false,
+                    "year1000_10": false,
+                    "year10000_10": false,
+                    "year100000_10": false,
+                    "year1000000_10": false,
+                    "year10000000_10": false,
+                    "year100000000_10": false,
+                    "year1_100": false,
+                    "year10_100": false,
+                    "year100_100": false,
+                    "year1000_100": false,
+                    "year10000_100": false,
+                    "year100000_100": false,
+                    "year1000000_100": false,
+                    "year10000000_100": false,
+                    "year100000000_100": false,
+                    "year1_1000": false,
+                    "year10_1000": false,
+                    "year100_1000": false,
+                    "year1000_1000": false,
+                    "year10000_1000": false,
+                    "year100000_1000": false,
+                    "year1000000_1000": false,
+                    "year10000000_1000": false,
+                    "year100000000_1000": false,
+                    "year1_10000": false,
+                    "year10_10000": false,
+                    "year100_10000": false,
+                    "year1000_10000": false,
+                    "year10000_10000": false,
+                    "year100000_10000": false,
+                    "year1000000_10000": false,
+                    "year10000000_10000": false,
+                    "year100000000_10000": false,
+                    "year2_10": false,
+                    "year2_100": false,
+                    "year2_1000": false,
+                    "year2_10000": false,
+                    "year3_10": false,
+                    "year3_100": false,
+                    "year3_1000": false,
+                    "year3_10000": false,
+                    "year4_10": false,
+                    "year4_100": false,
+                    "year4_1000": false,
+                    "year4_10000": false,
+                    "year5_10": false,
+                    "year5_100": false,
+                    "year5_1000": false,
+                    "year5_10000": false,
+                    "year6_10": false,
+                    "year6_100": false,
+                    "year6_1000": false,
+                    "year6_10000": false,
+                    "year7_10": false,
+                    "year7_100": false,
+                    "year7_1000": false,
+                    "year7_10000": false,
+                    "year8_10": false,
+                    "year8_100": false,
+                    "year8_1000": false,
+                    "year8_10000": false,
+                    "year9_10": false,
+                    "year9_100": false,
+                    "year9_1000": false,
+                    "year9_10000": false,
+                    "year11_10": false,
+                    "year11_100": false,
+                    "year11_1000": false,
+                    "year11_10000": false,
+                    "year12_10": false,
+                    "year12_100": false,
+                    "year12_1000": false,
+                    "year12_10000": false,
+                    "year13_10": false,
+                    "year13_100": false,
+                    "year13_1000": false,
+                    "year13_10000": false,
+                    "year14_10": false,
+                    "year14_100": false,
+                    "year14_1000": false,
+                    "year14_10000": false,
+                    "year15_10": false,
+                    "year15_100": false,
+                    "year15_1000": false,
+                    "year15_10000": false,
+                    "year16_10": false,
+                    "year16_100": false,
+                    "year16_1000": false,
+                    "year16_10000": false,
+                    "year17_10": false,
+                    "year17_100": false,
+                    "year17_1000": false,
+                    "year17_10000": false,
+                    "year18_10": false,
+                    "year18_100": false,
+                    "year18_1000": false,
+                    "year18_10000": false,
+                    "year19_10": false,
+                    "year19_100": false,
+                    "year19_1000": false,
+                    "year19_10000": false,
+                    "year20_10": false,
+                    "year20_100": false,
+                    "year20_1000": false,
+                    "year20_10000": false,
+                    "year21_10": false,
+                    "year21_100": false,
+                    "year21_1000": false,
+                    "year21_10000": false,
+                    "year22_10": false,
+                    "year22_100": false,
+                    "year22_1000": false,
+                    "year22_10000": false,
+                    "year23_10": false,
+                    "year23_100": false,
+                    "year23_1000": false,
+                    "year23_10000": false,
+                    "year24_10": false,
+                    "year24_100": false,
+                    "year24_1000": false,
+                    "year24_10000": false,
+                    "year25_10": false,
+                    "year25_100": false,
+                    "year25_1000": false,
+                    "year25_10000": false,
+                    "year26_10": false,
+                    "year26_100": false,
+                    "year26_1000": false,
+                    "year26_10000": false,
+                    "year27_10": false,
+                    "year27_100": false,
+                    "year27_1000": false,
+                    "year27_10000": false,
+                    "year28_10": false,
+                    "year28_100": false,
+                    "year28_1000": false,
+                    "year28_10000": false,
+                    "year29_10": false,
+                    "year29_100": false,
+                    "year29_1000": false,
+                    "year29_10000": false,
+                    "year30_10": false,
+                    "year30_100": false,
+                    "year30_1000": false,
+                    "year30_10000": false,
+                    "year31_10": false,
+                    "year31_100": false,
+                    "year31_1000": false,
+                    "year31_10000": false,
+                    "year32_10": false,
+                    "year32_100": false,
+                    "year32_1000": false,
+                    "year32_10000": false,
+                    "year33_10": false,
+                    "year33_100": false,
+                    "year33_1000": false,
+                    "year33_10000": false,
+                    "year34_10": false,
+                    "year34_100": false,
+                    "year34_1000": false,
+                    "year34_10000": false,
+                    "year35_10": false,
+                    "year35_100": false,
+                    "year35_1000": false,
+                    "year35_10000": false,
+                    "year36_10": false,
+                    "year36_100": false,
+                    "year36_1000": false,
+                    "year36_10000": false,
+                    "year37_10": false,
+                    "year37_100": false,
+                    "year37_1000": false,
+                    "year37_10000": false,
+                    "world_boss_1st": false,
+                    "world_boss_top5": false,
+                    "world_boss_top10": false,
+                    "world_boss_participant": false,
+
+                    // 转生成就
+                    reincarnation_10: false,
+                    reincarnation_100: false,
+                    reincarnation_1000: false,
+                    reincarnation_10000: false
+                },
+                actionLogs: [], // 新增：统一存储所有操作日志
+                goldLogs: [], // 保留原有金币日志（如果仍需单独使用）
+                autoBuy: [false, false, false, false, false, false, false, false, false, false, false, false], // 对应 7 种宝箱的自动购买状态
+                autoBuyMaterialChest: false, // 新增：自动购买材料宝箱的状态
+                gpsMultiplier: 1,
+                clickMultiplier: 1,
+                autoConvert: false,
+                autoConvertCurrency: { gold: false, diamond: false, titanium: false, starstone: false }, // 新增：自动兑换货币状态
+                clickTimestamps: [],
+                chestCounts: { common: 0, advanced: 0, rare: 0, epic: 0, legendary: 0 },
+                reincarnationStats: {
+                    gpsBonus: { level: 0, cost: 1 },
+                    equipmentLevelBonus: { level: 0, cost: 1 },
+                    clickLimitBonus: { level: 0, cost: 1 }
+                },
+                materialChestCost: 1,
+                stockData: { // 新增股票数据
+                    stocks: [
+                        { name: '青龙至尊股', basePrice: 1, currentPrice: 1, lastPrice: 1, shares: 0, avgCost: 0 },
+                        { name: '白虎至尊股', basePrice: 10, currentPrice: 10, lastPrice: 10, shares: 0, avgCost: 0 },
+                        { name: '朱雀至尊股', basePrice: 100, currentPrice: 100, lastPrice: 100, shares: 0, avgCost: 0 },
+                        { name: '玄武至尊股', basePrice: 1000, currentPrice: 1000, lastPrice: 1000, shares: 0, avgCost: 0 },
+                        { name: '瑞兽白泽股', basePrice: 10000, currentPrice: 10000, lastPrice: 10000, shares: 0, avgCost: 0 }
+                    ],
+                    lastStockUpdate: Date.now()
+                },
+                lotteryResults: [], // 新增：彩票开奖结果
+                traditionalLotteryNumbers: [], // 新增：传统数字彩票号码
+                lastLotteryDraw: Date.now(), // 新增：上次开奖时间
+                bank: { // 新增银行系统
+                    deposit: 0, // 存款金额
+                    lastInterestUpdate: Date.now() // 上次利息计算时间
+                }
+            };
+            updateDisplay();
+            logAction('游戏已重置', 'success');
+        }
+    });
+}
+
+// 自定义对话框逻辑
+function showCustomConfirm(message, callback) {
+    const dialog = document.getElementById('customDialog');
+    const overlay = document.getElementById('dialogOverlay');
+    document.getElementById('dialogMessage').textContent = message;
+
+    dialog.style.display = 'block';
+    overlay.style.display = 'block';
+
+    const confirmBtn = document.getElementById('dialogConfirm');
+    const cancelBtn = document.getElementById('dialogCancel');
+
+    const handler = (result) => {
+        dialog.style.display = 'none';
+        overlay.style.display = 'none';
+        callback(result);
+        confirmBtn.removeEventListener('click', confirmHandler);
+        cancelBtn.removeEventListener('click', cancelHandler);
+    };
+
+    const confirmHandler = () => handler(true);
+    const cancelHandler = () => handler(false);
+
+    confirmBtn.addEventListener('click', confirmHandler);
+    cancelBtn.addEventListener('click', cancelHandler);
+}
+
+function showCustomPrompt(message, callback) {
+    const dialog = document.getElementById('customDialog');
+    const overlay = document.getElementById('dialogOverlay');
+    document.getElementById('dialogMessage').textContent = message;
+    document.getElementById('dialogInput').style.display = 'block'; // 显示输入框
+    document.getElementById('dialogInput').value = ''; // 清空输入框
+
+    dialog.style.display = 'block';
+    overlay.style.display = 'block';
+
+    const confirmBtn = document.getElementById('dialogConfirm');
+    const cancelBtn = document.getElementById('dialogCancel');
+
+    const handler = (result) => {
+        dialog.style.display = 'none';
+        overlay.style.display = 'none';
+        document.getElementById('dialogInput').style.display = 'none'; // 隐藏输入框
+        callback(result);
+        confirmBtn.removeEventListener('click', confirmHandler);
+        cancelBtn.removeEventListener('click', cancelHandler);
+    };
+
+    const confirmHandler = () => handler(document.getElementById('dialogInput').value);
+    const cancelHandler = () => handler(null);
+
+    confirmBtn.addEventListener('click', confirmHandler);
+    cancelBtn.addEventListener('click', cancelHandler);
+}
+
+// 游戏初始化
+loadSave();
+setInterval(() => {
+    let gpsPerSecond = getTotalGPS();
+    // 如果在线且开启了加速，应用100倍加成
+    if (document.visibilityState === 'visible' && player.onlineBoostEnabled) {
+        gpsPerSecond *= 100;
+    }
+    player.gold += gpsPerSecond; // 每秒增加GPS
+    autoConvertCurrency();
+    initAutoDecomposeUI();
+    checkAutoBuy();
+    updateStockPrices();
+    calculateBankInterest();
+    updateDisplay();
+}, 1000);
+updateDisplay();
+
+// 页面可见性监听
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+        loadSave();
+        updateDisplay();
+    }
+});
+
+// 新增：切换游戏日志分页
+function switchLogTab(page) {
+    document.getElementById('gameLogPage1').classList.remove('active');
+    document.getElementById('gameLogPage2').classList.remove('active');
+    document.getElementById('gameLogPage3').classList.remove('active');
+    document.getElementById('gameLogPage4').classList.remove('active');
+    document.getElementById(`gameLogPage${page}`).classList.add('active');
+    document.querySelectorAll('.log-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector(`.log-tab[onclick="switchLogTab(${page})"]`).classList.add('active');
+}
+
+// 新增：打怪模式逻辑
+function toggleMonsterUI() {
+    // 检查转生次数是否达到2次
+    if (player.reincarnationCount < 2) {
+        alert("需要达到2转才能开启打怪模式！");
+        return;
+    }
+    const monsterUI = document.getElementById('monsterUI');
+    monsterUI.style.display = monsterUI.style.display === 'none' ? 'block' : 'none';
+    if (monsterUI.style.display === 'block') {
+        // 重新生成玩家属性，但不重新生成怪物
+        player.battle.playerHealth = player.reincarnationCount;
+        player.battle.playerAttack = getTotalClickValue();
+        updateOfficialSystemDisplay();
+        updateMonsterUI(); // 更新UI显示
+
+    }
+}
+
+function startBattle() {
+    player.battle.playerHealth = 1 + player.reincarnationCount;
+    player.battle.playerAttack = 1 + getTotalClickValue();
+    player.battle.playerCritRate = 0.1 + player.attributes.critRate * 0.0005; // 初始暴击率 + 属性加成
+    player.battle.playerCritDamage = 1.5 + player.attributes.critDamage * 0.005; // 初始爆伤 + 属性加成
+    player.battle.currentStage = player.battle.currentStage || 0;
+    player.battle.maxStage = Math.max(player.battle.maxStage, player.battle.currentStage);
+    updateOfficialSystemDisplay();
+    updateMonsterUI(); // 更新UI显示
+}
+
+const monsterModifiers = {
+    // 防御类词条
+    "硬化": { damageReduction: 0.10 }, // 受到伤害减少10%
+    "钢铁": { damageReduction: 0.20 }, // 受到伤害减少20%
+    "金身": { damageReduction: 0.50 }, // 受到伤害减少50%
+    "不败": { damageReduction: 0.70 }, // 受到伤害减少70%
+    "圣体": { damageReduction: 0.80 }, // 受到伤害减少80%
+    "不死": { damageReduction: 0.99 }, // 受到伤害减少99%
+
+    // 攻击类词条
+    "强击": { attackMultiplier: 1.10 }, // 攻击增加10%
+    "突击": { attackMultiplier: 1.20 }, // 攻击增加20%
+    "嗜血": { attackMultiplier: 1.30 }, // 攻击增加30%
+    "炼狱": { attackMultiplier: 1.40 }, // 攻击增加40%
+    "修罗": { attackMultiplier: 1.50 }, // 攻击增加50%
+    "死神": { attackMultiplier: 2.00 }, // 攻击增加100%
+
+    // 闪避类词条
+    "初级闪避": { dodgeChance: 0.10 }, // 闪避增加10%
+    "中级闪避": { dodgeChance: 0.20 }, // 闪避增加20%
+    "高级闪避": { dodgeChance: 0.30 }, // 闪避增加30%
+    "终极闪避": { dodgeChance: 0.40 }, // 闪避增加40%
+    "神级闪避": { dodgeChance: 0.50 }, // 闪避增加50%
+
+    // 特殊效果类词条
+    "抵消": { blockCount: 1 }, // 可以抵消玩家1次攻击
+    "金光": { blockCount: 2 }, // 可以抵消玩家2次攻击
+    "神盾": { blockCount: 3 }, // 可以抵消玩家3次攻击
+
+    // 特殊攻击类词条
+    "连击": { attackCount: 2 }, // 攻击2次
+    "虚弱": { damageTakenMultiplier: 1.50 } // 受到玩家伤害增加50%
+};
+
+const monsterRankModifiers = {
+    "普通": { pool: ["硬化", "强击", "初级闪避", "虚弱"], selectCount: 2 },
+    "精英": { pool: ["连击", "硬化", "强击", "初级闪避"], selectCount: 2 },
+    "普通BOSS": { pool: ["虚弱", "连击", "钢铁", "突击", "初级闪避"], selectCount: 3 },
+    "特殊BOSS": { pool: ["连击", "硬化", "钢铁", "突击", "中级闪避"], selectCount: 3 },
+    "领主BOSS": { pool: ["连击", "钢铁", "突击", "嗜血", "中级闪避", "抵消"], selectCount: 4 },
+    "霸主级BOSS": { pool: ["钢铁", "金身", "连击", "嗜血", "突击", "中级闪避", "抵消"], selectCount: 4 },
+    "王级BOSS": { pool: ["连击", "初级闪避", "金身", "炼狱", "嗜血", "高级闪避", "抵消"], selectCount: 4 },
+    "皇级BOSS": { pool: ["连击", "初级闪避", "不败", "炼狱", "高级闪避", "抵消"], selectCount: 4 },
+    "帝级BOSS": { pool: ["连击", "不败", "中级闪避", "炼狱", "修罗", "高级闪避", "金光"], selectCount: 4 },
+    "神级BOSS": { pool: ["连击", "圣体", "修罗", "终极闪避", "金光", "死神"], selectCount: 5 },
+    "圣级BOSS": { pool: ["连击", "不死", "死神", "神级闪避", "神盾", "终极闪避"], selectCount: 5 }
+};
+const monsterNames = [
+    "夜叉丸", "玄天青龙帝", "九幽冥凤尊", "太虚剑仙·凌霄", "紫微星君·太华",
+    "黄泉引渡使", "焚天炎龙圣主", "噬魂夜叉皇", "青丘九尾天狐", "白骨夫人·夜魅",
+    "天河银蛟龙王", "幽冥骑士·龙煞", "永恒梦魇·修普诺斯", "幽冥鬼判·玄煞", "金翅大鹏明王",
+    "天启四骑士·天罚", "混沌主宰", "哥布林", "太虚剑灵", "月宫蟾仙",
+    "九幽煞魔", "幽冥鬼王", "幽狱魔尊", "混元道傀", "八荒龙神",
+    "炎阳帝君", "星垣神王", "黄金狮心王·理查德", "幽冥鬼判·玄煞", "金翅大鹏明王",
+    "玉虚雷神将", "鸿蒙祖神", "玄天帝君", "风暴之眼", "暗月武士·凯恩",
+    "黑丝女神·闫闫", "萝莉·茶茶", "修罗刀魔·无间", "机械降神·欧米茄", "光年守望者·天狼",
+    "寒冰之魂", "血月狼王·芬里尔", "永恒黑暗·厄瑞玻斯", "虚数之龙·阿莱夫", "数据化身·尼奥"
+];
+
+function getRandomMonsterName() {
+    return monsterNames[Math.floor(Math.random() * monsterNames.length)];
+}
+
+function generateMonster() {
+    const stage = player.battle.currentStage;
+    const monsterRanks = ['普通', '精英', '普通BOSS', '特殊BOSS', '领主BOSS', '霸主级BOSS', '王级BOSS', '皇级BOSS', '帝级BOSS', '神级BOSS', '圣级BOSS'];
+    const rankProbabilities = [0.45, 0.20, 0.10, 0.06, 0.05, 0.04, 0.03, 0.03, 0.02, 0.015, 0.005];
+
+    // 随机生成怪物品阶
+    let rankIndex = 0;
+    let rand = Math.random();
+    for (let i = 0; i < rankProbabilities.length; i++) {
+        rand -= rankProbabilities[i];
+        if (rand < 0) {
+            rankIndex = i;
+            break;
+        }
+    }
+    const rank = monsterRanks[rankIndex];
+
+    // 根据品阶选择词条
+    const modifierPool = monsterRankModifiers[rank].pool;
+    const selectCount = monsterRankModifiers[rank].selectCount;
+    const selectedModifiers = [];
+    const usedModifiers = new Set(); // 用于记录已经使用的词条
+
+    for (let i = 0; i < selectCount; i++) {
+        let modifier;
+        do {
+            modifier = modifierPool[Math.floor(Math.random() * modifierPool.length)];
+        } while (usedModifiers.has(modifier)); // 确保词条不重复
+        usedModifiers.add(modifier); // 记录已使用的词条
+        selectedModifiers.push(modifier);
+    }
+
+    // 计算怪物属性
+    const healthMultiplier = Math.pow(2, stage);
+    let attackMultiplier;
+    if (stage <= 5) {
+        attackMultiplier = Math.floor(Math.random() * 3) + 1;
+    } else if (stage <= 15) {
+        attackMultiplier = Math.floor(Math.random() * 5) + 10;
+    } else if (stage <= 25) {
+        attackMultiplier = Math.floor(Math.random() * 25) + 20;
+    } else if (stage <= 40) {
+        attackMultiplier = Math.floor(Math.random() * 50) + 50;
+    } else if (stage <= 65) {
+        attackMultiplier = Math.floor(Math.random() * 90) + 100;
+    } else if (stage <= 90) {
+        attackMultiplier = Math.floor(Math.random() * 120) + 250;
+    } else if (stage <= 120) {
+        attackMultiplier = Math.floor(Math.random() * 180) + 1000;
+    } else if (stage <= 180) {
+        attackMultiplier = Math.floor(Math.random() * 200) + 5000;
+    } else if (stage <= 220) {
+        attackMultiplier = Math.floor(Math.random() * 250) + 10000;
+    } else if (stage <= 250) {
+        attackMultiplier = Math.floor(Math.random() * 300) + 30000;
+    } else if (stage <= 300) {
+        attackMultiplier = Math.floor(Math.random() * 400) + 40000;
+    } else if (stage <= 350) {
+        attackMultiplier = Math.floor(Math.random() * 600) + 50000;
+    } else if (stage <= 400) {
+        attackMultiplier = Math.floor(Math.random() * 800) + 75000;
+    } else if (stage <= 500) {
+        attackMultiplier = Math.floor(Math.random() * 1000) + 90000;
+    } else {
+        attackMultiplier = 100000 + (stage - 500) * 10000;
+    }
+
+    // 应用词条效果
+    let attack = attackMultiplier;
+    let damageReduction = 0;
+    let dodgeChance = 0;
+    let blockCount = 0;
+    let attackCount = 1;
+    let damageTakenMultiplier = 1;
+
+    selectedModifiers.forEach(modifier => {
+        const effect = monsterModifiers[modifier];
+        if (effect.attackMultiplier) attack *= effect.attackMultiplier;
+        if (effect.damageReduction) damageReduction += effect.damageReduction;
+        if (effect.dodgeChance) dodgeChance += effect.dodgeChance;
+        if (effect.blockCount) blockCount += effect.blockCount;
+        if (effect.attackCount) attackCount = effect.attackCount;
+        if (effect.damageTakenMultiplier) damageTakenMultiplier *= effect.damageTakenMultiplier;
+    });
+
+    // 生成怪物
+    player.battle.monster = {
+        name: `${getRandomMonsterName()}             等级${attackMultiplier * 2 + 7}`, // 随机生成怪物名字
+        rank: rank,
+        health: 10000 * healthMultiplier,
+        attack: attack,
+        modifiers: selectedModifiers,
+        damageReduction: damageReduction,
+        dodgeChance: dodgeChance,
+        blockCount: blockCount,
+        attackCount: attackCount,
+        damageTakenMultiplier: damageTakenMultiplier
+    };
+}
+
+function updateMonsterUI() {
+    document.getElementById('playerHealth').textContent = player.battle.playerHealth.toExponential(3);
+    document.getElementById('playerAttack').textContent = player.battle.playerAttack.toExponential(3);
+    document.getElementById('playerCritRate').textContent = `${((player.battle.playerCritRate + player.attributes.critRate * 0.0005) * 100).toFixed(1)}%`; // 更新暴击率显示
+    document.getElementById('playerCritDamage').textContent = `${((player.battle.playerCritDamage + player.attributes.critDamage * 0.005) * 100).toFixed(1)}%`; // 更新爆伤显示
+    document.getElementById('playerAccuracy').textContent = `${(player.battle.playerAccuracy * 100).toFixed(1)}%`;
+    document.getElementById('playerDodge').textContent = `${(player.battle.playerDodge * 100).toFixed(1)}%`;
+
+    document.getElementById('currentStage').textContent = player.battle.currentStage + 1;
+    document.getElementById('monsterName').textContent = player.battle.monster.name;
+    document.getElementById('monsterRank').textContent = player.battle.monster.rank;
+    document.getElementById('monsterHealth').textContent = player.battle.monster.health.toExponential(3);
+    document.getElementById('monsterAttack').textContent = player.battle.monster.attack.toLocaleString();
+
+    // 显示怪物词条
+    const modifiers = player.battle.monster.modifiers.join(', ');
+    document.getElementById('monsterModifiers').textContent = ` ${modifiers}`;
+}
+function attackMonster() {
+    const monster = player.battle.monster;
+
+    // 应用属性加成
+    const playerAttack = player.battle.playerAttack;
+    const playerCritRate = player.battle.playerCritRate;
+    const playerCritDamage = player.battle.playerCritDamage;
+    const playerMultiAttack = player.battle.playerMultiAttack;
+    const playerBlock = Math.floor(player.attributes.block / 5000000); // 每5000000点抵消属性点抵消1次攻击
+
+    // 新增：统计变量
+    let totalDamage = 0;           // 总伤害
+    let dodgeCount = 0;            // 闪避次数
+    let critCount = 0;             // 暴击次数
+    let normalDamage = 0;          // 普通伤害总和
+    const totalAttacks = playerMultiAttack + 1; // 总连击次数
+
+    // 连击次数
+    for (let i = 0; i < totalAttacks; i++) {
+        // 计算命中
+        if (Math.random() < monster.dodgeChance) {
+            dodgeCount++; // 记录闪避次数
+            continue;
+        }
+
+        // 计算伤害
+        let damage = playerAttack * monster.damageTakenMultiplier;
+        damage *= (1 - monster.damageReduction); // 应用伤害减免
+
+        // 抵消效果
+        if (monster.blockCount > 0) {
+            monster.blockCount--;
+            logBattleAction(`你的攻击被抵消了！怪物剩余抵消次数：${monster.blockCount}`);
+            continue;
+        }
+
+        // 暴击计算
+        if (Math.random() < playerCritRate) {
+            damage *= playerCritDamage; // 应用爆伤加成
+            critCount++;
+            totalDamage += damage;
+        } else {
+            normalDamage += damage;
+            totalDamage += damage;
+        }
+
+        // 应用伤害
+        monster.health -= damage;
+
+        if (monster.health <= 0) {
+            break; // 如果怪物被击败，跳出连击循环
+        }
+    }
+
+    // 新增：输出综合攻击日志
+    logBattleAction(`你造成了${totalDamage.toFixed(0)}点伤害 (${totalAttacks}连击) - 普通伤害: ${normalDamage.toFixed(0)}, 闪避x${dodgeCount} 暴击x${critCount}`);
+
+    // 检查怪物是否被击败
+    if (monster.health <= 0) {
+        logBattleAction(`你击败了${monster.name}，通关第${player.battle.currentStage + 1}关！`);
+        player.battle.currentStage++;
+        player.battle.maxStage = Math.max(player.battle.maxStage, player.battle.currentStage);
+
+        updatePlayerBattleStats();
+        // 更新总属性点
+        player.attributes.totalPoints = player.reincarnationCount * 1 + player.battle.maxStage * 10;
+        // 检查最大关卡成就
+        checkMaxStageAchievements();
+        // 新增：检查称号解锁
+        checkTitleUnlocks();
+        updateOfficialSystemDisplay();
+        // 掉落副本装备
+        dropDungeonEquipment(player.battle.currentStage);
+
+        // 掉落魂环
+        dropSoulRing(player.battle.currentStage);
+
+        // 掉落道具
+        dropItemsAfterBattle();
+
+        generateMonster();
+    }
+
+    updateMonsterUI();
+
+    function checkMaxStageAchievements() {
+        const maxStage = player.battle.maxStage;
+        const achievements = [
+            { stage: 10, key: 'max_stage_10' },
+            { stage: 30, key: 'max_stage_30' },
+            { stage: 60, key: 'max_stage_60' },
+            { stage: 90, key: 'max_stage_90' },
+            { stage: 120, key: 'max_stage_120' },
+            { stage: 200, key: 'max_stage_200' },
+            { stage: 300, key: 'max_stage_300' },
+            { stage: 400, key: 'max_stage_400' },
+            { stage: 500, key: 'max_stage_500' },
+            { stage: 600, key: 'max_stage_600' },
+            { stage: 700, key: 'max_stage_700' },
+            { stage: 800, key: 'max_stage_800' },
+            { stage: 900, key: 'max_stage_900' },
+            { stage: 1000, key: 'max_stage_1000' },
+        ];
+
+        achievements.forEach(({ stage, key }) => {
+            if (maxStage >= stage && !player.achievements[key]) {
+                player.achievements[key] = true;
+                const reward = achievementRewards[key];
+                if (reward) {
+                    player.gpsMultiplier += reward.gpsMultiplier;
+                    logAction(`成就达成：${reward.description}，GPS奖励 +${reward.gpsMultiplier * 100}%`, 'success');
+                    updatePlayerBattleStats();
+                }
+            }
+        });
+    }
+    // 怪物反击逻辑
+    if (monster.health > 0) {
+        for (let i = 0; i < monster.attackCount; i++) {
+            if (Math.random() > player.battle.playerDodge) {
+                if (playerBlock > 0) {
+                    playerBlock--; // 消耗一次抵消次数
+                    logBattleAction(`你抵消了怪物的攻击！剩余抵消次数：${playerBlock}`);
+                } else {
+                    player.battle.playerHealth -= monster.attack; // 如果没有抵消次数，玩家受到伤害
+                    logBattleAction(`${monster.name}对你造成了${monster.attack.toLocaleString()}点伤害`);
+                }
+            } else {
+                logBattleAction('你闪避了怪物的攻击！');
+            }
+        }
+        // 检查玩家是否被击败
+        if (player.battle.playerHealth <= 0) {
+            logBattleAction('你被怪物击败了！');
+            monster.health = 10000 * Math.pow(2, player.battle.currentStage); // 重置怪物生命
+            updatePlayerBattleStats();
+            updateOfficialSystemDisplay();
+        }
+    }
+
+    updateMonsterUI();
+}
+// 掉落道具函数
+function dropItemsAfterBattle() {
+    const stage = player.battle.currentStage;
+
+    // 洗炼石掉落（30关以上0.1%概率）
+    if (stage >= 30 && Math.random() < 0.0005) {
+        player.items.refineStone++;
+        logBattleAction('获得了洗炼石！');
+    }
+    if (stage >= 1 && Math.random() < 0.001) {
+        player.items.vipPower++;
+        logBattleAction('获得了VIP能力值！');
+    }
+    if (stage >= 50 && Math.random() < 0.0005) {
+        player.items.primaryGem++;
+        logBattleAction('获得了初级宝石！');
+    }
+    if (stage >= 100 && Math.random() < 0.0005) {
+        player.items.advancedGem++;
+        logBattleAction('获得了高级宝石！');
+    }
+    if (stage >= 150 && Math.random() < 0.0005) {
+        player.items.superiorGem++;
+        logBattleAction('获得了极品宝石！');
+    }
+
+    if (stage >= 1 && Math.random() < 0.001) {
+        player.items.rose++;
+        logBattleAction('获得了玫瑰花！');
+    }
+
+    if (stage >= 1 && Math.random() < 0.0005) {
+        player.items.companionKey++;
+        logBattleAction('获得了伴侣钥匙！');
+    }
+    // 其他道具掉落逻辑可以在这里添加
+}
+
+// 更新道具显示
+function updateItemDisplay() {
+    const container = document.getElementById('itemContainer');
+    container.innerHTML = Object.entries(player.items)
+        .map(([key, value]) => {
+            const item = itemEffects[key];
+            return `<div>${item.name}: ${value} - ${item.description}</div>`;
+        })
+        .join('');
+}
+function dropDungeonEquipment(stage) {
+    const dropRates = getDropRatesByStage(stage);
+    const drops = [];
+    for (let i = 0; i < 3; i++) {
+        const rand = Math.random();
+        let cumulativeProb = 0;
+        for (const [rarity, prob] of Object.entries(dropRates)) {
+            cumulativeProb += prob;
+            if (rand < cumulativeProb) {
+                drops.push(rarity);
+                break;
+            }
+        }
+    }
+
+    drops.forEach(rarity => {
+        addDungeonEquipment(rarity);
+        logBattleAction(`获得了副本装备：${dungeonEquipmentTypes[rarity].name}`);
+        // 新增：检查称号解锁
+        checkTitleUnlocks();
+    });
+}
+
+function dropSoulRing(stage) {
+    const soulRingDrops = [
+        { minStage: 1, type: 'year1', chance: 0.02 },
+        { minStage: 15, type: 'year10', chance: 0.02 },
+        { minStage: 25, type: 'year100', chance: 0.02 },
+        { minStage: 35, type: 'year1000', chance: 0.02 },
+        { minStage: 45, type: 'year10000', chance: 0.01 },
+        { minStage: 55, type: 'year10000', chance: 0.01 },
+        { minStage: 65, type: 'year100000', chance: 0.01 },
+        { minStage: 75, type: 'year1000000', chance: 0.01 },
+        { minStage: 90, type: 'year10000000', chance: 0.01 },
+        { minStage: 120, type: 'year100000000', chance: 0.01 },
+        { minStage: 140, type: 'year2', chance: 0.01 },
+        { minStage: 160, type: 'year3', chance: 0.01 },
+        { minStage: 180, type: 'year4', chance: 0.01 },
+        { minStage: 200, type: 'year5', chance: 0.01 },
+        { minStage: 220, type: 'year6', chance: 0.01 },
+        { minStage: 240, type: 'year7', chance: 0.01 },
+        { minStage: 260, type: 'year8', chance: 0.01 },
+        { minStage: 280, type: 'year9', chance: 0.01 },
+        { minStage: 300, type: 'year11', chance: 0.01 },
+        { minStage: 320, type: 'year12', chance: 0.01 },
+        { minStage: 340, type: 'year13', chance: 0.01 },
+        { minStage: 360, type: 'year14', chance: 0.01 },
+        { minStage: 380, type: 'year15', chance: 0.01 },
+        { minStage: 400, type: 'year16', chance: 0.01 },
+        { minStage: 420, type: 'year17', chance: 0.01 },
+        { minStage: 440, type: 'year18', chance: 0.01 },
+        { minStage: 460, type: 'year19', chance: 0.01 },
+        { minStage: 480, type: 'year20', chance: 0.01 },
+        { minStage: 500, type: 'year21', chance: 0.01 },
+        { minStage: 520, type: 'year22', chance: 0.01 },
+        { minStage: 540, type: 'year23', chance: 0.01 },
+        { minStage: 560, type: 'year24', chance: 0.01 },
+        { minStage: 580, type: 'year25', chance: 0.01 },
+        { minStage: 600, type: 'year26', chance: 0.01 },
+        { minStage: 620, type: 'year27', chance: 0.01 },
+        { minStage: 640, type: 'year28', chance: 0.01 },
+        { minStage: 660, type: 'year29', chance: 0.01 },
+        { minStage: 680, type: 'year30', chance: 0.01 },
+        { minStage: 700, type: 'year31', chance: 0.01 },
+        { minStage: 720, type: 'year32', chance: 0.01 },
+        { minStage: 740, type: 'year33', chance: 0.01 },
+        { minStage: 780, type: 'year34', chance: 0.01 },
+        { minStage: 800, type: 'year35', chance: 0.01 },
+        { minStage: 820, type: 'year36', chance: 0.01 },
+        { minStage: 850, type: 'year37', chance: 0.01 }
+    ];
+
+    soulRingDrops.forEach(drop => {
+        if (stage >= drop.minStage && Math.random() < drop.chance) {
+            addSoulRing(drop.type);
+            logBattleAction(`获得了${soulRingTypes[drop.type].name}`);
+            // 新增：检查称号解锁
+            checkTitleUnlocks();
+            // 检查成就
+            const ring = player.soulRings.find(r => r.type === drop.type);
+            if (ring) {
+                checkSoulRingAchievements(drop.type, ring.level);
+            }
+        }
+    });
+}
+
+function getDropRatesByStage(stage) {
+    if (stage <= 5) {
+        return { common: 0.8, rare: 0.2 };
+    } else if (stage <= 15) {
+        return { common: 0.8, rare: 0.14, epic: 0.05, legendary: 0.01 };
+    } else if (stage <= 25) {
+        return { common: 0.8, rare: 0.12, epic: 0.04, legendary: 0.03, ancient: 0.01 };
+    } else if (stage <= 40) {
+        return { common: 0.8, epic: 0.11, legendary: 0.03, ancient: 0.03, divine: 0.02, arcane: 0.01 };
+    } else if (stage <= 65) {
+        return { common: 0.7, legendary: 0.15, ancient: 0.06, divine: 0.04, arcane: 0.02, celestial: 0.02, infernal: 0.01 };
+    } else if (stage <= 90) {
+        return { common: 0.7, ancient: 0.14, divine: 0.06, arcane: 0.04, celestial: 0.02, infernal: 0.02, astral: 0.01, primeval: 0.01 };
+    } else if (stage <= 120) {
+        return { common: 0.7, divine: 0.13, arcane: 0.06, celestial: 0.04, infernal: 0.02, astral: 0.02, primeval: 0.01, transcendental: 0.01, quantum: 0.01 };
+    } else if (stage <= 150) {
+        return { common: 0.7, celestial: 0.13, infernal: 0.06, astral: 0.04, primeval: 0.02, transcendental: 0.02, quantum: 0.01, ultimate: 0.01, ultimate1: 0.01 };
+    } else if (stage <= 175) {
+        return { common: 0.7, infernal: 0.13, astral: 0.06, primeval: 0.04, transcendental: 0.02, quantum: 0.02, ultimate: 0.01, ultimate2: 0.01, ultimate3: 0.01 };
+    } else if (stage <= 200) {
+        return { common: 0.7, primeval: 0.13, transcendental: 0.06, quantum: 0.04, ultimate: 0.02, ultimate1: 0.02, ultimate2: 0.01, ultimate3: 0.01, ultimate4: 0.01 };
+    } else if (stage <= 225) {
+        return { common: 0.7, quantum: 0.13, ultimate: 0.06, ultimate1: 0.04, ultimate2: 0.02, ultimate3: 0.02, ultimate4: 0.01, ultimate5: 0.01, ultimate6: 0.01 };
+    } else if (stage <= 250) {
+        return { common: 0.7, ultimate1: 0.13, ultimate2: 0.06, ultimate3: 0.04, ultimate4: 0.02, ultimate5: 0.02, ultimate6: 0.01, ultimate7: 0.01, ultimate8: 0.01 };
+    } else if (stage <= 275) {
+        return { common: 0.7, ultimate3: 0.13, ultimate4: 0.06, ultimate5: 0.04, ultimate6: 0.02, ultimate7: 0.02, ultimate8: 0.01, ultimate9: 0.01, ultimate10: 0.01 };
+    } else if (stage <= 300) {
+        return { common: 0.7, ultimate5: 0.13, ultimate6: 0.06, ultimate7: 0.04, ultimate8: 0.02, ultimate9: 0.02, ultimate10: 0.01, ultimate11: 0.01, ultimate12: 0.01 };
+    } else if (stage <= 325) {
+        return { common: 0.7, ultimate7: 0.13, ultimate8: 0.06, ultimate9: 0.04, ultimate10: 0.02, ultimate11: 0.02, ultimate12: 0.01, ultimate13: 0.01, ultimate14: 0.01 };
+    } else if (stage <= 350) {
+        return { common: 0.7, ultimate9: 0.13, ultimate10: 0.06, ultimate11: 0.04, ultimate12: 0.02, ultimate13: 0.02, ultimate14: 0.01, ultimate15: 0.01, ultimate16: 0.01 };
+    } else if (stage <= 375) {
+        return { common: 0.7, ultimate11: 0.13, ultimate12: 0.06, ultimate13: 0.04, ultimate14: 0.02, ultimate15: 0.02, ultimate16: 0.01, ultimate17: 0.01, ultimate18: 0.011 };
+    } else if (stage <= 400) {
+        return { common: 0.7, ultimate13: 0.13, ultimate14: 0.06, ultimate15: 0.04, ultimate16: 0.02, ultimate17: 0.02, ultimate18: 0.01, ultimate19: 0.01, ultimate20: 0.01 };
+    } else if (stage <= 425) {
+        return { common: 0.7, ultimate15: 0.13, ultimate16: 0.06, ultimate17: 0.04, ultimate18: 0.02, ultimate19: 0.02, ultimate20: 0.01, ultimate21: 0.01, ultimate22: 0.01 };
+    } else if (stage <= 450) {
+        return { common: 0.7, ultimate17: 0.13, ultimate18: 0.06, ultimate19: 0.04, ultimate20: 0.02, ultimate21: 0.02, ultimate22: 0.01, ultimate23: 0.01, ultimate24: 0.01 };
+    } else if (stage <= 475) {
+        return { common: 0.7, ultimate19: 0.13, ultimate20: 0.06, ultimate21: 0.04, ultimate22: 0.02, ultimate23: 0.02, ultimate24: 0.01, ultimate25: 0.01, ultimate26: 0.01 };
+    } else if (stage <= 500) {
+        return { common: 0.7, ultimate21: 0.13, ultimate22: 0.06, ultimate23: 0.04, ultimate24: 0.02, ultimate25: 0.02, ultimate26: 0.01, ultimate27: 0.01, ultimate28: 0.01 };
+    } else if (stage <= 530) {
+        return { common: 0.7, ultimate23: 0.13, ultimate24: 0.06, ultimate25: 0.04, ultimate26: 0.02, ultimate27: 0.02, ultimate28: 0.01, ultimate29: 0.01, ultimate30: 0.01 };
+    } else if (stage <= 560) {
+        return { common: 0.7, ultimate25: 0.13, ultimate26: 0.06, ultimate27: 0.04, ultimate28: 0.02, ultimate29: 0.02, ultimate30: 0.01, ultimate31: 0.01, ultimate32: 0.01 };
+    } else if (stage <= 590) {
+        return { common: 0.7, ultimate27: 0.13, ultimate28: 0.06, ultimate29: 0.04, ultimate30: 0.02, ultimate31: 0.02, ultimate32: 0.01, ultimate33: 0.01, ultimate34: 0.01 };
+    } else if (stage <= 620) {
+        return { common: 0.7, ultimate29: 0.13, ultimate30: 0.06, ultimate31: 0.04, ultimate32: 0.02, ultimate33: 0.02, ultimate34: 0.01, ultimate35: 0.01, ultimate36: 0.01 };
+    } else if (stage <= 650) {
+        return { common: 0.7, ultimate31: 0.13, ultimate32: 0.06, ultimate33: 0.04, ultimate34: 0.02, ultimate35: 0.02, ultimate36: 0.01, ultimate37: 0.01, ultimate38: 0.01 };
+    } else if (stage <= 680) {
+        return { common: 0.7, ultimate33: 0.13, ultimate34: 0.06, ultimate35: 0.04, ultimate36: 0.02, ultimate37: 0.02, ultimate38: 0.01, ultimate39: 0.01, ultimate40: 0.01 };
+    } else if (stage <= 720) {
+        return { common: 0.7, ultimate35: 0.13, ultimate36: 0.06, ultimate37: 0.04, ultimate38: 0.02, ultimate39: 0.02, ultimate40: 0.01, ultimate41: 0.01, ultimate42: 0.01 };
+    } else if (stage <= 750) {
+        return { common: 0.7, ultimate37: 0.13, ultimate38: 0.06, ultimate39: 0.04, ultimate40: 0.02, ultimate41: 0.02, ultimate42: 0.01, ultimate43: 0.01, ultimate44: 0.01 };
+    } else if (stage <= 780) {
+        return { common: 0.7, ultimate39: 0.13, ultimate40: 0.06, ultimate41: 0.04, ultimate42: 0.02, ultimate43: 0.02, ultimate44: 0.01, ultimate45: 0.01, ultimate46: 0.01 };
+    } else if (stage <= 800) {
+        return { common: 0.7, ultimate41: 0.13, ultimate42: 0.06, ultimate43: 0.04, ultimate44: 0.02, ultimate45: 0.02, ultimate46: 0.01, ultimate47: 0.01, ultimate48: 0.01 };
+    } else {
+        return { common: 0.7, ultimate43: 0.13, ultimate44: 0.06, ultimate45: 0.04, ultimate46: 0.02, ultimate47: 0.02, ultimate48: 0.01, ultimate49: 0.01, ultimate50: 0.01 };
+    }
+}
+
+
+function fleeFromBattle() {
+    const cost = player.battle.maxStage * 10;
+    if (player.reincarnationCoin >= cost) {
+        player.reincarnationCoin -= cost;
+        player.battle.currentStage = 0;
+        generateMonster();
+        updateOfficialSystemDisplay();
+        updateMonsterUI();
+        logBattleAction(`你重置了关卡，消耗了${cost}转生币`);
+    } else {
+        logBattleAction('转生币不足，无法重置关卡！');
+    }
+}
+
+function sweepStages() {
+    const currentStage = player.battle.currentStage;
+    const maxStage = player.battle.maxStage;
+    const targetStage = Math.max(1, maxStage - 6); // 扫荡到最大关卡-5
+
+    if (currentStage >= targetStage) {
+        logBattleAction("没有可扫荡的关卡！");
+        return;
+    }
+
+    // 计算消耗的转生币
+    const cost = (targetStage - currentStage) * 2;
+
+    if (player.reincarnationCoin < cost) {
+        logBattleAction(`扫荡需要 ${cost} 转生币，当前不足！`);
+        return;
+    }
+
+    // 确认对话框
+    showCustomConfirm(`确定要扫荡从第${currentStage + 1}关到第${targetStage}关吗？消耗 ${cost} 转生币`, (confirmed) => {
+        if (confirmed) {
+            player.reincarnationCoin -= cost;
+
+            // 记录扫荡前的状态
+            const originalStage = player.battle.currentStage;
+            let totalDrops = 0;
+            let dungeonEquipmentDrops = 0;
+            let soulRingDrops = 0;
+            let itemDrops = 0;
+
+            // 模拟扫荡过程
+            for (let stage = currentStage; stage < targetStage; stage++) {
+                player.battle.currentStage = stage;
+
+                // 固定掉落3个副本装备
+                for (let i = 0; i < 3; i++) {
+                    const dungeonDrops = getDropRatesByStage(stage);
+                    const rand = Math.random();
+                    let cumulativeProb = 0;
+
+                    for (const [rarity, prob] of Object.entries(dungeonDrops)) {
+                        cumulativeProb += prob;
+                        if (rand < cumulativeProb) {
+                            addDungeonEquipment(rarity);
+                            dungeonEquipmentDrops++;
+                            break;
+                        }
+                    }
+                }
+
+                // 魂环掉落（保持原逻辑）
+                const soulRingResult = simulateSoulRingDrop(stage);
+                if (soulRingResult) {
+                    soulRingDrops++;
+                }
+
+                // 道具掉落（保持原逻辑）
+                const itemResult = simulateItemDrop(stage);
+                if (itemResult) {
+                    itemDrops++;
+                }
+
+                // 更新显示（每10关更新一次）
+                if (stage % 10 === 0) {
+                    updateMonsterUI();
+                }
+            }
+
+            // 扫荡完成后停留在目标关卡
+            player.battle.currentStage = targetStage;
+            generateMonster();
+
+            logBattleAction(`扫荡完成！从第${originalStage + 1}关到第${targetStage}关`);
+            logBattleAction(`获得副本装备: ${dungeonEquipmentDrops}件`);
+            logBattleAction(`获得魂环: ${soulRingDrops}件`);
+            logBattleAction(`获得道具: ${itemDrops}件`);
+            updateMonsterUI();
+            updateOfficialSystemDisplay();
+        }
+    });
+}
+
+// 单独提取魂环掉落逻辑
+function simulateSoulRingDrop(stage) {
+    const soulRingDrops = [
+        { minStage: 1, type: 'year1', chance: 0.02 },
+        { minStage: 15, type: 'year10', chance: 0.02 },
+        { minStage: 25, type: 'year100', chance: 0.02 },
+        { minStage: 35, type: 'year1000', chance: 0.02 },
+        { minStage: 45, type: 'year10000', chance: 0.01 },
+        { minStage: 55, type: 'year10000', chance: 0.01 },
+        { minStage: 65, type: 'year100000', chance: 0.01 },
+        { minStage: 75, type: 'year1000000', chance: 0.01 },
+        { minStage: 90, type: 'year10000000', chance: 0.01 },
+        { minStage: 120, type: 'year100000000', chance: 0.01 },
+        { minStage: 140, type: 'year2', chance: 0.01 },
+        { minStage: 160, type: 'year3', chance: 0.01 },
+        { minStage: 180, type: 'year4', chance: 0.01 },
+        { minStage: 200, type: 'year5', chance: 0.01 },
+        { minStage: 220, type: 'year6', chance: 0.01 },
+        { minStage: 240, type: 'year7', chance: 0.01 },
+        { minStage: 260, type: 'year8', chance: 0.01 },
+        { minStage: 280, type: 'year9', chance: 0.01 },
+        { minStage: 300, type: 'year11', chance: 0.01 },
+        { minStage: 320, type: 'year12', chance: 0.01 },
+        { minStage: 340, type: 'year13', chance: 0.01 },
+        { minStage: 360, type: 'year14', chance: 0.01 },
+        { minStage: 380, type: 'year15', chance: 0.01 },
+        { minStage: 400, type: 'year16', chance: 0.01 },
+        { minStage: 420, type: 'year17', chance: 0.01 },
+        { minStage: 440, type: 'year18', chance: 0.01 },
+        { minStage: 460, type: 'year19', chance: 0.01 },
+        { minStage: 480, type: 'year20', chance: 0.01 },
+        { minStage: 500, type: 'year21', chance: 0.01 },
+        { minStage: 520, type: 'year22', chance: 0.01 },
+        { minStage: 540, type: 'year23', chance: 0.01 },
+        { minStage: 560, type: 'year24', chance: 0.01 },
+        { minStage: 580, type: 'year25', chance: 0.01 },
+        { minStage: 600, type: 'year26', chance: 0.01 },
+        { minStage: 620, type: 'year27', chance: 0.01 },
+        { minStage: 640, type: 'year28', chance: 0.01 },
+        { minStage: 660, type: 'year29', chance: 0.01 },
+        { minStage: 680, type: 'year30', chance: 0.01 },
+        { minStage: 700, type: 'year31', chance: 0.01 },
+        { minStage: 720, type: 'year32', chance: 0.01 },
+        { minStage: 740, type: 'year33', chance: 0.01 },
+        { minStage: 780, type: 'year34', chance: 0.01 },
+        { minStage: 800, type: 'year35', chance: 0.01 },
+        { minStage: 820, type: 'year36', chance: 0.01 },
+        { minStage: 850, type: 'year37', chance: 0.01 }
+    ];
+
+    for (const drop of soulRingDrops) {
+        if (stage >= drop.minStage && Math.random() < drop.chance) {
+            addSoulRing(drop.type);
+            return true;
+        }
+    }
+    return false;
+}
+
+// 单独提取道具掉落逻辑
+function simulateItemDrop(stage) {
+    let hasDropped = false;
+
+    // 洗炼石掉落（30关以上0.05%概率）
+    if (stage >= 30 && Math.random() < 0.0001) {
+        player.items.refineStone++;
+        hasDropped = true;
+    }
+
+    // VIP能力值掉落（全关卡0.1%概率）
+    if (stage >= 1 && Math.random() < 0.001) {
+        player.items.vipPower++;
+        hasDropped = true;
+    }
+
+    // 初级宝石掉落（50关以上0.04%概率）
+    if (stage >= 50 && Math.random() < 0.0004) {
+        player.items.primaryGem++;
+        hasDropped = true;
+    }
+
+    // 高级宝石掉落（100关以上0.03%概率）
+    if (stage >= 100 && Math.random() < 0.0003) {
+        player.items.advancedGem++;
+        hasDropped = true;
+    }
+
+    // 极品宝石掉落（150关以上0.01%概率）
+    if (stage >= 150 && Math.random() < 0.0001) {
+        player.items.superiorGem++;
+        hasDropped = true;
+    }
+
+    // 玫瑰花掉落（150关以上0.05%概率）
+    if (stage >= 1 && Math.random() < 0.001) {
+        player.items.rose++;
+        hasDropped = true;
+    }
+
+    // 伴侣钥匙掉落（150关以上0.01%概率）
+    if (stage >= 1 && Math.random() < 0.00025) {
+        player.items.companionKey++;
+        hasDropped = true;
+    }
+
+    return hasDropped;
+}
+function jumpToStage() {
+    const stage = parseInt(document.getElementById('jumpStage').value) || 0;
+    if (stage > player.battle.currentStage && stage <= player.battle.maxStage && player.reincarnationCoin >= stage) {
+        player.reincarnationCoin -= stage;
+        player.battle.currentStage = stage;
+        generateMonster();
+        updateMonsterUI();
+        logBattleAction(`你跳到了第${stage + 1}关`);
+    } else {
+        logBattleAction('无法跳到该关卡！');
+    }
+}
+function formatNumber(value) {
+    if (value >= 1e8) { // 当数值大于等于 100,000,000 时使用科学计数法
+        return value.toExponential(3); // 保留两位小数
+    } else {
+        return value.toLocaleString(); // 否则使用常规的数值显示
+    }
+}
+function logBattleAction(message) {
+    const formattedMessage = message.replace(/\d+(\.\d+)?/g, num =>
+        formatSci(parseFloat(num))
+    );
+
+    const timestamp = new Date().toLocaleTimeString();
+    const logEntry = `<div class="battle-log-entry">[${timestamp}] ${formattedMessage}</div>`;
+
+    const logContainer = document.getElementById("battleLogContent");
+    logContainer.insertAdjacentHTML("afterbegin", logEntry);
+
+    // 保持最多20条日志
+    if (logContainer.children.length > 20) {
+        logContainer.removeChild(logContainer.lastChild);
+    }
+}
+
+function addAttributePoint(attribute, amount) {
+    // 计算实际要加的点数
+    let pointsToAdd = 0;
+    if (amount === 'all') {
+        pointsToAdd = player.attributes.remainingPoints; // 全部剩余属性点
+    } else {
+        pointsToAdd = Math.min(amount, player.attributes.remainingPoints); // 不能超过剩余属性点
+    }
+
+    if (pointsToAdd <= 0) {
+        logAction("剩余属性点不足！", "error");
+        return;
+    }
+
+    // 根据属性类型加点
+    switch (attribute) {
+        case 'health':
+            player.attributes.health += pointsToAdd;
+            break;
+        case 'attack':
+            player.attributes.attack += pointsToAdd;
+            break;
+        case 'critRate':
+            player.attributes.critRate += pointsToAdd;
+            break;
+        case 'critDamage':
+            撒player.attributes.critDamage += pointsToAdd;
+            break;
+        case 'multiAttack':
+            player.attributes.multiAttack += pointsToAdd;
+            break;
+        case 'block':
+            player.attributes.block += pointsToAdd;
+            break;
+        default:
+            logAction("无效的属性类型！", "error");
+            return;
+    }
+
+    // 扣除剩余属性点
+    player.attributes.remainingPoints -= pointsToAdd;
+
+    // 更新显示
+    updatePlayerAttributesDisplay();
+    logAction(`成功为${attribute}属性增加${pointsToAdd}点`, 'success');
+}
+
+function resetAttributes() {
+    if (player.reincarnationCoin >= 1) {
+        player.reincarnationCoin -= 1;
+        // 重置所有属性点
+        player.attributes.health = 0;
+        player.attributes.attack = 0;
+        player.attributes.critRate = 0;
+        player.attributes.critDamage = 0;
+        player.attributes.multiAttack = 0;
+        player.attributes.block = 0;
+        // 重置剩余属性点 = 总属性点
+        player.attributes.remainingPoints = player.attributes.totalPoints;
+        updatePlayerAttributesDisplay(); // 更新显示
+        logAction("属性点已重置", "success");
+    } else {
+        logAction("转生币不足！", "error");
+    }
+}
+
+function handleBattleResult(isVictory) {
+    // 保存当前的功法加成
+    const techniqueBonuses = {
+        health: player.attributes.healthBonus,
+        attack: player.attributes.attackBonus,
+        critRate: player.attributes.critRateBonus,
+        critDamage: player.attributes.critDamageBonus,
+        multiAttack: player.attributes.multiAttackBonus
+    };
+
+    if (isVictory) {
+        // 胜利逻辑...
+        player.battle.currentStage++;
+        player.battle.maxStage = Math.max(player.battle.maxStage, player.battle.currentStage);
+    } else {
+        // 失败逻辑...
+        player.battle.playerHealth = player.reincarnationCount;
+    }
+
+    // 恢复功法加成
+    player.attributes.healthBonus = techniqueBonuses.health;
+    player.attributes.attackBonus = techniqueBonuses.attack;
+    player.attributes.critRateBonus = techniqueBonuses.critRate;
+    player.attributes.critDamageBonus = techniqueBonuses.critDamage;
+    player.attributes.multiAttackBonus = techniqueBonuses.multiAttack;
+
+    // 更新玩家战斗属性
+    updatePlayerBattleStats();
+
+}
+function updatePlayerAttributesDisplay() {
+    // 计算总属性点
+    const totalAttributePoints = player.reincarnationCount * 1 + player.battle.maxStage * 10 + player.tower.currentFloor * 1;
+    player.attributes.totalPoints = totalAttributePoints;
+
+    // 更新总属性点和剩余属性点
+    document.getElementById("totalAttributePoints").textContent = player.attributes.totalPoints;
+    document.getElementById("remainingAttributePoints").textContent = player.attributes.remainingPoints;
+
+    // 更新各属性加成显示和已投入点数
+    document.getElementById("healthBonus").textContent =
+        (player.attributes.health * 1 + player.attributes.healthBonus * 100).toFixed(2) + "%";
+    document.getElementById("healthPoints").textContent = player.attributes.health;
+
+    document.getElementById("attackBonus").textContent =
+        (player.attributes.attack * 1 + player.attributes.attackBonus * 100).toFixed(2) + "%";
+    document.getElementById("attackPoints").textContent = player.attributes.attack;
+
+    document.getElementById("critRateBonus").textContent =
+        (player.attributes.critRate * 0.05 + player.attributes.critRateBonus * 100).toFixed(3) + "%";
+    document.getElementById("critRatePoints").textContent = player.attributes.critRate;
+
+    document.getElementById("critDamageBonus").textContent =
+        (player.attributes.critDamage * 0.50 + player.attributes.critDamageBonus * 100).toFixed(2) + "%";
+    document.getElementById("critDamagePoints").textContent = player.attributes.critDamage;
+
+    document.getElementById("multiAttackBonus").textContent =
+        Math.floor(player.attributes.multiAttack / 300) + player.attributes.multiAttackBonus;
+    document.getElementById("multiAttackPoints").textContent = player.attributes.multiAttack;
+}
+function updateTechniqueBonuses() {
+    // 重置所有加成
+    player.attributes.healthBonus = 0;
+    player.attributes.attackBonus = 0;
+    player.attributes.critRateBonus = 0;
+    player.attributes.critDamageBonus = 0;
+    player.attributes.multiAttackBonus = 0;
+
+    // 计算所有功法提供的加成
+    Object.entries(player.techniques).forEach(([type, level]) => {
+        const tech = techniqueConfig[type];
+        if (tech) {
+            switch (tech.type) {
+                case 'health':
+                    player.attributes.healthBonus += level * tech.effect;
+                    break;
+                case 'attack':
+                    player.attributes.attackBonus += level * tech.effect;
+                    break;
+                case 'critRate':
+                    player.attributes.critRateBonus += level * tech.effect;
+                    break;
+                case 'critDamage':
+                    player.attributes.critDamageBonus += level * tech.effect;
+                    break;
+                case 'multiAttack':
+                    player.attributes.multiAttackBonus += Math.floor(level * tech.effect);
+                    break;
+            }
+        }
+    });
+
+    // 更新玩家战斗属性
+    updatePlayerBattleStats();
+    updateOfficialSystemDisplay();
+    updatePlayerAttributesDisplay();
+}
+function updatePlayerBattleStats() {
+    // 1. 获取各类加成
+    const classBonuses = calculateClassBonuses();
+    const titleBonuses = calculateTotalBonuses(); // 重命名变量避免混淆
+    const officialBonus = getOfficialBonus();
+    const companionBonuses = getCompanionBonuses(); // 获取伴侣天赋加成
+
+    // 保存职业加成到player对象
+    player.classBonuses = classBonuses;
+
+    // 2. 计算玩家生命（应用伴侣生命加成）
+    player.battle.playerHealth = Math.floor(
+        player.reincarnationCount *
+        (1 + player.attributes.healthBonus + player.attributes.health * 0.01) *
+        classBonuses.healthMultiplier * titleBonuses.healthMultiplier *
+        companionBonuses.healthMultiplier // 应用伴侣生命加成
+    );
+
+    // 3. 计算玩家攻击（应用伴侣攻击加成）
+    player.battle.playerAttack = Math.floor(
+        getTotalClickValue() *
+        (1 + player.attributes.attackBonus + player.attributes.attack * 0.01) *
+        classBonuses.attackMultiplier * titleBonuses.attackMultiplier *
+        officialBonus * companionBonuses.attackMultiplier // 应用伴侣攻击加成
+    );
+
+    // 4. 计算暴击率（应用伴侣暴击率加成）
+    const baseCritRate = 0.1 + player.attributes.critRateBonus + player.attributes.critRate * 0.00025 +
+        classBonuses.critChance;
+    player.battle.playerCritRate = Math.min(
+        0.9,
+        baseCritRate * companionBonuses.critRateMultiplier // 应用伴侣暴击率乘数
+    );
+
+    // 5. 计算爆伤（应用伴侣爆伤加成和全属性加成）
+    player.battle.playerCritDamage = (1.5 +
+        player.attributes.critDamageBonus +
+        player.attributes.critDamage * 0.0025) *
+        classBonuses.critMultiplier * titleBonuses.critMultiplier *
+        companionBonuses.critDamageMultiplier; // 应用伴侣爆伤加成
+
+    // 6. 计算连击次数（应用伴侣连击加成）
+    player.battle.playerMultiAttack = Math.max(1,
+        Math.floor(player.attributes.multiAttack / 300) +
+        player.attributes.multiAttackBonus +
+        companionBonuses.combo // 应用伴侣连击加成
+    );
+
+    // 更新UI显示
+    updateMonsterUI();
+}
+
+// 计算离线经验
+// 新增：计算离线奥秘经验
+function calculateOfflineMysteryExp() {
+    if (!player.mystery || !player.mystery.lastUpdateTime) return;
+
+    const now = Date.now();
+    const timeDiff = now - player.mystery.lastUpdateTime;
+    const minutesPassed = Math.floor(timeDiff / (1000 * 60));
+
+    if (minutesPassed > 0) {
+        const towerFloor = player.tower.currentFloor || 0;
+        const vipLevel = player.vip.level || 1;
+        const expGained = minutesPassed * towerFloor * vipLevel;
+
+        if (expGained > 0) {
+            player.mystery.exp += expGained;
+            logAction(`离线获得 ${expGained} 奥秘经验`, 'success');
+        }
+    }
+
+    // 更新最后更新时间
+    player.mystery.lastUpdateTime = now;
+}
+
+// 定时增加经验
+setInterval(() => {
+    if (player.mystery) {
+        const towerFloor = parseInt(document.getElementById('towerFloor').textContent) || 0;
+        const vipLevel = parseInt(document.getElementById('vipLevel').textContent) || 1;
+        const expPerMinute = towerFloor * vipLevel;
+
+        if (expPerMinute > 0) {
+            // 每分钟增加一次，这里按秒计算
+            player.mystery.exp += expPerMinute / 60;
+            player.mystery.lastUpdateTime = new Date().getTime();
+            updateMysterySystemDisplay();
+        }
+    }
+}, 1000);
+
+// 切换奥秘系统界面
+function toggleMysterySystem() {
+    calculateOfflineMysteryExp();
+
+    const ui = document.getElementById('mysterySystemUI');
+    const overlay = document.getElementById('mysterySystemOverlay');
+
+    if (ui.style.display === 'block') {
+        ui.style.display = 'none';
+        overlay.style.display = 'none';
+    } else {
+        ui.style.display = 'block';
+        overlay.style.display = 'block';
+        updateMysterySystemDisplay();
+    }
+}
+
+// 更新奥秘系统显示
+function updateMysterySystemDisplay() {
+    const currentStage = player.mystery.stage;
+    const currentLevel = player.mystery.level;
+    const currentConfig = mysteryConfig.find(c => c.stage === currentStage);
+    const nextLevel = currentLevel < 10 ? currentLevel + 1 : 1;
+    const nextStage = currentLevel < 10 ? currentStage : currentStage + 1;
+    const nextConfig = mysteryConfig.find(c => c.stage === nextStage);
+
+    // 更新当前奥秘信息
+    const title = `${currentConfig.name} ${currentStage}阶${currentLevel}级`;
+    document.getElementById('mysteryTitleDisplay').textContent = title;
+    document.getElementById('currentMysteryTitle').textContent = title;
+
+    // 更新加成显示
+    const maxStageReached = Math.min(currentStage, mysteryConfig.length);
+    const maxConfig = mysteryConfig.find(c => c.stage === maxStageReached);
+    document.getElementById('mysteryBonusDisplay').textContent = maxConfig ? maxConfig.totalBonus : 1;
+
+    // 更新经验显示
+    document.getElementById('currentMysteryExp').textContent = Math.floor(player.mystery.exp);
+    document.getElementById('nextMysteryExp').textContent = currentConfig.levelCost;
+
+    // 更新每分钟经验
+    const towerFloor = parseInt(document.getElementById('towerFloor').textContent) || 0;
+    const vipLevel = parseInt(document.getElementById('vipLevel').textContent) || 1;
+    document.getElementById('expPerMinute').textContent = towerFloor * vipLevel;
+
+
+
+    // 更新下一等级信息
+    const nextMysteryInfo = document.getElementById('nextMysteryInfo');
+    if (nextConfig && currentStage < mysteryConfig.length) {
+        nextMysteryInfo.innerHTML = `${nextConfig.name} ${nextStage}阶${nextLevel}级 - 消耗: ${nextConfig.levelCost}经验`;
+    } else {
+        nextMysteryInfo.textContent = '已达到最高奥秘等级';
+        document.getElementById('mysteryBonusDisplay').textContent = player.mystery.bonus;
+        const offlineExpElement = document.createElement('div');
+        offlineExpElement.textContent = `离线经验: ${player.mystery.exp}`;
+        container.appendChild(offlineExpElement);
+    }
+}
+
+// 升级一次奥秘
+function upgradeMystery() {
+    const currentStage = player.mystery.stage;
+    const currentLevel = player.mystery.level;
+    const currentConfig = mysteryConfig.find(c => c.stage === currentStage);
+
+    // 检查是否已达最高等级
+    if (currentStage >= mysteryConfig.length && currentLevel >= 10) {
+        logAction("已达到最高奥秘等级！", "error");
+        return false;
+    }
+
+    // 检查经验是否足够
+    if (player.mystery.exp < currentConfig.levelCost) {
+        logAction("奥秘经验不足，无法升级！", "error");
+        return false;
+    }
+
+    // 消耗经验
+    player.mystery.exp -= currentConfig.levelCost;
+
+    // 升级处理
+    if (currentLevel < 10) {
+        player.mystery.level += 1;
+    } else {
+        player.mystery.level = 1;
+        player.mystery.stage += 1;
+    }
+    updateDisplay();
+    return true;
+}
+
+// 按指定次数升级奥秘
+function upgradeMysteryByAmount() {
+    calculateOfflineMysteryExp();
+    const amount = parseInt(document.getElementById('mysteryUpgradeAmount').value) || 1;
+    let upgraded = 0;
+
+    for (let i = 0; i < amount; i++) {
+        if (!upgradeMystery()) {
+            break;
+        }
+        upgraded++;
+    }
+
+    if (upgraded > 0) {
+        logAction(`成功升级${upgraded}级奥秘！`, 'success');
+        updateMysterySystemDisplay();
+        updateDisplay();
+    }
+}
+// 升级后更新加成
+const config = mysteryConfig.find(c => c.stage === player.mystery.stage);
+if (config) {
+    player.mystery.bonus = config.totalBonus;
+}
+// 一键升级奥秘到最大可能
+function upgradeMysteryMaxPossible() {
+    calculateOfflineMysteryExp();
+    let upgraded = 0;
+
+    while (upgradeMystery()) {
+        upgraded++;
+    }
+
+    if (upgraded > 0) {
+        logAction(`成功升级${upgraded}级奥秘！`, 'success');
+        updateMysterySystemDisplay();
+        updateDisplay();
+    }
+}
+
+
+
+// 称号配置（按分支分组）
+const titleConfig = {
+    towerBranch: [
+        { name: "关破厉鬼", condition: (p) => p.tower.maxFloor > 10, bonus: { healthMultiplier: 1.1 } },
+        { name: "阶碎无常", condition: (p) => p.tower.maxFloor > 100, bonus: { healthMultiplier: 1.1 } },
+        { name: "踏塔马面", condition: (p) => p.tower.maxFloor > 100, bonus: { healthMultiplier: 1.1 } },
+        { name: "魔修夜叉", condition: (p) => p.tower.maxFloor > 300, bonus: { healthMultiplier: 1.1 } },
+        { name: "破阶修罗", condition: (p) => p.tower.maxFloor > 500, bonus: { healthMultiplier: 1.1 } },
+        { name: "千层煞主", condition: (p) => p.tower.maxFloor > 1000, bonus: { healthMultiplier: 1.1 } },
+        { name: "踏关煞神", condition: (p) => p.tower.maxFloor > 2000, bonus: { healthMultiplier: 1.1 } },
+        { name: "关前冥王", condition: (p) => p.tower.maxFloor > 5000, bonus: { healthMultiplier: 1.1 } },
+        { name: "踏塔狂魔", condition: (p) => p.tower.maxFloor > 10000, bonus: { healthMultiplier: 1.1 } },
+        { name: "混世魔王", condition: (p) => p.tower.maxFloor > 20000, bonus: { healthMultiplier: 1.1 } },
+        { name: "屠戮之主", condition: (p) => p.tower.maxFloor > 30000, bonus: { healthMultiplier: 1.1 } },
+        { name: "杀戮之神", condition: (p) => p.tower.maxFloor > 40000, bonus: { healthMultiplier: 1.1 } },
+        { name: "十殿阎罗", condition: (p) => p.tower.maxFloor > 50000, bonus: { healthMultiplier: 1.1 } },
+        { name: "弑神修罗", condition: (p) => p.tower.maxFloor > 60000, bonus: { healthMultiplier: 1.1 } },
+        { name: "九幽魔尊", condition: (p) => p.tower.maxFloor > 70000, bonus: { healthMultiplier: 1.1 } },
+        { name: "永夜君主", condition: (p) => p.tower.maxFloor > 80000, bonus: { healthMultiplier: 1.1 } },
+        { name: "深渊主宰", condition: (p) => p.tower.maxFloor > 90000, bonus: { healthMultiplier: 1.1 } }
+    ],
+    // 关卡分支
+    stageBranch: [
+        { name: "探险者", condition: (p) => p.battle.maxStage > 10, bonus: { attackMultiplier: 2 } },
+        { name: "银翼斥候", condition: (p) => p.battle.maxStage > 50, bonus: { attackMultiplier: 2 } },
+        { name: "圣域行者", condition: (p) => p.battle.maxStage > 100, bonus: { attackMultiplier: 2 } },
+        { name: "苍穹之主", condition: (p) => p.battle.maxStage > 150, bonus: { attackMultiplier: 5 } },
+        { name: "九天至尊", condition: (p) => p.battle.maxStage > 200, bonus: { attackMultiplier: 5 } },
+        { name: "万域之主", condition: (p) => p.battle.maxStage > 300, bonus: { attackMultiplier: 5 } },
+        { name: "寰宇独尊", condition: (p) => p.battle.maxStage > 400, bonus: { attackMultiplier: 5 } },
+        { name: "万界臣服", condition: (p) => p.battle.maxStage > 500, bonus: { attackMultiplier: 5 } },
+        { name: "天地共主", condition: (p) => p.battle.maxStage > 600, bonus: { attackMultiplier: 5 } },
+        { name: "星河主宰", condition: (p) => p.battle.maxStage > 700, bonus: { attackMultiplier: 5 } },
+        { name: "太虚之皇", condition: (p) => p.battle.maxStage > 800, bonus: { attackMultiplier: 5 } },
+        { name: "六道归一", condition: (p) => p.battle.maxStage > 900, bonus: { attackMultiplier: 5 } }
+    ],
+    // 转生分支
+    reincarnationBranch: [
+        { name: "初涉江湖", condition: (p) => p.reincarnationCount > 1, bonus: { healthMultiplier: 1.2 } },
+        { name: "俗世门徒", condition: (p) => p.reincarnationCount > 10, bonus: { healthMultiplier: 1.2 } },
+        { name: "人中龙凤", condition: (p) => p.reincarnationCount > 50, bonus: { healthMultiplier: 1.2 } },
+        { name: "一方翘楚", condition: (p) => p.reincarnationCount > 100, bonus: { healthMultiplier: 1.2 } },
+        { name: "超凡入圣", condition: (p) => p.reincarnationCount > 250, bonus: { healthMultiplier: 1.2 } },
+        { name: "一代宗师", condition: (p) => p.reincarnationCount > 500, bonus: { healthMultiplier: 1.2 } },
+        { name: "盖世之才", condition: (p) => p.reincarnationCount > 1000, bonus: { healthMultiplier: 1.2 } },
+        { name: "众仙之师", condition: (p) => p.reincarnationCount > 2000, bonus: { healthMultiplier: 1.2 } },
+        { name: "创世之灵", condition: (p) => p.reincarnationCount > 3000, bonus: { healthMultiplier: 1.2 } },
+        { name: "万神之主", condition: (p) => p.reincarnationCount > 5000, bonus: { healthMultiplier: 1.2 } },
+        { name: "无上真神", condition: (p) => p.reincarnationCount > 10000, bonus: { healthMultiplier: 1.2 } },
+        { name: "寰宇神尊", condition: (p) => p.reincarnationCount > 50000, bonus: { healthMultiplier: 1.2 } },
+        { name: "创世神帝", condition: (p) => p.reincarnationCount > 100000, bonus: { healthMultiplier: 1.2 } }
+    ],
+    // 驯兽师分支
+    tamerBranch: [
+        { name: "初级驯兽师", condition: (p) => p.pets?.thunderKirin?.level > 10, bonus: { critMultiplier: 2 } },
+        { name: "中级驯兽师", condition: (p) => p.pets?.netherQiongqi?.level > 10, bonus: { critMultiplier: 2 } },
+        { name: "高级驯兽师", condition: (p) => p.pets?.primordialZhuLong?.level > 10, bonus: { critMultiplier: 4 } },
+        { name: "圣级驯兽师", condition: (p) => p.pets?.yanYuBiAn?.level > 10, bonus: { critMultiplier: 4 } },
+        { name: "神级驯兽师", condition: (p) => p.pets?.yuyu2?.level > 10, bonus: { critMultiplier: 4 } },
+        { name: "人级驯兽师", condition: (p) => p.pets?.yuyu3?.level > 10, bonus: { critMultiplier: 4 } },
+        { name: "地级驯兽师", condition: (p) => p.pets?.yuyu4?.level > 10, bonus: { critMultiplier: 4 } },
+        { name: "天级驯兽师", condition: (p) => p.pets?.yuyu5?.level > 10, bonus: { critMultiplier: 4 } }
+    ],
+    // 魂环分支
+    soulRingBranch: [
+        { name: "魂士", condition: (p) => hasSoulRing(p, "year1"), bonus: { attackMultiplier: 2 } },
+        { name: "魂师", condition: (p) => hasSoulRing(p, "year100"), bonus: { attackMultiplier: 2 } },
+        { name: "大魂师", condition: (p) => hasSoulRing(p, "year10000"), bonus: { attackMultiplier: 2 } },
+        { name: "魂尊", condition: (p) => hasSoulRing(p, "year1000000"), bonus: { attackMultiplier: 2 } },
+        { name: "魂宗", condition: (p) => hasSoulRing(p, "year3"), bonus: { attackMultiplier: 2 } },
+        { name: "魂王", condition: (p) => hasSoulRing(p, "year7"), bonus: { attackMultiplier: 2 } },
+        { name: "魂帝", condition: (p) => hasSoulRing(p, "year13"), bonus: { attackMultiplier: 4 } },
+        { name: "魂圣", condition: (p) => hasSoulRing(p, "year18"), bonus: { attackMultiplier: 4 } },
+        { name: "魂斗罗", condition: (p) => hasSoulRing(p, "year23"), bonus: { attackMultiplier: 4 } },
+        { name: "普通封号斗罗", condition: (p) => hasSoulRing(p, "year28"), bonus: { attackMultiplier: 4 } },
+        { name: "巅峰斗罗", condition: (p) => hasSoulRing(p, "year33"), bonus: { attackMultiplier: 4 } },
+        { name: "绝世斗罗", condition: (p) => hasSoulRing(p, "year37"), bonus: { attackMultiplier: 4 } }
+    ],
+    // 特殊分支
+    specialBranch: [
+        { name: "萌新", condition: (p) => p.gold > 1, bonus: { attackMultiplier: 1 } },
+        { name: "公测玩家", condition: (p) => p.usedActivationCodes.includes("VIP666777"), bonus: { attackMultiplier: 2 } },
+        { name: "持剑学徒", condition: (p) => getEquipLevel(p, "废品") > 1, bonus: { attackMultiplier: 2 } },
+        { name: "疾风剑者", condition: (p) => getEquipLevel(p, "废品") > 1000, bonus: { attackMultiplier: 2 } },
+        { name: "断水剑师", condition: (p) => getEquipLevel(p, "废品") > 10000, bonus: { attackMultiplier: 2 } },
+        { name: "九霄剑王", condition: (p) => getEquipLevel(p, "废品") > 100000, bonus: { attackMultiplier: 2 } },
+        { name: "独孤剑皇", condition: (p) => getEquipLevel(p, "废品") > 500000, bonus: { attackMultiplier: 2 } },
+        { name: "剑域之主", condition: (p) => getEquipLevel(p, "废品") > 1000000, bonus: { attackMultiplier: 4 } },
+        { name: "万剑之神", condition: (p) => getEquipLevel(p, "废品") > 5000000, bonus: { attackMultiplier: 4 } },
+        { name: "鸿蒙剑祖", condition: (p) => getEquipLevel(p, "废品") > 10000000, bonus: { attackMultiplier: 4 } },
+        { name: "万劫剑神", condition: (p) => getEquipLevel(p, "废品") > 50000000, bonus: { attackMultiplier: 4 } },
+        { name: "无上剑神", condition: (p) => getEquipLevel(p, "废品") > 100000000, bonus: { attackMultiplier: 4 } },
+        { name: "剑狱之尊", condition: (p) => getEquipLevel(p, "废品") > 200000000, bonus: { attackMultiplier: 4 } },
+        { name: "剑主洪荒", condition: (p) => getEquipLevel(p, "废品") > 300000000, bonus: { attackMultiplier: 4 } },
+        { name: "御诸剑神", condition: (p) => getEquipLevel(p, "废品") > 400000000, bonus: { attackMultiplier: 4 } }
+    ]
+};
+// 辅助函数：检查是否拥有指定魂环
+function hasSoulRing(player, typeName) {
+    return player.soulRings.some(ring => ring.type === typeName);
+}
+
+// 辅助函数：获取指定类型装备的最高等级
+function getEquipLevel(player, equipName) {
+    return player.dungeonEquipment
+        .filter(eq => eq.name === equipName)
+        .reduce((max, eq) => Math.max(max, eq.level || 0), 0);
+}
+
+// 显示称号界面
+function showTitleDialog() {
+    checkTitleUnlocks(); // 先检查解锁状态
+    renderTitleBranches(); // 渲染称号
+    document.getElementById("titleDialog").style.display = "block";
+    document.getElementById("titleOverlay").style.display = "block";
+}
+
+// 关闭称号界面
+function closeTitleDialog() {
+    document.getElementById("titleDialog").style.display = "none";
+    document.getElementById("titleOverlay").style.display = "none";
+}
+
+// 检查并解锁称号
+function checkTitleUnlocks() {
+    let newlyUnlocked = false;
+    // 遍历所有分支的称号
+    Object.values(titleConfig).forEach(branch => {
+        branch.forEach(title => {
+            if (!player.titles.unlocked.includes(title.name) && title.condition(player)) {
+                player.titles.unlocked.push(title.name);
+                newlyUnlocked = true;
+
+                // 应用称号加成
+                if (title.bonus) {
+                    applyTitleBonus(title.bonus);
+                }
+
+                logAction(`解锁新称号：${title.name}`, 'success');
+            }
+        });
+    });
+    if (newlyUnlocked) {
+        saveGame();
+    }
+}
+
+// 应用称号加成
+function applyTitleBonus(bonus) {
+    // 直接修改玩家属性
+    if (bonus.attackMultiplier) {
+        player.battle.playerAttack *= bonus.attackMultiplier;
+    }
+    if (bonus.healthMultiplier) {
+        player.battle.playerHealth *= bonus.healthMultiplier;
+    }
+    if (bonus.critMultiplier) {
+        player.battle.playerCritDamage *= bonus.critMultiplier;
+    }
+    // 其他属性...
+
+    logAction(`称号加成生效: ${JSON.stringify(bonus)}`, 'success');
+    updatePlayerBattleStats();
+}
+
+// 渲染称号分支
+function renderTitleBranches() {
+    // 遍历每个分支并渲染
+    Object.entries(titleConfig).forEach(([branchKey, titles]) => {
+        const container = document.getElementById(`${branchKey}Container`);
+        if (!container) return;
+
+        container.innerHTML = "";
+        titles.forEach(title => {
+            // 只显示已解锁的称号
+            if (player.titles.unlocked.includes(title.name)) {
+                const isSelected = player.titles.current === title.name;
+                const titleEl = document.createElement("div");
+                titleEl.className = `titleItem unlocked ${isSelected ? 'selected' : ''}`;
+                titleEl.textContent = title.name;
+                titleEl.onclick = () => selectTitle(title.name);
+                container.appendChild(titleEl);
+            }
+        });
+    });
+}
+
+// 选择称号
+function selectTitle(titleName) {
+    if (player.titles.unlocked.includes(titleName)) {
+        player.titles.current = titleName;
+        logAction(`已选择称号：${titleName}`, 'info');
+        renderTitleBranches(); // 更新选中状态
+        updateDisplay(); // 更新玩家名字旁的称号显示
+        saveGame();
+    }
+}
+// 计算称号总加成（在属性计算处调用）
+function calculateTotalBonuses() {
+    const bonuses = {
+        attackMultiplier: 1,
+        healthMultiplier: 1,
+        critMultiplier: 1
+    };
+
+    // 累加所有已解锁称号的加成
+    player.titles.unlocked.forEach(titleName => {
+        // 查找对应的称号配置
+        for (const branch of Object.values(titleConfig)) {
+            for (const title of branch) {
+                if (title.name === titleName && title.bonus) {
+                    // 累乘加成
+                    if (title.bonus.attackMultiplier) {
+                        bonuses.attackMultiplier *= title.bonus.attackMultiplier;
+                    }
+                    if (title.bonus.healthMultiplier) {
+                        bonuses.healthMultiplier *= title.bonus.healthMultiplier;
+                    }
+                    if (title.bonus.critMultiplier) {
+                        bonuses.critMultiplier *= title.bonus.critMultiplier;
+                    }
+                    break;
+                }
+            }
+        }
+    });
+
+    return bonuses;
+}
+
+
+// 伴侣品阶配置
+const companionRarities = {
+    white: {
+        name: "普通",
+        color: "#FFFFFF",
+        baseScore: 100,
+        upgradeMultiplier: 1,
+        talentCount: 4,
+        talentRange: [0, 3], // 初级到终极
+        decomposeRose: 5
+    },
+    blue: {
+        name: "稀有",
+        color: "#0000FF",
+        baseScore: 500,
+        upgradeMultiplier: 3,
+        talentCount: 5,
+        talentRange: [0, 4], // 初级到圣级
+        decomposeRose: 20
+    },
+    purple: {
+        name: "史诗",
+        color: "#800080",
+        baseScore: 1000,
+        upgradeMultiplier: 10,
+        talentCount: 6,
+        talentRange: [0, 5], // 初级到神级
+        decomposeRose: 50
+    },
+    pink: {
+        name: "卓越",
+        color: "#FF69B4",
+        baseScore: 3000,
+        upgradeMultiplier: 20,
+        talentCount: 7,
+        talentRange: [0, 6], // 初级到远古
+        decomposeRose: 100
+    },
+    orange: {
+        name: "完美",
+        color: "#FFA500",
+        baseScore: 5000,
+        upgradeMultiplier: 50,
+        talentCount: 8,
+        talentRange: [0, 7], // 初级到太古
+        decomposeRose: 200
+    },
+    red: {
+        name: "神赐",
+        color: "#FF0000",
+        baseScore: 8000,
+        upgradeMultiplier: 100,
+        talentCount: 10,
+        talentRange: [0, 8], // 初级到洪荒
+        decomposeRose: 1000
+    }
+};
+
+// 天赋类型配置
+const talentTypes = [
+    {
+        name: "攻击",
+        base: 1,
+        perLevel: 5,
+        description: (level) => `玩家总和攻击+${(1 + 5 * level).toFixed(1)}倍`
+    },
+    {
+        name: "爆伤",
+        base: 1,
+        perLevel: 5,
+        description: (level) => `玩家总和爆伤+${(1 + 5 * level).toFixed(1)}倍`
+    },
+    {
+        name: "生命",
+        base: 0.001,
+        perLevel: 0.001,
+        description: (level) => `玩家总和生命+${(0.001 + 0.001 * level).toFixed(2)}倍`
+    },
+    {
+        name: "全属性",
+        base: 0.5,
+        perLevel: 2.5,
+        description: (level) => `玩家总和全属性+${(0.5 + 2.5 * level).toFixed(1)}倍`
+    },
+    {
+        name: "连击",
+        base: 1,
+        perLevel: 5,
+        description: (level) => `玩家连击+${1 + 5 * level}`
+    },
+    {
+        name: "暴击率",
+        base: 0.001,
+        perLevel: 0.001,
+        description: (level) => `玩家暴击率+${(0.001 + 0.001 * level).toFixed(2)}倍`
+    }
+];
+
+// 天赋品阶名称
+const talentRanks = ["初级", "中级", "高级", "终极", "圣级", "神级", "远古", "太古", "洪荒"];
+
+// 伴侣名字库
+const companionNames = ["闫闫", "茶茶", "沈砚山", "苏绾月", "林清瑶", "楚棠溪", "慕玄尘", "许清尘", "温玉珞", "林灵枢", "叶棠音", "陆剑尘", "楚絮晚", "陆星辞", "王富贵", "洛千尘", "白小纯", "白芷晴", "顾长歌", "沈青岚", "慕雨柔", "陆天行", "乔曦", "柳如烟", "香香", "尝试", "小萝莉", "通元", "鱼鱼", "花花"];
+
+// 抽奖概率
+const drawProbabilities = [
+    { rarity: "white", prob: 0.8 },
+    { rarity: "blue", prob: 0.15 },
+    { rarity: "purple", prob: 0.01889 },
+    { rarity: "pink", prob: 0.001 },
+    { rarity: "orange", prob: 0.0001 },
+    { rarity: "red", prob: 0.00001 }
+];
+const guaranteeThresholds = {
+    epic: 100,   // 100次保底史诗
+    pink: 500,   // 500次保底卓越
+    orange: 1000, // 1000次保底完美
+    red: 5000    // 5000次保底神赐
+};
+
+// 打开伴侣系统
+function openCompanionSystem() {
+    document.getElementById('companionSystem').style.display = 'block';
+    document.getElementById('companionOverlay').style.display = 'block';
+    updateCompanionDisplay();
+}
+
+// 关闭伴侣系统
+function closeCompanionSystem() {
+    document.getElementById('companionSystem').style.display = 'none';
+    document.getElementById('companionOverlay').style.display = 'none';
+}
+
+// 更新伴侣系统显示
+function updateCompanionDisplay() {
+    // 更新等级和消耗
+    document.getElementById('companionLevel').textContent = player.companionLevel;
+    document.getElementById('upgradeCost').textContent = 10 * player.companionLevel;
+    document.getElementById('companionKeyCount').textContent = player.items.companionKey;
+    // 更新保底计数器显示
+    document.getElementById('epicGuarantee').textContent = player.companionChestGuarantee.epic;
+    document.getElementById('pinkGuarantee').textContent = player.companionChestGuarantee.pink;
+    document.getElementById('orangeGuarantee').textContent = player.companionChestGuarantee.orange;
+    document.getElementById('redGuarantee').textContent = player.companionChestGuarantee.red;
+    // 更新伴侣列表
+    const listContainer = document.getElementById('companionList');
+    listContainer.innerHTML = '';
+
+    player.companions.forEach(companion => {
+        const isEquipped = player.equippedCompanionId === companion.id;
+        const stars = '★'.repeat(Math.min(10, Math.floor(companion.score / 1000)));
+        const emptyStars = '☆'.repeat(10 - Math.min(10, Math.floor(companion.score / 1000)));
+
+        const card = document.createElement('div');
+        card.style = `background: #222; border: 2px solid ${companionRarities[companion.rarity].color}; border-radius: 5px; padding: 10px; position: relative;`;
+        card.innerHTML = `
+            <div style="position: absolute; top: 5px; right: 5px; color: ${companionRarities[companion.rarity].color};">
+                ${companionRarities[companion.rarity].name}
+            </div>
+            <h4 style="color: ${companionRarities[companion.rarity].color}; margin-top: 0;">${companion.name}</h4>
+            <div>${stars}${emptyStars} (${companion.score}/10000)</div>
+            <div style="margin: 5px 0; font-size: 0.8em; max-height: 80px; overflow-y: auto;">
+                ${companion.talents.map(t => `${talentRanks[t.rank]}${talentTypes[t.type].name}: ${talentTypes[t.type].description(t.rank)}`).join('<br>')}
+            </div>
+            <div style="margin-top: 10px; display: flex; gap: 5px;">
+                <button onclick="equipCompanion('${companion.id}')" style="flex: 1; background: ${isEquipped ? '#4CAF50' : '#555'}; color: white; border: none; padding: 3px; border-radius: 2px; font-size: 0.8em;">
+                    ${isEquipped ? '已装备' : '装备'}
+                </button>
+                <button onclick="toggleCompanionLock('${companion.id}')" style="width: 30px; background: ${companion.locked ? '#f44336' : '#555'}; color: white; border: none; padding: 3px; border-radius: 2px;">
+                    ${companion.locked ? '锁' : '开'}
+                </button>
+                <button onclick="decomposeCompanion('${companion.id}')" style="width: 30px; background: #f44336; color: white; border: none; padding: 3px; border-radius: 2px;" ${companion.locked ? 'disabled' : ''}>
+                    分
+                </button>
+            </div>
+        `;
+        listContainer.appendChild(card);
+    });
+}
+
+// 抽取伴侣
+function drawCompanion() {
+    if (player.items.companionKey < 1) {
+        logAction("伴侣钥匙不足！", "error");
+        return;
+    }
+
+    player.items.companionKey--;
+
+    // 更新所有保底计数器 - 修复：确保每次开启都更新计数器
+    player.companionChestGuarantee.epic++;
+    player.companionChestGuarantee.pink++;
+    player.companionChestGuarantee.orange++;
+    player.companionChestGuarantee.red++;
+
+    let selectedRarity;
+    let isGuaranteed = false;
+
+    // 检查保底机制（优先级从高到低）
+    if (player.companionChestGuarantee.red >= guaranteeThresholds.red) {
+        selectedRarity = "red";
+        isGuaranteed = true;
+        player.companionChestGuarantee.red = 0; // 重置计数器
+        logAction("触发神赐品质保底！", "success");
+    } else if (player.companionChestGuarantee.orange >= guaranteeThresholds.orange) {
+        selectedRarity = "orange";
+        isGuaranteed = true;
+        player.companionChestGuarantee.orange = 0;
+        logAction("触发完美品质保底！", "success");
+    } else if (player.companionChestGuarantee.pink >= guaranteeThresholds.pink) {
+        selectedRarity = "pink";
+        isGuaranteed = true;
+        player.companionChestGuarantee.pink = 0;
+        logAction("触发卓越品质保底！", "success");
+    } else if (player.companionChestGuarantee.epic >= guaranteeThresholds.epic) {
+        selectedRarity = "epic";
+        isGuaranteed = true;
+        player.companionChestGuarantee.epic = 0;
+        logAction("触发史诗品质保底！", "success");
+    } else {
+        // 没有触发保底，按原概率抽取
+        let rand = Math.random();
+        let cumulativeProb = 0;
+        for (const { rarity, prob } of drawProbabilities) {
+            cumulativeProb += prob;
+            if (rand < cumulativeProb) {
+                selectedRarity = rarity;
+                break;
+            }
+        }
+    }
+
+    // 生成天赋
+    const config = companionRarities[selectedRarity];
+    const talentCount = config.talentCount;
+    const [minRank, maxRank] = config.talentRange;
+    const talents = [];
+
+    while (talents.length < talentCount) {
+        const type = Math.floor(Math.random() * talentTypes.length);
+        const rank = Math.floor(Math.random() * (maxRank - minRank + 1)) + minRank;
+        talents.push({ type, rank });
+    }
+
+    // 计算评分
+    const baseScore = config.baseScore;
+    const talentScore = talents.reduce((sum, t) => sum + (t.rank + 1) * 50, 0);
+    const totalScore = Math.min(10000, baseScore + talentScore);
+
+    // 生成伴侣
+    const companion = {
+        id: 'comp_' + Date.now() + Math.floor(Math.random() * 1000),
+        name: companionNames[Math.floor(Math.random() * companionNames.length)],
+        rarity: selectedRarity,
+        talents,
+        score: totalScore,
+        locked: false
+    };
+
+    player.companions.push(companion);
+
+    const rarityName = {
+        "white": "普通",
+        "blue": "稀有",
+        "epic": "史诗",
+        "pink": "卓越",
+        "orange": "完美",
+        "red": "神赐"
+    }[selectedRarity];
+
+    logAction(`获得了${rarityName}品质伴侣：${companion.name}${isGuaranteed ? " (保底)" : ""}`, 'success');
+    updateCompanionDisplay();
+}
+
+// 升级伴侣等级
+function upgradeCompanion() {
+    const cost = 10 * player.companionLevel;
+    if (player.items.rose < cost) {
+        logAction("玫瑰花不足！", "error");
+        return;
+    }
+
+    player.items.rose -= cost;
+    player.companionLevel++;
+    logAction(`伴侣等级提升至Lv.${player.companionLevel}`, 'success');
+    updateCompanionDisplay();
+}
+
+// 装备伴侣
+function equipCompanion(id) {
+    player.equippedCompanionId = id;
+    logAction(`已装备伴侣：${player.companions.find(c => c.id === id).name}`, 'success');
+    updateCompanionDisplay();
+}
+
+// 切换锁定状态
+function toggleCompanionLock(id) {
+    const companion = player.companions.find(c => c.id === id);
+    if (companion) {
+        companion.locked = !companion.locked;
+        logAction(`${companion.name}已${companion.locked ? '锁定' : '解锁'}`, 'success');
+        updateCompanionDisplay();
+    }
+}
+// 切换自动分解状态
+function toggleAutoDecompose() {
+    player.autoDecompose.enabled = !player.autoDecompose.enabled;
+    const btn = document.getElementById('toggleAutoDecompose');
+    btn.textContent = `自动分解：${player.autoDecompose.enabled ? '开启' : '关闭'}`;
+    btn.style.background = player.autoDecompose.enabled ? '#4CAF50' : '#ff9800';
+    logAction(`${player.autoDecompose.enabled ? '开启' : '关闭'}自动分解低于${getRarityName(player.autoDecompose.belowRarity)}的伴侣`, 'info');
+
+    // 如果开启则立即检查一次
+    if (player.autoDecompose.enabled) {
+        checkAutoDecompose();
+    }
+}
+
+// 设置自动分解的品阶阈值
+function setAutoDecomposeRarity() {
+    const rarity = document.getElementById('autoDecomposeBelowRarity').value;
+    player.autoDecompose.belowRarity = rarity;
+    logAction(`设置自动分解低于${getRarityName(rarity)}的伴侣`, 'info');
+}
+
+// 获取品阶名称
+function getRarityName(rarity) {
+    const names = {
+        'white': '普通(白色)',
+        'blue': '稀有(蓝色)',
+        'purple': '史诗(紫色)',
+        'pink': '卓越(粉色)',
+        'orange': '完美(橙色)',
+        'red': '神赐(红色)'
+    };
+    return names[rarity] || '普通(白色)';
+}
+
+// 自动分解检查逻辑
+function checkAutoDecompose() {
+    if (!player.autoDecompose.enabled) return;
+
+    const rarityOrder = ['white', 'blue', 'purple', 'pink', 'orange', 'red'];
+    const targetIndex = rarityOrder.indexOf(player.autoDecompose.belowRarity);
+    if (targetIndex === -1) return;
+
+    // 找出所有低于等于目标品阶且未锁定的伴侣
+    const toDecompose = player.companions.filter(c =>
+        rarityOrder.indexOf(c.rarity) <= targetIndex && !c.locked
+    );
+
+    if (toDecompose.length > 0) {
+        const totalRoses = toDecompose.reduce((sum, c) => sum + companionRarities[c.rarity].decomposeRose, 0);
+        player.items.rose += totalRoses;
+
+        // 过滤掉分解的伴侣
+        player.companions = player.companions.filter(c =>
+            !(rarityOrder.indexOf(c.rarity) <= targetIndex && !c.locked)
+        );
+
+        // 如果装备的伴侣被分解，取消装备
+        if (toDecompose.some(c => c.id === player.equippedCompanionId)) {
+            player.equippedCompanionId = null;
+        }
+
+        logAction(`自动分解${toDecompose.length}个低于${getRarityName(player.autoDecompose.belowRarity)}的伴侣，获得${totalRoses}玫瑰花`, 'success');
+        updateCompanionDisplay();
+    }
+}
+
+// 添加到页面初始化函数中
+function initAutoDecomposeUI() {
+    const raritySelect = document.getElementById('autoDecomposeBelowRarity');
+    raritySelect.value = player.autoDecompose.belowRarity;
+    raritySelect.onchange = setAutoDecomposeRarity;
+
+    const btn = document.getElementById('toggleAutoDecompose');
+    btn.textContent = `自动分解：${player.autoDecompose.enabled ? '开启' : '关闭'}`;
+    btn.style.background = player.autoDecompose.enabled ? '#4CAF50' : '#ff9800';
+}
+
+// 添加定时检查（每5秒一次）
+setInterval(checkAutoDecompose, 5000);
+// 分解单个伴侣
+function decomposeCompanion(id) {
+    const index = player.companions.findIndex(c => c.id === id);
+    if (index === -1) return;
+
+    const companion = player.companions[index];
+    if (companion.locked) return;
+
+    const roses = companionRarities[companion.rarity].decomposeRose;
+    player.items.rose += roses;
+    player.companions.splice(index, 1);
+
+    // 如果分解的是当前装备的伴侣，取消装备
+    if (player.equippedCompanionId === id) {
+        player.equippedCompanionId = null;
+    }
+
+    logAction(`分解${companionRarities[companion.rarity].name}伴侣${companion.name}，获得${roses}玫瑰花`, 'success');
+    updateCompanionDisplay();
+}
+
+// 批量分解
+function batchDecompose() {
+    const rarity = document.getElementById('decomposeRarity').value;
+    const toDecompose = player.companions.filter(c => c.rarity === rarity && !c.locked);
+    if (toDecompose.length === 0) {
+        logAction("没有可分解的伴侣", "error");
+        return;
+    }
+
+    const totalRoses = toDecompose.reduce((sum, c) => sum + companionRarities[c.rarity].decomposeRose, 0);
+    player.items.rose += totalRoses;
+
+    // 过滤掉分解的伴侣
+    player.companions = player.companions.filter(c => !(c.rarity === rarity && !c.locked));
+
+    // 如果装备的伴侣被分解，取消装备
+    if (toDecompose.some(c => c.id === player.equippedCompanionId)) {
+        player.equippedCompanionId = null;
+    }
+
+    logAction(`批量分解${toDecompose.length}个${companionRarities[rarity].name}伴侣，获得${totalRoses}玫瑰花`, 'success');
+    updateCompanionDisplay();
+}
+
+// 计算伴侣天赋加成（需要整合到属性计算中）
+function getCompanionBonuses() {
+    if (!player.equippedCompanionId) return {
+        attackMultiplier: 1,
+        critDamageMultiplier: 1,
+        healthMultiplier: 1,
+        allStatsMultiplier: 1,
+        combo: 0,
+        critRateMultiplier: 1
+    };
+
+    const companion = player.companions.find(c => c.id === player.equippedCompanionId);
+    if (!companion) return {
+        attackMultiplier: 1,
+        critDamageMultiplier: 1,
+        healthMultiplier: 1,
+        allStatsMultiplier: 1,
+        combo: 0,
+        critRateMultiplier: 1
+    };
+
+    // 基础加成
+    let bonuses = {
+        attackMultiplier: 1,
+        critDamageMultiplier: 1,
+        healthMultiplier: 1,
+        allStatsMultiplier: 1,
+        combo: 0,
+        critRateMultiplier: 1
+    };
+
+    // 应用天赋
+    companion.talents.forEach(talent => {
+        const rank = talent.rank;
+        const type = talentTypes[talent.type];
+        const multiplier = companionRarities[companion.rarity].upgradeMultiplier * player.companionLevel;
+
+        switch (talent.type) {
+            case 0: // 攻击
+                bonuses.attackMultiplier += (type.base + type.perLevel * rank) * multiplier;
+                break;
+            case 1: // 爆伤
+                bonuses.critDamageMultiplier += (type.base + type.perLevel * rank) * multiplier;
+                break;
+            case 2: // 生命
+                bonuses.healthMultiplier += (type.base + type.perLevel * rank) * multiplier;
+                break;
+            case 3: // 全属性
+                bonuses.allStatsMultiplier += (type.base + type.perLevel * rank) * multiplier;
+                break;
+            case 4: // 连击
+                bonuses.combo += (type.base + type.perLevel * rank) * multiplier;
+                break;
+            case 5: // 暴击率
+                bonuses.critRateMultiplier += (type.base + type.perLevel * rank) * multiplier;
+                break;
+        }
+    });
+
+    // 全属性加成应用到攻击和爆伤
+    bonuses.attackMultiplier += bonuses.allStatsMultiplier;
+    bonuses.critDamageMultiplier += bonuses.allStatsMultiplier;
+
+    return bonuses;
+}
+
+
+
+// 切换通天塔UI
+function toggleTowerUI() {
+    // 检查转生次数是否达到100次（和普通打怪模式一致）
+    if (player.reincarnationCount < 100) {
+        alert("需要达到100转才能开启通天塔模式！");
+        return;
+    }
+
+    const towerUI = document.getElementById('towerUI');
+    towerUI.style.display = towerUI.style.display === 'none' ? 'block' : 'none';
+    if (towerUI.style.display === 'block') {
+        // 初始化玩家属性
+        generateTowerMonster();
+        initTowerPlayerStats();
+        player.tower.playerHealth = player.battle.playerHealth;
+        player.tower.playerAttack = player.battle.playerAttack;
+        player.tower.playerCritRate = player.battle.playerCritRate;
+        player.tower.playerCritDamage = player.battle.playerCritDamage;
+        player.tower.playerAccuracy = player.battle.playerAccuracy;
+        player.tower.playerDodge = player.battle.playerDodge;
+        // 如果没有当前怪物，生成一个
+        if (!player.tower.monster) {
+            generateTowerMonster();
+        }
+        updateTowerUI();
+    }
+}
+
+// 初始化通天塔玩家属性
+function initTowerPlayerStats() {
+    player.tower.playerHealth = player.battle.playerHealth;
+    player.tower.playerAttack = player.battle.playerAttack;
+    player.tower.playerCritRate = player.battle.playerCritRate;
+    player.tower.playerCritDamage = player.battle.playerCritDamage;
+    player.tower.playerMultiAttack = player.battle.playerMultiAttack;
+}
+
+// 生成通天塔怪物
+function generateTowerMonster() {
+    const floor = player.tower.currentFloor;
+    const monsterRanks = ['普通', '精英', '普通BOSS', '特殊BOSS', '领主BOSS', '霸主级BOSS', '王级BOSS', '皇级BOSS', '帝级BOSS', '神级BOSS', '圣级BOSS'];
+    const rankProbabilities = [0.45, 0.20, 0.10, 0.06, 0.05, 0.04, 0.03, 0.03, 0.02, 0.015, 0.005];
+
+    // 随机生成怪物品阶
+    let rankIndex = 0;
+    let rand = Math.random();
+    for (let i = 0; i < rankProbabilities.length; i++) {
+        rand -= rankProbabilities[i];
+        if (rand < 0) {
+            rankIndex = i;
+            break;
+        }
+    }
+    const rank = monsterRanks[rankIndex];
+
+    // 根据品阶选择词条
+    const modifierPool = monsterRankModifiers[rank].pool;
+    const selectCount = monsterRankModifiers[rank].selectCount;
+    const selectedModifiers = [];
+    const usedModifiers = new Set();
+
+    for (let i = 0; i < selectCount; i++) {
+        let modifier;
+        do {
+            modifier = modifierPool[Math.floor(Math.random() * modifierPool.length)];
+        } while (usedModifiers.has(modifier));
+        usedModifiers.add(modifier);
+        selectedModifiers.push(modifier);
+    }
+
+    // 计算怪物属性（通天塔特殊逻辑）
+    const baseHealth = 10000000000; // 初始1亿血量
+    const healthMultiplier = Math.pow(1.00693, floor); // 每层乘以1.00693
+    let attackMultiplier;
+
+    if (floor <= 5) {
+        attackMultiplier = Math.floor(Math.random() * 50) + 30;
+    } else if (floor <= 150) {
+        attackMultiplier = Math.floor(Math.random() * 100) + 100;
+    } else if (floor <= 300) {
+        attackMultiplier = 300 + (floor - 149) * 50;
+    } else if (floor <= 1000) {
+        attackMultiplier = 1000 + (floor - 299) * 100;
+    } else if (floor <= 5000) {
+        attackMultiplier = 5000 + (floor - 999) * 1000;
+    } else if (floor <= 10000) {
+        attackMultiplier = 10000 + (floor - 4999) * 10000;
+    } else if (floor <= 20000) {
+        attackMultiplier = 20000 + (floor - 9999) * 100000;
+    } else if (floor <= 30000) {
+        attackMultiplier = 30000 + (floor - 19999) * 1000000;
+    } else if (floor <= 50000) {
+        attackMultiplier = 50000 + (floor - 29999) * 10000000;
+    } else if (floor <= 60000) {
+        attackMultiplier = 60000 + (floor - 49999) * 100000000;
+    } else if (floor <= 70000) {
+        attackMultiplier = 70000 + (floor - 59999) * 1000000000;
+    } else if (floor <= 80000) {
+        attackMultiplier = 80000 + (floor - 69999) * 10000000000;
+    } else {
+        attackMultiplier = 90000 + (floor - 79999) * 100000000000;
+    }
+
+    let attack = attackMultiplier * (10 + floor * 500);
+    let damageReduction = 0;
+    let dodgeChance = 0;
+    let blockCount = 0;
+    let attackCount = 1;
+    let damageTakenMultiplier = 1;
+
+    selectedModifiers.forEach(modifier => {
+        const effect = monsterModifiers[modifier];
+        if (effect.attackMultiplier) attack *= effect.attackMultiplier;
+        if (effect.damageReduction) damageReduction += effect.damageReduction;
+        if (effect.dodgeChance) dodgeChance += effect.dodgeChance;
+        if (effect.blockCount) blockCount += effect.blockCount;
+        if (effect.attackCount) attackCount = effect.attackCount;
+        if (effect.damageTakenMultiplier) damageTakenMultiplier *= effect.damageTakenMultiplier;
+    });
+
+    // 生成怪物，包含复活次数
+    player.tower.monster = {
+        name: `${getRandomMonsterName()} 等级${Math.floor(attackMultiplier * 2 + 7)}`,
+        rank: rank,
+        health: baseHealth * healthMultiplier,
+        maxHealth: baseHealth * healthMultiplier,
+        attack: attack,
+        modifiers: selectedModifiers,
+        damageReduction: damageReduction,
+        dodgeChance: dodgeChance,
+        blockCount: blockCount,
+        attackCount: attackCount,
+        damageTakenMultiplier: damageTakenMultiplier,
+        resurrectionsLeft: 20 // 20次复活机会
+    };
+}
+
+// 攻击通天塔怪物
+function attackTowerMonster() {
+    // 使用打怪模式属性
+    const playerAttack = player.battle.playerAttack;
+    const playerCritRate = player.battle.playerCritRate;
+    const playerCritDamage = player.battle.playerCritDamage;
+    const playerMultiAttack = player.battle.playerMultiAttack;
+
+    if (!player.tower.monster) return;
+
+    const monster = player.tower.monster;
+    let totalDamage = 0;
+    let normalDamage = 0;
+    let critDamage = 0;
+    let critCount = 0;
+    let dodgeCount = 0;
+    let totalAttacks = player.tower.playerMultiAttack || 1;
+    let battleLogs = [];
+    let monsterDefeated = false;
+
+    // 玩家攻击
+    for (let i = 0; i < totalAttacks; i++) {
+        // 检查是否已被击败
+        if (monster.health <= 0) break;
+
+        // 检查闪避
+        if (Math.random() < monster.dodgeChance) {
+            dodgeCount++;
+            battleLogs.push(`${monster.name}闪避了你的攻击！`);
+            continue;
+        }
+
+        // 计算基础伤害
+        let damage = player.tower.playerAttack;
+
+        // 应用伤害减免
+        damage *= (1 - monster.damageReduction);
+
+        // 应用伤害乘数
+        damage *= monster.damageTakenMultiplier;
+
+        // 检查暴击
+        let isCrit = Math.random() < player.tower.playerCritRate;
+        if (isCrit) {
+            damage *= player.tower.playerCritDamage;
+            critCount++;
+            critDamage += damage;
+        } else {
+            normalDamage += damage;
+        }
+
+        // 应用伤害
+        monster.health -= damage;
+        totalDamage += damage;
+
+        battleLogs.push(`你对${monster.name}造成了${Math.floor(damage)}点伤害${isCrit ? '（暴击！）' : ''}`);
+
+        // 检查怪物是否被击败
+        if (monster.health <= 0) {
+            // 检查是否还有复活次数
+            if (monster.resurrectionsLeft > 0) {
+                monster.resurrectionsLeft--;
+                monster.health = monster.maxHealth; // 复活回满血
+                battleLogs.push(`${monster.name}复活了！剩余复活次数: ${monster.resurrectionsLeft}`);
+
+                // BOSS复活后立刻攻击玩家1次
+                towerMonsterCounterAttack();
+            } else {
+                battleLogs.push(`你击败了${monster.name}！`);
+                monsterDefeated = true;
+            }
+            break; // 结束当前连击
+            initTowerPlayerStats();
+            updateOfficialSystemDisplay();
+            updateMonsterUI(); // 更新UI显示
+        }
+    }
+
+    // 输出综合攻击日志
+    battleLogs.push(`你造成了${Math.floor(totalDamage)}点伤害 (${totalAttacks}连击) - 普通伤害: ${Math.floor(normalDamage)}, 闪避x${dodgeCount}, 暴击x${critCount}`);
+
+    // 添加到战斗日志
+    battleLogs.forEach(log => {
+        addTowerBattleLog(log);
+    });
+
+    // 如果怪物被彻底击败（无复活次数）
+    if (monsterDefeated) {
+        player.tower.currentFloor++;
+        player.tower.maxFloor = Math.max(player.tower.maxFloor, player.tower.currentFloor);
+        addTowerBattleLog(`通关通天塔第${player.tower.currentFloor}层！`);
+        checkTitleUnlocks();
+        // 更新总属性点
+        player.attributes.totalPoints = player.reincarnationCount * 1 + player.battle.maxStage * 10 + player.tower.currentFloor * 1;
+        player.attributes.remainingPoints++; // 每通关一层增加1点剩余属性点
+        initTowerPlayerStats();
+        // 自动进入下一关
+        generateTowerMonster();
+        updateTowerUI();
+        saveGame();
+        return;
+    }
+
+    // 怪物反击（如果还活着）
+    if (monster.health > 0) {
+        towerMonsterCounterAttack();
+    }
+
+    // 检查玩家是否被击败
+    if (player.tower.playerHealth <= 0) {
+        addTowerBattleLog('你被怪物击败了！');
+        // 重置当前层怪物
+        generateTowerMonster();
+        // 重置玩家状态
+        initTowerPlayerStats();
+        stopTowerAutoAttack();
+
+    }
+
+    updateTowerUI();
+
+}
+
+// 通天塔怪物反击
+function towerMonsterCounterAttack() {
+    const monster = player.tower.monster;
+    if (!monster || monster.health <= 0) return;
+
+    for (let i = 0; i < monster.attackCount; i++) {
+        // 检查玩家闪避
+        if (Math.random() < (player.attributes.dodge * 0.001 || 0)) {
+            addTowerBattleLog(`你闪避了${monster.name}的攻击！`);
+            continue;
+        }
+
+        // 玩家受到伤害
+        player.tower.playerHealth -= monster.attack;
+        addTowerBattleLog(`${monster.name}对你造成了${monster.attack}点伤害`);
+
+        // 检查玩家是否被击败
+        if (player.tower.playerHealth <= 0) {
+            break;
+        }
+    }
+}
+
+// 切换通天塔自动攻击
+function toggleTowerAutoAttack() {
+    player.tower.isAutoAttacking = !player.tower.isAutoAttacking;
+    document.getElementById('towerAutoAttackStatus').textContent = player.tower.isAutoAttacking ? '开' : '关';
+
+    if (player.tower.isAutoAttacking) {
+        startTowerAutoAttack();
+    } else {
+        stopTowerAutoAttack();
+    }
+}
+
+// 开始通天塔自动攻击
+function startTowerAutoAttack() {
+    // 先停止现有的自动攻击
+    stopTowerAutoAttack();
+
+    // 每秒攻击10次
+    player.tower.autoAttackInterval = setInterval(() => {
+        if (player.tower.isAutoAttacking && player.tower.monster) {
+            attackTowerMonster();
+        }
+    }, 100);
+}
+
+// 停止通天塔自动攻击
+function stopTowerAutoAttack() {
+    if (player.tower.autoAttackInterval) {
+        clearInterval(player.tower.autoAttackInterval);
+        player.tower.autoAttackInterval = null;
+    }
+}
+
+// 添加通天塔战斗日志
+function addTowerBattleLog(message) {
+    player.tower.battleLog.push({
+        time: new Date(),
+        message: message
+    });
+
+    // 限制日志长度
+    if (player.tower.battleLog.length > 10) {
+        player.tower.battleLog.shift();
+    }
+
+    // 更新UI显示
+    updateTowerBattleLog();
+}
+
+// 更新通天塔战斗日志UI
+function updateTowerBattleLog() {
+    const logElement = document.getElementById('towerBattleLog');
+    logElement.innerHTML = '';
+
+    player.tower.battleLog.forEach(entry => {
+        const logItem = document.createElement('div');
+        logItem.className = 'battle-log-entry';
+        logItem.textContent = entry.message;
+        logElement.appendChild(logItem);
+    });
+
+    // 滚动到底部
+    logElement.scrollTop = logElement.scrollHeight;
+}
+
+// 更新通天塔UI
+function updateTowerUI() {
+    // 更新玩家信息
+    document.getElementById('towerPlayerHealth').textContent = Math.floor(player.tower.playerHealth).toExponential(3);
+    document.getElementById('towerPlayerAttack').textContent = player.tower.playerAttack.toExponential(3);
+    document.getElementById('towerPlayerCritRate').textContent = (player.tower.playerCritRate * 100).toFixed(1) + '%';
+    document.getElementById('towerPlayerCritDamage').textContent = ((player.tower.playerCritDamage - 1) * 100).toFixed(1) + '%';
+
+    // 更新通天塔层数显示
+    document.getElementById('towerFloor').textContent = player.tower.currentFloor;
+    document.getElementById('towerCurrentFloor').textContent = player.tower.currentFloor;
+
+    const bonus = player.tower.currentFloor * 0.1; // 每层增加0.1%
+    document.getElementById("towerBonus").textContent = bonus.toFixed(1) + "倍";
+    // 更新怪物信息
+    if (player.tower.monster) {
+        const monster = player.tower.monster;
+        document.getElementById('towerMonsterName').textContent = monster.name;
+        document.getElementById('towerMonsterRank').textContent = monster.rank;
+        document.getElementById('towerMonsterHealth').textContent = Math.floor(monster.health).toExponential(3); + '/' + Math.floor(monster.maxHealth).toExponential(3);
+        document.getElementById('towerMonsterAttack').textContent = monster.attack.toExponential(3);
+        document.getElementById('towerMonsterModifiers').textContent = monster.modifiers.join(', ');
+        document.getElementById('towerMonsterResurrections').textContent = monster.resurrectionsLeft;
+    }
+
+    // 更新自动攻击状态
+    document.getElementById('towerAutoAttackStatus').textContent = player.tower.isAutoAttacking ? '开' : '关';
+    // 更新战斗日志
+    updateTowerBattleLog();
+}
+
+
+
+
+
+
+// 官职配置
+const officialConfig = [
+    { level: 1, name: "将仕郎（九品）", attackMultiplier: 5, cost: 100 },
+    { level: 2, name: "文林郎（九品）", attackMultiplier: 10, cost: 1000 },
+    { level: 3, name: "登仕郎（九品）", attackMultiplier: 50, cost: 10000 },
+    { level: 4, name: "儒林郎（九品）", attackMultiplier: 100, cost: 100000 },
+    { level: 5, name: "承务郎（八品）", attackMultiplier: 500, cost: 1000000 },
+    { level: 6, name: "承奉郎（八品）", attackMultiplier: 1000, cost: 1000000 },
+    { level: 7, name: "征事郎（八品）", attackMultiplier: 5000, cost: 10000000 },
+    { level: 8, name: "给事郎（八品）", attackMultiplier: 10000, cost: 100000000 },
+    { level: 9, name: "宣议郎（七品）", attackMultiplier: 50000, cost: 1000000000 },
+    { level: 10, name: "朝散郎（七品）", attackMultiplier: 100000, cost: 1000000000 },
+    { level: 11, name: "武骑尉（七品）", attackMultiplier: 500000, cost: 10000000000 },
+    { level: 12, name: "宣德郎（七品）", attackMultiplier: 1000000, cost: 100000000000 },
+    { level: 13, name: "朝请郎（七品）", attackMultiplier: 5000000, cost: 1000000000000 },
+    { level: 14, name: "云骑尉（七品）", attackMultiplier: 10000000, cost: 10000000000000 },
+    { level: 15, name: "通直郎（六品）", attackMultiplier: 50000000, cost: 100000000000000 },
+    { level: 16, name: "奉议郎（六品）", attackMultiplier: 100000000, cost: 1000000000000000 },
+    { level: 17, name: "飞骑尉（六品）", attackMultiplier: 500000000, cost: 10000000000000000 },
+    { level: 18, name: "飞骑尉（六品）", attackMultiplier: 1000000000, cost: 100000000000000000 },
+    { level: 19, name: "承议郎（六品）", attackMultiplier: 5000000000, cost: 1000000000000000000 },
+    { level: 20, name: "承议郎（六品）", attackMultiplier: 10000000000, cost: 10000000000000000000 },
+    { level: 21, name: "朝议郎（六品）", attackMultiplier: 50000000000, cost: 100000000000000000000 },
+    { level: 22, name: "晓骑尉（六品）", attackMultiplier: 100000000000, cost: 1000000000000000000000 },
+    { level: 23, name: "游击将军（五品）", attackMultiplier: 500000000000, cost: 10000000000000000000000 },
+    { level: 24, name: "游击将军（五品）", attackMultiplier: 1000000000000, cost: 100000000000000000000000 },
+    { level: 25, name: "游骑将军（五品）", attackMultiplier: 5000000000000, cost: 1000000000000000000000000 },
+    { level: 26, name: "骑都尉（五品）", attackMultiplier: 10000000000000, cost: 10000000000000000000000000 },
+    { level: 27, name: "怀化郎将（五品）", attackMultiplier: 50000000000000, cost: 100000000000000000000000000 },
+    { level: 28, name: "宁远将军（五品）", attackMultiplier: 100000000000000, cost: 1000000000000000000000000000 },
+    { level: 29, name: "定远将军（五品）", attackMultiplier: 500000000000000, cost: 10000000000000000000000000000 },
+    { level: 30, name: "归德中郎将（四品）", attackMultiplier: 1000000000000000, cost: 100000000000000000000000000000 },
+    { level: 31, name: "明威将军（四品）", attackMultiplier: 5000000000000000, cost: 1000000000000000000000000000000 },
+    { level: 32, name: "宣威将军（四品）", attackMultiplier: 10000000000000000, cost: 10000000000000000000000000000000 },
+    { level: 33, name: "轻车都尉（四品）", attackMultiplier: 50000000000000000, cost: 100000000000000000000000000000000 },
+    { level: 34, name: "怀化中郎将（四品）", attackMultiplier: 100000000000000000, cost: 1000000000000000000000000000000000 },
+    { level: 35, name: "忠武将军（四品）", attackMultiplier: 500000000000000000, cost: 10000000000000000000000000000000000 },
+    { level: 36, name: "归德将军（三品）", attackMultiplier: 1000000000000000000, cost: 100000000000000000000000000000000000 },
+    { level: 37, name: "云麾将军（三品）", attackMultiplier: 5000000000000000000, cost: 1000000000000000000000000000000000000 },
+    { level: 38, name: "护军（三品）", attackMultiplier: 10000000000000000000, cost: 10000000000000000000000000000000000000 },
+    { level: 39, name: "怀化大将军（三品）", attackMultiplier: 50000000000000000000, cost: 100000000000000000000000000000000000000 },
+    { level: 40, name: "冠军大将军（三品）", attackMultiplier: 100000000000000000000, cost: 1000000000000000000000000000000000000000 },
+    { level: 41, name: "镇军大将军（二品）", attackMultiplier: 500000000000000000000, cost: 10000000000000000000000000000000000000000 },
+    { level: 42, name: "辅国大将军（二品）", attackMultiplier: 1000000000000000000000, cost: 100000000000000000000000000000000000000000 },
+    { level: 43, name: "骠骑大将军（一品）", attackMultiplier: 5000000000000000000000, cost: 1000000000000000000000000000000000000000000 },
+    { level: 44, name: "异地王（特品）", attackMultiplier: 10000000000000000000000, cost: 10000000000000000000000000000000000000000000 },
+    { level: 45, name: "王爷（特品）", attackMultiplier: 50000000000000000000000, cost: 100000000000000000000000000000000000000000000 },
+    { level: 46, name: "国师（特品）", attackMultiplier: 100000000000000000000000, cost: 1000000000000000000000000000000000000000000000 },
+    { level: 47, name: "丞相（特品）", attackMultiplier: 500000000000000000000000, cost: 10000000000000000000000000000000000000000000000 },
+    { level: 48, name: "辅佐王（特品）", attackMultiplier: 1000000000000000000000000, cost: 100000000000000000000000000000000000000000000000 },
+    { level: 49, name: "监证（圣品）", attackMultiplier: 5000000000000000000000000, cost: 1000000000000000000000000000000000000000000000000 },
+    { level: 50, name: "七皇子（圣品）", attackMultiplier: 10000000000000000000000000, cost: 10000000000000000000000000000000000000000000000000 },
+    { level: 51, name: "六皇子（圣品）", attackMultiplier: 50000000000000000000000000, cost: 100000000000000000000000000000000000000000000000000 },
+    { level: 52, name: "五皇子（圣品）", attackMultiplier: 100000000000000000000000000, cost: 1000000000000000000000000000000000000000000000000000 },
+    { level: 53, name: "四皇子（圣品）", attackMultiplier: 500000000000000000000000000, cost: 10000000000000000000000000000000000000000000000000000 },
+    { level: 54, name: "三皇子（神品）", attackMultiplier: 1000000000000000000000000000, cost: 100000000000000000000000000000000000000000000000000000 },
+    { level: 55, name: "二皇子（神品）", attackMultiplier: 5000000000000000000000000000, cost: 1000000000000000000000000000000000000000000000000000000 },
+    { level: 56, name: "一皇子（神品）", attackMultiplier: 10000000000000000000000000000, cost: 10000000000000000000000000000000000000000000000000000000 },
+    { level: 57, name: "大殿下（神品）", attackMultiplier: 50000000000000000000000000000, cost: 100000000000000000000000000000000000000000000000000000000 },
+    { level: 58, name: "太子爷（仙品）", attackMultiplier: 100000000000000000000000000000, cost: 1000000000000000000000000000000000000000000000000000000000 },
+    { level: 59, name: "皇帝（仙品）", attackMultiplier: 500000000000000000000000000000, cost: 10000000000000000000000000000000000000000000000000000000000 },
+    { level: 60, name: "太上皇（仙品）", attackMultiplier: 1000000000000000000000000000000, cost: 100000000000000000000000000000000000000000000000000000000000 }
+];
+
+// 切换官职系统界面显示
+function toggleOfficialSystem() {
+    const ui = document.getElementById('officialSystemUI');
+    const overlay = document.getElementById('officialSystemOverlay');
+
+    if (ui.style.display === 'block') {
+        ui.style.display = 'none';
+        overlay.style.display = 'none';
+    } else {
+        ui.style.display = 'block';
+        overlay.style.display = 'block';
+        updateOfficialSystemDisplay();
+    }
+}
+
+// 更新官职系统界面显示
+function updateOfficialSystemDisplay() {
+    const currentLevel = player.officialLevel;
+    let currentOfficial = null;
+    let nextOfficial = null;
+
+    if (currentLevel > 0) {
+        currentOfficial = officialConfig.find(oc => oc.level === currentLevel);
+    }
+
+    if (currentLevel < 60) {
+        nextOfficial = officialConfig.find(oc => oc.level === currentLevel + 1);
+    }
+
+    // 更新当前官职显示
+    document.getElementById('officialTitleDisplay').textContent = currentOfficial ? currentOfficial.name : '无';
+    document.getElementById('officialLevelDisplay').textContent = currentLevel;
+    document.getElementById('officialBonusDisplay').textContent = currentOfficial ? currentOfficial.attackMultiplier : 1;
+    document.getElementById('currentOfficialTitle').textContent = currentOfficial ? currentOfficial.name : '无';
+
+    // 更新下一阶官职信息
+    const nextOfficialEl = document.getElementById('nextOfficialInfo');
+    if (nextOfficial) {
+        nextOfficialEl.innerHTML = `${nextOfficial.name} - 攻击加成: ${nextOfficial.attackMultiplier}倍, 消耗: ${formatNumber(nextOfficial.cost)}转生币`;
+    } else if (currentLevel >= 60) {
+        nextOfficialEl.textContent = '已达到最高官职';
+    } else {
+        nextOfficialEl.textContent = '请升级官职';
+    }
+}
+
+// 按指定次数升级官职
+function upgradeOfficialByAmount() {
+    const amount = parseInt(document.getElementById('officialUpgradeAmount').value) || 1;
+    let upgraded = 0;
+
+    for (let i = 0; i < amount; i++) {
+        if (!upgradeOfficial()) {
+            break;
+        }
+        upgraded++;
+    }
+
+    if (upgraded > 0) {
+        logAction(`成功升级${upgraded}级官职！`, 'success');
+        updateOfficialSystemDisplay();
+        updateDisplay();
+    }
+}
+
+// 一键升级到最大可能等级
+function upgradeOfficialMaxPossible() {
+    let upgraded = 0;
+
+    while (upgradeOfficial()) {
+        upgraded++;
+    }
+
+    if (upgraded > 0) {
+        logAction(`成功升级${upgraded}级官职！`, 'success');
+        updateOfficialSystemDisplay();
+        updateDisplay();
+    }
+}
+
+// 升级一级官职
+function upgradeOfficial() {
+    const nextLevel = player.officialLevel + 1;
+    if (nextLevel > 60) {
+        logAction("已达到最高官职！", "error");
+        return false;
+    }
+
+    const nextOfficial = officialConfig.find(oc => oc.level === nextLevel);
+    if (!nextOfficial) {
+        logAction("无法找到下一阶官职配置！", "error");
+        return false;
+    }
+
+    if (player.reincarnationCoin >= nextOfficial.cost) {
+        player.reincarnationCoin -= nextOfficial.cost;
+        player.officialLevel = nextLevel;
+        return true;
+    } else {
+        logAction("转生币不足，无法升级官职！", "error");
+        return false;
+    }
+}
+
+// 添加格式化大数字的函数（如果没有的话）
+function formatNumber(num) {
+    if (num >= 1e8) {
+        return num.toExponential(3);
+    } else {
+        return num.toLocaleString();
+    }
+}
+function getOfficialBonus() {
+    if (player.officialLevel === 0) return 1;
+
+    const official = officialConfig.find(oc => oc.level === player.officialLevel);
+    return official ? official.attackMultiplier : 1;
+}
+
+// 职业配置
+const classConfig = {
+    warrior: {
+        name: "战士",
+        branches: [
+            {
+                requiredStage: 20,
+                options: [
+                    { desc: "玩家攻击加成总和提升10倍", type: "attackMultiplier", value: 10 },
+                    { desc: "玩家爆伤总和提升10倍", type: "critMultiplier", value: { chance: 0.01, multiplier: 10 } },
+                    { desc: "玩家生命加成总和提升2倍", type: "healthMultiplier", value: 2 }
+                ]
+            },
+            {
+                requiredStage: 50,
+                options: [
+                    { desc: "玩家攻击加成总和提升200倍", type: "attackMultiplier", value: 200 },
+                    { desc: "玩家爆伤总和提升200倍", type: "critMultiplier", value: { chance: 0.01, multiplier: 200 } },
+                    { desc: "玩家生命加成总和提升4倍", type: "healthMultiplier", value: 5 }
+                ]
+            },
+            {
+                requiredStage: 100,
+                options: [
+                    { desc: "玩家攻击加成总和提升2000倍", type: "attackMultiplier", value: 2000 },
+                    { desc: "玩家爆伤总和提升2000倍", type: "critMultiplier", value: { chance: 0.01, multiplier: 2000 } },
+                    { desc: "玩家生命加成总和提升5倍", type: "healthMultiplier", value: 5 }
+                ]
+            },
+            {
+                requiredStage: 200,
+                options: [
+                    { desc: "玩家攻击加成总和提升20000倍", type: "attackMultiplier", value: 20000 },
+                    { desc: "玩家爆伤总和提升20000倍伤害", type: "critMultiplier", value: { chance: 0.01, multiplier: 20000 } },
+                    { desc: "玩家生命加成总和提升8倍", type: "healthMultiplier", value: 8 }
+                ]
+            },
+            {
+                requiredStage: 300,
+                options: [
+                    { desc: "玩家攻击加成总和提升200000倍", type: "attackMultiplier", value: 200000 },
+                    { desc: "玩家爆伤总和提升200000倍", type: "critMultiplier", value: { chance: 0.01, multiplier: 200000 } },
+                    { desc: "玩家生命加成总和提升10倍", type: "healthMultiplier", value: 10 }
+                ]
+            },
+            {
+                requiredStage: 400,
+                options: [
+                    { desc: "玩家攻击加成总和提升2000000倍", type: "attackMultiplier", value: 2000000 },
+                    { desc: "玩家爆伤总和提升2000000倍", type: "critMultiplier", value: { chance: 0.01, multiplier: 2000000 } },
+                    { desc: "玩家生命加成总和提升15倍", type: "healthMultiplier", value: 15 }
+                ]
+            },
+            {
+                requiredStage: 500,
+                options: [
+                    { desc: "玩家攻击加成总和提升20000000倍", type: "attackMultiplier", value: 20000000 },
+                    { desc: "玩家爆伤总和提升20000000倍", type: "critMultiplier", value: { chance: 0.01, multiplier: 20000000 } },
+                    { desc: "玩家生命加成总和提升20倍", type: "healthMultiplier", value: 20 }
+                ]
+            },
+            {
+                requiredStage: 600,
+                options: [
+                    { desc: "玩家攻击加成总和提升200000000倍", type: "attackMultiplier", value: 200000000 },
+                    { desc: "玩家爆伤总和提升200000000倍", type: "critMultiplier", value: { chance: 0.01, multiplier: 200000000 } },
+                    { desc: "玩家生命加成总和提升25倍", type: "healthMultiplier", value: 25 }
+                ]
+            },
+            {
+                requiredStage: 700,
+                options: [
+                    { desc: "玩家攻击加成总和提升2000000000倍", type: "attackMultiplier", value: 2000000000 },
+                    { desc: "玩家爆伤总和提升2000000000倍", type: "critMultiplier", value: { chance: 0.01, multiplier: 2000000000 } },
+                    { desc: "玩家生命加成总和提升30倍", type: "healthMultiplier", value: 30 }
+                ]
+            },
+            {
+                requiredStage: 800,
+                options: [
+                    { desc: "玩家攻击加成总和提升20000000000倍", type: "attackMultiplier", value: 20000000000 },
+                    { desc: "玩家爆伤总和提升20000000000倍", type: "critMultiplier", value: { chance: 0.01, multiplier: 20000000000 } },
+                    { desc: "玩家生命加成总和提升35倍", type: "healthMultiplier", value: 35 }
+                ]
+            },
+            {
+                requiredStage: 900,
+                options: [
+                    { desc: "玩家攻击加成总和提升200000000000倍", type: "attackMultiplier", value: 200000000000 },
+                    { desc: "玩家爆伤总和提升200000000000倍", type: "critMultiplier", value: { chance: 0.01, multiplier: 200000000000 } },
+                    { desc: "玩家生命加成总和提升40倍", type: "healthMultiplier", value: 40 }
+                ]
+            }
+        ]
+    },
+    mage: {
+        name: "法师",
+        branches: [
+            {
+                requiredStage: 20,
+                options: [
+                    { desc: "玩家生命加成总和提升2倍", type: "healthMultiplier", value: 2 },
+                    { desc: "副本装备加成总和提升10倍", type: "dungeonEquipMultiplier", value: 10 },
+                    { desc: "魂环加成总和提升10倍", type: "soulRingMultiplier", value: 10 }
+                ]
+            },
+            {
+                requiredStage: 50,
+                options: [
+                    { desc: "玩家生命加成总和提升5倍", type: "healthMultiplier", value: 5 },
+                    { desc: "副本装备加成总和提升100倍", type: "dungeonEquipMultiplier", value: 100 },
+                    { desc: "魂环加成总和提升100倍", type: "soulRingMultiplier", value: 100 }
+                ]
+            },
+            {
+                requiredStage: 100,
+                options: [
+                    { desc: "玩家生命加成总和提升8倍", type: "healthMultiplier", value: 8 },
+                    { desc: "副本装备加成总和提升1000倍", type: "dungeonEquipMultiplier", value: 1000 },
+                    { desc: "魂环加成总和提升1000倍", type: "soulRingMultiplier", value: 1000 }
+                ]
+            },
+            {
+                requiredStage: 200,
+                options: [
+                    { desc: "玩家生命加成总和提升12倍", type: "healthMultiplier", value: 12 },
+                    { desc: "副本装备加成总和提升10000倍", type: "dungeonEquipMultiplier", value: 10000 },
+                    { desc: "魂环加成总和提升10000倍", type: "soulRingMultiplier", value: 10000 }
+                ]
+            },
+            {
+                requiredStage: 300,
+                options: [
+                    { desc: "玩家生命加成总和提升15倍", type: "healthMultiplier", value: 15 },
+                    { desc: "副本装备加成总和提升100000倍", type: "dungeonEquipMultiplier", value: 100000 },
+                    { desc: "魂环加成总和提升100000倍", type: "soulRingMultiplier", value: 100000 }
+                ]
+            },
+            {
+                requiredStage: 400,
+                options: [
+                    { desc: "玩家生命加成总和提升20倍", type: "healthMultiplier", value: 20 },
+                    { desc: "副本装备加成总和提升1000000倍", type: "dungeonEquipMultiplier", value: 1000000 },
+                    { desc: "魂环加成总和提升1000000倍", type: "soulRingMultiplier", value: 1000000 }
+                ]
+            },
+            {
+                requiredStage: 500,
+                options: [
+                    { desc: "玩家生命加成总和提升25倍", type: "healthMultiplier", value: 25 },
+                    { desc: "副本装备加成总和提升10000000倍", type: "dungeonEquipMultiplier", value: 10000000 },
+                    { desc: "魂环加成总和提升10000000倍", type: "soulRingMultiplier", value: 10000000 }
+
+                ]
+            },
+            {
+                requiredStage: 600,
+                options: [
+                    { desc: "玩家生命加成总和提升30倍", type: "healthMultiplier", value: 30 },
+                    { desc: "副本装备加成总和提升100000000倍", type: "dungeonEquipMultiplier", value: 100000000 },
+                    { desc: "魂环加成总和提升100000000倍", type: "soulRingMultiplier", value: 100000000 }
+
+                ]
+            },
+            {
+                requiredStage: 700,
+                options: [
+                    { desc: "玩家生命加成总和提升35倍", type: "healthMultiplier", value: 35 },
+                    { desc: "副本装备加成总和提升1000000000倍", type: "dungeonEquipMultiplier", value: 1000000000 },
+                    { desc: "魂环加成总和提升1000000000倍", type: "soulRingMultiplier", value: 1000000000 }
+
+                ]
+            },
+            {
+                requiredStage: 800,
+                options: [
+                    { desc: "玩家生命加成总和提升40倍", type: "healthMultiplier", value: 40 },
+                    { desc: "副本装备加成总和提升10000000000倍", type: "dungeonEquipMultiplier", value: 10000000000 },
+                    { desc: "魂环加成总和提升10000000000倍", type: "soulRingMultiplier", value: 10000000000 }
+
+                ]
+            },
+            {
+                requiredStage: 900,
+                options: [
+                    { desc: "玩家生命加成总和提升45倍", type: "healthMultiplier", value: 45 },
+                    { desc: "副本装备加成总和提升100000000000倍", type: "dungeonEquipMultiplier", value: 100000000000 },
+                    { desc: "魂环加成总和提升100000000000倍", type: "soulRingMultiplier", value: 100000000000 }
+                ]
+            }
+        ]
+    }
+};
+
+// 切换职业系统界面显示
+function toggleClassSystem() {
+    const ui = document.getElementById('classSystemUI');
+    const overlay = document.getElementById('classSystemOverlay');
+
+    if (ui.style.display === 'block') {
+        ui.style.display = 'none';
+        overlay.style.display = 'none';
+    } else {
+        ui.style.display = 'block';
+        overlay.style.display = 'block';
+        updateClassSystemDisplay();
+    }
+}
+
+// 选择职业
+function selectClass(classType) {
+    // 检查是否需要消耗转生币更换职业
+    if (player.class && player.class !== classType) {
+        if (player.reincarnationCoin < 1000) {
+            alert("转生币不足，更换职业需要1000转生币！");
+            return;
+        }
+        // 消耗转生币
+        player.reincarnationCoin -= 1000;
+        logAction(`消耗1000转生币，更换职业为${classConfig[classType].name}`, 'success');
+    }
+
+    // 设置职业并重置分支
+    player.class = classType;
+    player.classBranches = [];
+
+    // 更新显示
+    updateClassSystemDisplay();
+    updatePlayerClassNameDisplay();
+    updateDisplay(); // 更新整体显示
+}
+
+// 更新职业系统界面显示
+function updateClassSystemDisplay() {
+    // 更新当前职业显示
+    const className = player.class ? classConfig[player.class].name : "无";
+    document.getElementById('currentClassName').textContent = className;
+
+    // 显示或隐藏分支加点
+    const branchesContainer = document.getElementById('classBranches');
+    const branchPointsContainer = document.getElementById('branchPointsContainer');
+
+    if (player.class) {
+        branchesContainer.style.display = 'block';
+        branchPointsContainer.innerHTML = '';
+
+        // 获取当前职业的分支配置
+        const branches = classConfig[player.class].branches;
+
+        // 生成分支加点HTML
+        branches.forEach((branch, index) => {
+            const isUnlocked = player.battle.maxStage >= branch.requiredStage;
+            const selectedOption = player.classBranches[index] !== undefined ? player.classBranches[index] : -1;
+
+            let branchHtml = `<div style="margin: 15px 0; padding: 10px; border: 1px solid #ccc;">`;
+            branchHtml += `<div>第${index + 1}排 (需要最高层: ${branch.requiredStage})</div>`;
+
+            if (!isUnlocked) {
+                branchHtml += `<div style="color: #999;">未解锁，需要达到${branch.requiredStage}层</div>`;
+            } else {
+                branch.options.forEach((option, optIndex) => {
+                    const isSelected = selectedOption === optIndex;
+                    branchHtml += `
+                        <div style="margin: 5px 0; padding: 5px; ${isSelected ? 'background: #ccf;' : ''}">
+                            <button onclick="selectBranch(${index}, ${optIndex})" 
+                                style="${isSelected ? 'background: #00f; color: white;' : ''}">
+                                ${isSelected ? '✓ ' : ''}选择
+                            </button>
+                            ${option.desc}
+                        </div>
+                    `;
+                });
+            }
+
+            branchHtml += `</div>`;
+            branchPointsContainer.innerHTML += branchHtml;
+        });
+    } else {
+        branchesContainer.style.display = 'none';
+    }
+}
+
+// 选择分支选项
+function selectBranch(branchIndex, optionIndex) {
+    // 检查是否解锁
+    const branch = classConfig[player.class].branches[branchIndex];
+    if (player.battle.maxStage < branch.requiredStage) {
+        alert(`需要达到${branch.requiredStage}层才能解锁此分支！`);
+        return;
+    }
+
+    // 保存选择
+    player.classBranches[branchIndex] = optionIndex;
+    logAction(`选择了${classConfig[player.class].name}第${branchIndex + 1}排第${optionIndex + 1}个分支`, 'success');
+
+    // 更新显示
+    updateClassSystemDisplay();
+    updatePlayerBattleStats(); // 更新战斗属性
+}
+
+
+// 更新玩家名字旁的职业显示
+function updatePlayerClassNameDisplay() {
+    const classNameElement = document.getElementById('playerClassName');
+    if (player.class) {
+        classNameElement.textContent = `[${classConfig[player.class].name}]`;
+    } else {
+        classNameElement.textContent = '';
+    }
+}
+// 新增：计算魂环总加成（含职业分支乘数）
+function getTotalSoulRingBonus() {
+    let total = 0;
+    player.soulRings.forEach(ring => {
+        // 基础加成：等级 × 单级倍率
+        total += ring.level * ring.multiplier;
+    });
+    // 应用职业分支的魂环加成乘数
+    return total * player.classBonuses.soulRingMultiplier;
+}
+// 新增：计算副本装备总加成（含职业分支乘数）
+function getTotalDungeonEquipBonus() {
+    let total = 0;
+    player.dungeonEquipment.forEach(eq => {
+        // 基础加成：等级 × 成长率（示例，需结合实际装备效果逻辑）
+        total += eq.level * eq.growthRate;
+    });
+    // 应用职业分支的副本装备加成乘数
+    return total * player.classBonuses.dungeonEquipMultiplier;
+}
+// 计算职业加成 (需要在战斗计算相关函数中调用)
+function calculateClassBonuses() {
+    const bonuses = {
+        attackMultiplier: 1,
+        healthMultiplier: 1,
+        critChance: 0,
+        critMultiplier: 1,
+        collectionMultiplier: 1,
+        dungeonEquipMultiplier: 1,
+        soulRingMultiplier: 1
+    };
+
+    if (!player.class) return bonuses;
+
+    const classData = classConfig[player.class];
+
+    // 累加所有已选择分支的加成
+    player.classBranches.forEach((optionIndex, branchIndex) => {
+        if (optionIndex === undefined) return;
+
+        const branch = classData.branches[branchIndex];
+        const option = branch.options[optionIndex];
+
+        switch (option.type) {
+            case 'attackMultiplier':
+                bonuses.attackMultiplier *= (1 + option.value);
+                break;
+            case 'healthMultiplier':
+                bonuses.healthMultiplier *= (1 + option.value);
+                break;
+            case 'critMultiplier':
+                // 处理暴击倍率加成（如果有特殊结构需要单独处理）
+                if (option.value.multiplier) {
+                    bonuses.critMultiplier *= (1 + option.value.multiplier);
+                } else {
+                    bonuses.critMultiplier *= (1 + option.value);
+                }
+                break;
+            // 新增：处理副本装备加成乘数
+            case 'dungeonEquipMultiplier':
+                bonuses.dungeonEquipMultiplier *= (1 + option.value);
+                break;
+            // 新增：处理魂环加成乘数
+            case 'soulRingMultiplier':
+                bonuses.soulRingMultiplier *= (1 + option.value);
+                break;
+        }
+    });
+
+    return bonuses;
+}
+
+// 世界BOSS系统数据
+const worldBossData = {
+    summonCount: 1,
+    lastSummonTime: Date.now(),
+    isBossActive: false,
+    bossEndTime: 0,
+    bossHealth: 0,
+    bossMaxHealth: 0,
+    bossName: "",
+    bossWorld: "",
+    bossStars: 0,
+    playerDamage: 0,
+    isAutoAttacking: false,
+    attackInterval: null,
+    virtualPlayers: [],
+    rankings: [],
+    battleLog: [],
+    lastSummonTime: Date.now(),
+    nextRecoveryTime: 0, // 新增：下次恢复时间
+};
+
+// BOSS名字池
+const bossNames = [
+    "灭世魔尊·阎罗",
+    "永恒天帝·太初",
+    "混沌主宰·虚无",
+    "九幽冥王·黄泉",
+    "万界神皇·凌霄",
+    "太古龙帝·烛阴",
+    "星空吞噬者·饕餮",
+    "时间掌控者·岁月",
+    "命运编织者·天机",
+    "元素始祖·创世"
+];
+
+// 世界名字池
+const worldNames = [
+    "玄天大陆",
+    "九幽冥界",
+    "太虚神境",
+    "洪荒古界",
+    "星辰海域",
+    "万界战场",
+    "永恒神域",
+    "混沌虚空",
+    "天元世界",
+    "轮回之境"
+];
+
+// 虚拟玩家名字池
+const virtualPlayerNames = [
+    "萧炎", "林动", "牧尘", "叶凡", "石昊",
+    "楚风", "秦羽", "方源", "韩立", "孟浩",
+    "苏铭", "王林", "白小纯", "李七夜", "陈平安",
+    "宁缺", "许七安", "陆鸣", "周元", "江离",
+    "罗峰", "洪易", "纪宁", "滕青山", "唐三",
+    "霍雨浩", "唐舞麟", "蓝轩宇", "古月娜", "唐昊", "茶茶", "闫闫", "萧云凡", "叶玄霄", "林昊辰", "楚星河", "秦无痕", "苏九夜", "陆天行", "沈青岚", "顾长歌", "洛千尘", "云清瑶", "柳如烟", "白芷晴", "慕雨柔", "苏灵儿", "凌寒霜", "楚月璃", "花未央", "冷轻衣", "夜琉璃", "夏知微", "苏晚晴", "林浅夏", "乔曦", "李二狗", "张全蛋", "赵日天", "王富贵"
+];
+
+// 初始化世界BOSS系统
+function initWorldBossSystem() {
+    // 计算离线时间增加的召唤次数
+    const currentTime = Date.now();
+    const timePassed = currentTime - (worldBossData.lastSummonTime || currentTime);
+    const hoursPassed = Math.floor(timePassed / (60 * 60 * 1000));
+
+    if (hoursPassed > 0) {
+        worldBossData.summonCount = Math.min(worldBossData.summonCount + hoursPassed, 10);
+        worldBossData.lastSummonTime = currentTime;
+        saveWorldBossData();
+    }
+
+    // 计算下次恢复时间
+    calculateNextRecoveryTime();
+
+    // 启动倒计时更新
+    updateSummonCountdown();
+
+    updateBossUI();
+}
+
+// 计算下次恢复时间
+function calculateNextRecoveryTime() {
+    if (worldBossData.summonCount >= 10) {
+        worldBossData.nextRecoveryTime = 0;
+        return;
+    }
+
+    // 距离下次恢复的时间 = 1小时 - (当前时间与上次恢复的时间差 % 1小时)
+    const oneHour = 60 * 60 * 1000;
+    const timeSinceLastRecovery = Date.now() - worldBossData.lastSummonTime;
+    const timeToNextRecovery = oneHour - (timeSinceLastRecovery % oneHour);
+
+    worldBossData.nextRecoveryTime = Date.now() + timeToNextRecovery;
+}
+
+// 更新召唤次数倒计时显示
+function updateSummonCountdown() {
+    const countdownElement = document.getElementById('summonCountdown');
+    if (!countdownElement) return;
+
+    if (worldBossData.summonCount >= 10) {
+        countdownElement.textContent = "已达上限";
+        setTimeout(updateSummonCountdown, 1000);
+        return;
+    }
+
+    const now = Date.now();
+    const timeLeft = Math.max(0, worldBossData.nextRecoveryTime - now);
+
+    if (timeLeft === 0 && worldBossData.summonCount < 10) {
+        // 强制更新上次召唤时间为当前时间
+        worldBossData.lastSummonTime = now;
+        worldBossData.summonCount++;
+        calculateNextRecoveryTime(); // 重新计算下次恢复时间（1小时后）
+        saveWorldBossData();
+        document.getElementById('bossSummonCount').textContent = worldBossData.summonCount;
+        console.log("恢复次数+1，下次恢复时间：", new Date(worldBossData.nextRecoveryTime).toLocaleTimeString());
+    }
+
+    // 格式化时间显示
+    const hours = Math.floor(timeLeft / (60 * 60 * 1000));
+    const minutes = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
+    const seconds = Math.floor((timeLeft % (60 * 1000)) / 1000);
+    countdownElement.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+    setTimeout(updateSummonCountdown, 1000);
+}
+
+
+// 保存世界BOSS数据
+function saveWorldBossData() {
+    worldBossData.lastUpdate = Date.now();
+    localStorage.setItem('worldBossSave', JSON.stringify(worldBossData));
+}
+
+// 加载世界BOSS数据
+// 加载世界BOSS数据
+function loadWorldBossData() {
+    const save = JSON.parse(localStorage.getItem('worldBossSave'));
+    if (save) {
+        Object.assign(worldBossData, save);
+
+        // 如果BOSS活动正在进行中，计算离线期间的伤害
+        if (worldBossData.isBossActive) {
+            const currentTime = Date.now();
+
+            // 检查BOSS是否已超时
+            if (currentTime > worldBossData.bossEndTime) {
+                endBossFight(false);
+            } else {
+                // 计算离线时间（秒）
+                const offlineSeconds = Math.floor((currentTime - worldBossData.lastUpdate) / 1000);
+
+                if (offlineSeconds > 0) {
+                    // 1. 计算虚拟玩家在离线期间造成的总伤害（已有逻辑）
+                    const virtualDamagePerSecond = worldBossData.virtualPlayers.reduce((sum, player) => {
+                        const avgDamage = player.attack * player.multiAttack *
+                            (1 + (player.critRate * (player.critDamage - 1)));
+                        return sum + avgDamage;
+                    }, 0);
+                    const totalVirtualDamage = Math.floor(virtualDamagePerSecond * offlineSeconds);
+                    worldBossData.bossHealth = Math.max(0, worldBossData.bossHealth - totalVirtualDamage);
+                    const damagePerPlayer = Math.floor(totalVirtualDamage / worldBossData.virtualPlayers.length);
+                    worldBossData.virtualPlayers.forEach(player => {
+                        player.damage += damagePerPlayer;
+                    });
+                    addBossBattleLog(`离线期间虚拟玩家共造成 ${formatNumber(totalVirtualDamage)} 点伤害`);
+
+                    // 2. 新增：计算真实玩家的离线自动攻击伤害
+                    if (worldBossData.isAutoAttacking) { // 仅当开启自动攻击时计算
+                        // 玩家每秒攻击20次（与startAutoAttack一致）
+                        const attacksPerSecond = 20;
+                        const totalAttacks = offlineSeconds * attacksPerSecond;
+
+                        // 计算单次攻击的平均伤害（参考calculatePlayerDamage逻辑）
+                        const playerData = {
+                            attack: player.battle.playerAttack,
+                            multiAttack: player.battle.playerMultiAttack,
+                            critRate: player.battle.playerCritRate,
+                            critDamage: player.battle.playerCritDamage
+                        };
+                        // 计算单次攻击的平均伤害（避免循环计算totalAttacks次，优化性能）
+                        const singleAttackAvgDamage = playerData.attack * playerData.multiAttack *
+                            (1 + (playerData.critRate * (playerData.critDamage - 1)));
+                        const totalPlayerDamage = Math.floor(singleAttackAvgDamage * totalAttacks);
+
+                        // 应用玩家离线伤害
+                        worldBossData.bossHealth = Math.max(0, worldBossData.bossHealth - totalPlayerDamage);
+                        worldBossData.playerDamage += totalPlayerDamage;
+                        addBossBattleLog(`离线期间你通过自动攻击造成 ${formatNumber(totalPlayerDamage)} 点伤害`);
+                    }
+
+                    // 检查BOSS是否被击败
+                    if (worldBossData.bossHealth <= 0) {
+                        endBossFight(true);
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    // 重新开始虚拟玩家攻击
+    startVirtualPlayerAttacks();
+
+    // 更新最后更新时间
+    worldBossData.lastUpdate = Date.now();
+    initWorldBossSystem();
+}
+
+// 切换世界BOSS界面
+function toggleWorldBossUI() {
+    // 检查转生次数是否达到20次
+    if (player.reincarnationCount < 20) {
+        alert("需要达到20转才能开启世界BOSS系统！");
+        return;
+    }
+    const ui = document.getElementById('worldBossUI');
+    const overlay = document.getElementById('bossOverlay');
+
+    if (ui.style.display === 'block') {
+        ui.style.display = 'none';
+        overlay.style.display = 'none';
+
+
+    } else {
+        ui.style.display = 'block';
+        overlay.style.display = 'block';
+        updateBossUI();
+    }
+}
+
+// 更新BOSS界面
+function updateBossUI() {
+    document.getElementById('bossSummonCount').textContent = worldBossData.summonCount;
+    if (worldBossData.isBossActive && player.bossBattleSnapshot) {
+        document.getElementById('playerBossAttack').textContent = formatNumber(player.bossBattleSnapshot.playerAttack);
+        document.getElementById('playerBossMultiAttack').textContent = player.bossBattleSnapshot.playerMultiAttack;
+        document.getElementById('playerBossCritRate').textContent = (player.bossBattleSnapshot.playerCritRate * 100).toFixed(1) + '%';
+        document.getElementById('playerBossCritDamage').textContent = ((player.bossBattleSnapshot.playerCritDamage - 1) * 100).toFixed(1) + '%';
+    } else {
+        // 显示实时属性
+        document.getElementById('playerBossAttack').textContent = formatNumber(player.battle.playerAttack);
+        document.getElementById('playerBossMultiAttack').textContent = player.battle.playerMultiAttack;
+        document.getElementById('playerBossCritRate').textContent = (player.battle.playerCritRate * 100).toFixed(1) + '%';
+        document.getElementById('playerBossCritDamage').textContent = ((player.battle.playerCritDamage - 1) * 100).toFixed(1) + '%';
+    }
+    document.getElementById('playerBossDamage').textContent = formatNumber(worldBossData.playerDamage);
+    if (!worldBossData.isBossActive) {
+        document.getElementById('playerBossRank').textContent = "未开始";
+    } else {
+        // 触发一次排行更新
+        updateRankings();
+    }
+    // 新增：检查BOSS是否超时（无论是否在战斗中，强制判断时间）
+    if (worldBossData.isBossActive && Date.now() >= worldBossData.bossEndTime) {
+        endBossFight(false); // 强制结束战斗
+        return; // 结束后无需继续更新UI
+    }
+    if (!worldBossData.isBossActive) {
+        document.getElementById('playerBossRank').textContent = "未开始";
+    } else {
+        // 触发一次排行更新
+        updateRankings();
+    }
+    // 更新BOSS状态
+    if (worldBossData.isBossActive) {
+        document.getElementById('bossName').textContent = worldBossData.bossName;
+        document.getElementById('bossWorld').textContent = worldBossData.bossWorld;
+        document.getElementById('bossStars').textContent = '★'.repeat(worldBossData.bossStars);
+
+        const healthPercent = (worldBossData.bossHealth / worldBossData.bossMaxHealth) * 100;
+        document.getElementById('bossHealthFill').style.width = healthPercent + '%';
+        document.getElementById('bossHealthText').textContent =
+            formatNumber(worldBossData.bossHealth) + '/' + formatNumber(worldBossData.bossMaxHealth);
+
+        const timeLeft = Math.max(0, Math.floor((worldBossData.bossEndTime - Date.now()) / 1000));
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        document.getElementById('bossTimeLeft').textContent =
+            `剩余: ${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+
+        document.getElementById('bossSummonButton').disabled = true;
+        document.getElementById('bossAttackButton').disabled = false;
+
+        // 更新排行榜
+        updateRankings();
+    } else {
+        document.getElementById('bossName').textContent = '未召唤BOSS';
+        document.getElementById('bossWorld').textContent = '';
+        document.getElementById('bossStars').textContent = '';
+        document.getElementById('bossHealthFill').style.width = '0%';
+        document.getElementById('bossHealthText').textContent = '0/0';
+        document.getElementById('bossTimeLeft').textContent = '剩余: 未开始';
+
+        document.getElementById('bossSummonButton').disabled = worldBossData.summonCount <= 0;
+        document.getElementById('bossAttackButton').disabled = true;
+
+        if (worldBossData.summonCount <= 0) {
+            document.getElementById('bossSummonButton').textContent = '无次数';
+        } else {
+            document.getElementById('bossSummonButton').textContent = '召唤';
+        }
+    }
+
+    // 更新自动攻击按钮
+    document.getElementById('bossAutoAttackButton').textContent =
+        `自动: ${worldBossData.isAutoAttacking ? '开' : '关'}`;
+}
+
+// 召唤BOSS
+function summonBoss() {
+    // 检查转生次数是否达到20次
+    if (player.reincarnationCount < 20) {
+        alert("需要达到20转才能召唤世界BOSS！");
+        return;
+    }
+    if (worldBossData.summonCount <= 0) return;
+
+    worldBossData.summonCount--;
+    worldBossData.isBossActive = true;
+    worldBossData.bossEndTime = Date.now() + 60 * 60 * 1000; // 60分钟
+    worldBossData.playerDamage = 0;
+    worldBossData.battleLog = [];
+
+    // 随机生成BOSS属性
+    worldBossData.bossName = bossNames[Math.floor(Math.random() * bossNames.length)];
+    worldBossData.bossWorld = worldNames[Math.floor(Math.random() * worldNames.length)];
+    worldBossData.bossStars = Math.floor(Math.random() * 30) + 1; // 1-30星
+
+    // BOSS生命值为玩家攻击力的100000万-1000000万倍
+    const healthMultiplier = 1000000000 + Math.random() * 99000000000000000000000000;
+    worldBossData.bossMaxHealth = Math.floor(player.battle.playerAttack * healthMultiplier);
+    worldBossData.bossHealth = worldBossData.bossMaxHealth;
+    // 保存玩家属性快照
+    player.bossBattleSnapshot = {
+        playerAttack: player.battle.playerAttack,
+        playerMultiAttack: player.battle.playerMultiAttack,
+        playerCritRate: player.battle.playerCritRate,
+        playerCritDamage: player.battle.playerCritDamage
+    };
+    // 生成虚拟玩家
+    generateVirtualPlayers();
+
+    // 开始虚拟玩家攻击
+    startVirtualPlayerAttacks();
+
+    // 更新UI
+    updateBossUI();
+
+    // 保存数据
+    saveWorldBossData();
+
+    // 添加战斗日志
+    addBossBattleLog(`召唤了 ${worldBossData.bossName} [${worldBossData.bossWorld}] (${worldBossData.bossStars}★)`);
+
+    // 设置BOSS结束检查
+    setTimeout(checkBossEnd, 1000);
+}
+
+// 生成虚拟玩家
+function generateVirtualPlayers() {
+    worldBossData.virtualPlayers = [];
+
+    for (let i = 0; i < 60; i++) {
+        const name = virtualPlayerNames[i] || `玩家${i + 1}`;
+        const attackMultiplier = 0.1 + Math.random() * 30;
+        const attack = Math.floor(player.battle.playerAttack * attackMultiplier);
+        const multiAttack = Math.max(1,
+            Math.floor(player.battle.playerMultiAttack * (0.4 + Math.random() * 0.9)));
+        const critRate = 0.5 + Math.random() * 1.9;
+        const critDamage = player.battle.playerCritDamage * (0.3 + Math.random() * 0.9);
+
+        worldBossData.virtualPlayers.push({
+            name: name,
+            attack: attack,
+            multiAttack: multiAttack,
+            critRate: critRate,
+            critDamage: critDamage,
+            damage: 0
+        });
+    }
+}
+// 修改离线虚拟玩家伤害计算逻辑（替换原有的平均分配部分）
+function calculateOfflineVirtualDamage() {
+    const now = Date.now();
+    const timePassed = now - worldBossData.lastVirtualAttackTime;
+    const secondsPassed = Math.floor(timePassed / 1000);
+    if (secondsPassed <= 0) return;
+
+    // 为每个虚拟玩家单独计算离线伤害（基于其自身属性）
+    worldBossData.virtualPlayers.forEach(player => {
+        // 计算该玩家的每秒平均伤害（考虑连击和爆伤）
+        const avgDps = player.attack * player.multiAttack *
+            (1 + (player.critRate * (player.critDamage - 1)));
+        // 计算离线总伤害
+        const playerDamage = Math.floor(avgDps * secondsPassed);
+        // 应用伤害
+        worldBossData.bossHealth = Math.max(0, worldBossData.bossHealth - playerDamage);
+        player.damage += playerDamage;
+    });
+
+    // 更新最后攻击时间
+    worldBossData.lastVirtualAttackTime = now;
+
+    // 记录总离线伤害
+    const totalDamage = worldBossData.virtualPlayers.reduce((sum, p) => sum + p.damageAdded, 0);
+    addBossBattleLog(`离线期间虚拟玩家共造成 ${formatNumber(totalDamage)} 点伤害`);
+
+    // 检查BOSS是否被击败
+    if (worldBossData.bossHealth <= 0) {
+        endBossFight(true);
+    }
+
+    // 更新排行榜
+    updateRankings();
+
+    // 保存数据
+    saveWorldBossData();
+}
+// 开始虚拟玩家攻击
+function startVirtualPlayerAttacks() {
+    // 清除之前的攻击间隔
+    if (worldBossData.virtualAttackInterval) {
+        clearInterval(worldBossData.virtualAttackInterval);
+    }
+
+    // 设置新的攻击间隔 (每秒攻击一次)
+    worldBossData.virtualAttackInterval = setInterval(() => {
+        if (!worldBossData.isBossActive) {
+            clearInterval(worldBossData.virtualAttackInterval);
+            return;
+        }
+
+        // 所有虚拟玩家攻击
+        worldBossData.virtualPlayers.forEach(player => {
+            const result = calculatePlayerDamage(player);
+            worldBossData.bossHealth = Math.max(0, worldBossData.bossHealth - result.total);
+            player.damage += result.total;
+
+            // 每10次攻击记录一次（显示爆伤）
+            if (Math.random() < 0.1) {
+                let logMessage = `${player.name} 造成 ${formatNumber(result.total)} 伤害 - `;
+                logMessage += `普通: ${formatNumber(result.normalDamage)}, `;
+                logMessage += `暴击x${result.critCount}: ${formatNumber(result.critDamage)}`;
+                addBossBattleLog(logMessage);
+            }
+        });
+
+        // 更新UI
+        updateRankings();
+        updateBossUI();
+
+        // 检查BOSS是否被击败
+        if (worldBossData.bossHealth <= 0) {
+            endBossFight(true);
+        }
+    }, 1000);
+}
+
+// 计算玩家伤害
+function calculatePlayerDamage(playerData) {
+    let totalDamage = 0;
+    let critCount = 0;
+    let critDamageTotal = 0;
+    let normalDamageTotal = 0;
+
+    for (let i = 0; i < playerData.multiAttack; i++) {
+        const isCrit = Math.random() < playerData.critRate;
+        let damage = playerData.attack;
+
+        if (isCrit) {
+            damage *= playerData.critDamage;
+            critCount++;
+            critDamageTotal += damage;
+        } else {
+            normalDamageTotal += damage;
+        }
+
+        totalDamage += damage;
+    }
+
+    return {
+        total: Math.floor(totalDamage),
+        critCount: critCount,
+        critDamage: Math.floor(critDamageTotal),
+        normalDamage: Math.floor(normalDamageTotal)
+    };
+}
+
+// 攻击BOSS（修改为显示爆伤信息）
+function attackBoss() {
+    if (!worldBossData.isBossActive) return;
+
+    // 使用保存的属性快照而不是实时属性
+    const result = calculatePlayerDamage({
+        attack: player.bossBattleSnapshot.playerAttack,
+        multiAttack: player.bossBattleSnapshot.playerMultiAttack,
+        critRate: player.bossBattleSnapshot.playerCritRate,
+        critDamage: player.bossBattleSnapshot.playerCritDamage
+    });
+
+
+    worldBossData.bossHealth = Math.max(0, worldBossData.bossHealth - result.total);
+    worldBossData.playerDamage += result.total;
+
+    // 添加战斗日志（显示爆伤详情）
+    let logMessage = `你造成了 ${formatNumber(result.total)} 点伤害 (${player.battle.playerMultiAttack}连击) - `;
+    logMessage += `普通伤害: ${formatNumber(result.normalDamage)}, `;
+    logMessage += `暴击x${result.critCount}: ${formatNumber(result.critDamage)}`;
+
+    addBossBattleLog(logMessage);
+
+    // 更新UI
+    updateRankings();
+    updateBossUI();
+
+    // 新增：保存攻击后的BOSS数据
+    saveWorldBossData();
+
+    // 检查BOSS是否被击败
+    if (worldBossData.bossHealth <= 0) {
+        endBossFight(true);
+    }
+}
+
+// 切换自动攻击
+function toggleAutoAttackBoss() {
+    worldBossData.isAutoAttacking = !worldBossData.isAutoAttacking;
+
+    if (worldBossData.isAutoAttacking) {
+        // 启动自动攻击（即使界面关闭也会继续）
+        startAutoAttack();
+    } else {
+        stopAutoAttack();
+    }
+
+    updateBossUI();
+}
+
+// 新增专用函数处理自动攻击
+function startAutoAttack() {
+    // 先停止现有的自动攻击
+    stopAutoAttack();
+
+    // 每秒攻击20次
+    worldBossData.attackInterval = setInterval(() => {
+        if (worldBossData.isBossActive && worldBossData.isAutoAttacking) {
+            for (let i = 0; i < 20; i++) {
+                // 使用属性快照攻击
+                const result = calculatePlayerDamage({
+                    attack: player.bossBattleSnapshot.playerAttack,
+                    multiAttack: player.bossBattleSnapshot.playerMultiAttack,
+                    critRate: player.bossBattleSnapshot.playerCritRate,
+                    critDamage: player.bossBattleSnapshot.playerCritDamage
+                });
+
+                worldBossData.bossHealth = Math.max(0, worldBossData.bossHealth - result.total);
+                worldBossData.playerDamage += result.total;
+
+                // 检查BOSS是否被击败
+                if (worldBossData.bossHealth <= 0) {
+                    endBossFight(true);
+                    break;
+                }
+            }
+        }
+    }, 1000);
+}
+
+function stopAutoAttack() {
+    clearInterval(worldBossData.attackInterval);
+}
+
+// 更新排行榜
+function updateRankings() {
+    // 合并真实玩家和虚拟玩家
+    const allPlayers = [
+        {
+            name: "你",
+            damage: worldBossData.playerDamage
+        },
+        ...worldBossData.virtualPlayers.map(p => ({
+            name: p.name,
+            damage: p.damage
+        }))
+    ];
+
+    // 按伤害排序
+    allPlayers.sort((a, b) => b.damage - a.damage);
+    worldBossData.rankings = allPlayers;
+
+    // 更新玩家排名
+    const playerRank = allPlayers.findIndex(p => p.name === "你") + 1;
+    document.getElementById('playerBossRank').textContent = playerRank ?
+        `${playerRank} / ${allPlayers.length}` : "未排名";
+
+    // 更新UI
+    const rankingsContainer = document.getElementById('bossRankings');
+    rankingsContainer.innerHTML = '';
+
+    allPlayers.slice(0, 10).forEach((player, index) => {
+        const div = document.createElement('div');
+        div.className = 'boss-ranking-item';
+        div.innerHTML = `
+            <span>${index + 1}. ${player.name}</span>
+            <span>${formatNumber(player.damage)}</span>
+        `;
+        rankingsContainer.appendChild(div);
+    });
+
+    if (allPlayers.length === 0) {
+        rankingsContainer.innerHTML = '<div>尚未开始战斗</div>';
+    }
+}
+
+// 添加战斗日志
+function addBossBattleLog(message) {
+    const timestamp = new Date().toLocaleTimeString();
+    const logEntry = `[${timestamp}] ${message}`;
+
+    worldBossData.battleLog.unshift(logEntry);
+    if (worldBossData.battleLog.length > 15) { // 减少日志数量
+        worldBossData.battleLog.pop();
+    }
+
+    // 更新UI
+    const logContainer = document.getElementById('bossBattleLog');
+    logContainer.innerHTML = worldBossData.battleLog.map(log =>
+        `<div class="boss-battle-log-entry">${log}</div>`
+    ).join('');
+}
+
+// 检查BOSS是否结束
+function checkBossEnd() {
+    if (!worldBossData.isBossActive) return;
+
+    if (Date.now() >= worldBossData.bossEndTime) {
+        endBossFight(false);
+    } else {
+        setTimeout(checkBossEnd, 1000);
+        updateBossUI();
+    }
+}
+
+// 结束BOSS战斗
+function endBossFight(isDefeated) {
+    worldBossData.isBossActive = false;
+    clearInterval(worldBossData.virtualAttackInterval);
+
+    // 停止自动攻击
+    if (worldBossData.isAutoAttacking) {
+        worldBossData.isAutoAttacking = false;
+        stopAutoAttack();
+    }
+    player.bossBattleSnapshot = null;
+    // 发放奖励
+    distributeRewards();
+
+    // 添加战斗日志
+    if (isDefeated) {
+        addBossBattleLog(`BOSS ${worldBossData.bossName} 已被击败！`);
+    } else {
+        addBossBattleLog(`BOSS ${worldBossData.bossName} 时间结束！`);
+    }
+
+    // 保存数据
+    saveWorldBossData();
+
+    // 更新UI
+    updateBossUI();
+
+    // 记录开奖结果
+    recordBossResult();
+}
+
+// 分发奖励
+function distributeRewards() {
+    const playerRank = worldBossData.rankings.findIndex(p => p.name === "你") + 1;
+
+    if (playerRank === 1) {
+        // 第一名
+        player.items.divineGem += 5;
+        player.reincarnationCoin += 30000;
+        addBossBattleLog("你获得了第1名奖励: 5个神级宝石 + 30000转生币");
+
+        // 解锁成就
+        if (!player.achievements.world_boss_1st) {
+            player.achievements.world_boss_1st = true;
+            player.gpsMultiplier += achievementRewards.world_boss_1st.gpsMultiplier;
+            logAction(`成就达成：${achievementRewards.world_boss_1st.description}，GPS奖励 +${achievementRewards.world_boss_1st.gpsMultiplier * 100}%`, 'success');
+        }
+    } else if (playerRank >= 2 && playerRank <= 5) {
+        // 第2-5名
+        player.items.superiorGem += 5;
+        player.reincarnationCoin += 10000;
+        addBossBattleLog(`你获得了第${playerRank}名奖励: 5个极品宝石 + 10000转生币`);
+
+        // 解锁成就
+        if (!player.achievements.world_boss_top5) {
+            player.achievements.world_boss_top5 = true;
+            player.gpsMultiplier += achievementRewards.world_boss_top5.gpsMultiplier;
+            logAction(`成就达成：${achievementRewards.world_boss_top5.description}，GPS奖励 +${achievementRewards.world_boss_top5.gpsMultiplier * 100}%`, 'success');
+        }
+    } else if (playerRank >= 6 && playerRank <= 10) {
+        // 第6-10名
+        player.items.advancedGem += 3;
+        player.reincarnationCoin += 5000;
+        addBossBattleLog(`你获得了第${playerRank}名奖励: 3个高级宝石 + 5000转生币`);
+
+        // 解锁成就
+        if (!player.achievements.world_boss_top10) {
+            player.achievements.world_boss_top10 = true;
+            player.gpsMultiplier += achievementRewards.world_boss_top10.gpsMultiplier;
+            logAction(`成就达成：${achievementRewards.world_boss_top10.description}，GPS奖励 +${achievementRewards.world_boss_top10.gpsMultiplier * 100}%`, 'success');
+        }
+    } else {
+        // 参与奖
+        player.items.primaryGem += 1;
+        player.reincarnationCoin += 100;
+        addBossBattleLog("你获得了参与奖: 1个初级宝石 + 100转生币");
+
+        // 解锁成就
+        if (!player.achievements.world_boss_participant) {
+            player.achievements.world_boss_participant = true;
+            player.gpsMultiplier += achievementRewards.world_boss_participant.gpsMultiplier;
+            logAction(`成就达成：${achievementRewards.world_boss_participant.description}，GPS奖励 +${achievementRewards.world_boss_participant.gpsMultiplier * 100}%`, 'success');
+        }
+    }
+
+    // 更新显示
+    updateDisplay();
+    updateAchievementsDisplay();
+}
+
+// 记录开奖结果
+function recordBossResult() {
+    const top3 = worldBossData.rankings.slice(0, 3).map(p => p.name).join(", ");
+    const result = `世界BOSS ${worldBossData.bossName} 结束，前三名: ${top3}`;
+
+    player.lotteryResults.unshift({
+        time: new Date().toLocaleString(),
+        result: result
+    });
+
+    if (player.lotteryResults.length > 5) {
+        player.lotteryResults.pop();
+    }
+
+    // 更新彩票结果显示
+    updateLotteryResultsDisplay();
+}
+
+// 格式化数字显示
+function formatNumber(value) {
+    if (value >= 1e8) {
+        return value.toExponential(3);
+    } else {
+        return value.toLocaleString();
+    }
+}
+// 在游戏加载时初始化世界BOSS系统
+loadWorldBossData();
+updateOfficialSystemDisplay();
+updatePlayerClassNameDisplay();
+updateCompanionDisplay();
+updateItemDisplay();
+updateMonsterUI();
+updateMysterySystemDisplay();

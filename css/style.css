@@ -1,0 +1,591 @@
+
+        /* 样式保持不变 */
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        button { padding: 10px; margin: 5px; cursor: pointer; }
+        #equipmentList, #itemList, #collectionList, #reincarnationList, #petList, #stockList, #lotteryList, #bankList, #dungeonEquipmentList, #soulRingList { margin-top: 20px; max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; }
+        .log { color: #666; font-size: 0.9em; }
+        .common { color: #666; border-left: 4px solid #666; padding: 2px 5px; }
+        .rare { color: blue; border-left: 4px solid blue; }
+        .epic { color: purple; border-left: 4px solid purple; }
+        .legendary { color: orange; border-left: 4px solid orange; }
+        .ancient { color: brown; border-left: 4px solid brown; }
+        .divine { color: gold; border-left: 4px solid gold; }
+        .arcane { color: deepskyblue; border-left: 4px solid deepskyblue; }
+        .celestial { color: lightblue; border-left: 4px solid lightblue; }
+        .infernal { color: darkred; border-left: 4px solid darkred; }
+        .astral { color: violet; border-left: 4px solid violet; }
+        .primeval { color: darkgreen; border-left: 4px solid darkgreen; }
+        .transcendental { color: fuchsia; border-left: 4px solid fuchsia; }
+        .quantum { color: aqua; border-left: 4px solid aqua; }
+        .ultimate { color: orange; border-left: 4px solid orange; }
+        .chaos { color: #FF4500; border-left: 4px solid #FF4500; }
+       .eternal { color: #00CED1; border-left: 4px solid #00CED1; }
+         .void { color: #8A2BE2; border-left: 4px solid #8A2BE2; }
+        .genesis { color: #FFD700; border-left: 4px solid #FFD700; }
+         .divineRealm { color: #FF69B4; border-left: 4px solid #FF69B4; }
+         .apocalypse { color: #000000; border-left: 4px solid #000000; }
+       .yeyu1 { color: #C0C0C0; border-left: 4px solid #C0C0C0; }
+       .yeyu2 { color: #8A2BE5; border-left: 4px solid #8A2BE5; }
+         .yeyu3 { color: #FF4530; border-left: 4px solid #FF4530; }
+        .yeyu4 { color: #4B0082; border-left: 4px solid #4B0082; }
+         .yeyu5 { color: #FFD770; border-left: 4px solid #FFD770; }
+         .yeyu6 { color: #8B0000; border-left: 4px solid #8B0000; }
+       .yeyu7 { color: #C0C0C0; border-left: 4px solid #C0C0C0; }
+       .yeyu8 { color: #8A2BE5; border-left: 4px solid #8A2BE5; }
+         .yeyu9 { color: #FF4530; border-left: 4px solid #FF4530; }
+        .yeyu10 { color: #4B0082; border-left: 4px solid #4B0082; }
+         .yeyu11 { color: #FFD770; border-left: 4px solid #FFD770; }
+         .yeyu12 { color: #8B0000; border-left: 4px solid #8B0000; }
+       .yeyu13 { color: #C0C0C0; border-left: 4px solid #C0C0C0; }
+       .yeyu14 { color: #8A2BE5; border-left: 4px solid #8A2BE5; }
+         .yeyu15 { color: #FF4530; border-left: 4px solid #FF4530; }
+   .ultimate2 { color: #00CED1; border-left: 4px solid #00CED1; }
+.ultimate3 { color: #8A2BE2; border-left: 4px solid #8A2BE2; } 
+.ultimate4 { color: #FFD700; border-left: 4px solid #FFD700; } 
+.ultimate5 { color: #FF69B4; border-left: 4px solid #FF69B4; }
+.ultimate6 { color: #000000; border-left: 4px solid #000000; }
+.ultimate7 { color: #00FF00; border-left: 4px solid #00FF00; } 
+.ultimate8 { color: #FF0000; border-left: 4px solid #FF0000; } 
+.ultimate9 { color: #0000FF; border-left: 4px solid #0000FF; }
+.ultimate10 { color: #800080; border-left: 4px solid #800080; } 
+.ultimate11 { color: #FFA500; border-left: 4px solid #FFA500; } 
+.ultimate12 { color: #008080; border-left: 4px solid #008080; } 
+.ultimate13 { color: #4B0082; border-left: 4px solid #4B0082; } 
+.ultimate14 { color: #FF6347; border-left: 4px solid #FF6347; } 
+.ultimate15 { color: #7CFC00; border-left: 4px solid #7CFC00; } 
+.ultimate16 { color: #DC143C; border-left: 4px solid #DC143C; } 
+.ultimate17 { color: #00FFFF; border-left: 4px solid #00FFFF; } 
+.ultimate18 { color: #FF00FF; border-left: 4px solid #FF00FF; } 
+.ultimate19 { color: #FFFF00; border-left: 4px solid #FFFF00; }
+.ultimate20 { color: #8B0000; border-left: 4px solid #8B0000; } 
+.ultimate21 { color: #800000; border-left: 4px solid #800000; } 
+.ultimate22 { color: #FFDAB9; border-left: 4px solid #FFDAB9; }
+.ultimate23 { color: #000080; border-left: 4px solid #000080; } 
+.ultimate24 { color: #FF1493; border-left: 4px solid #FF1493; } 
+.ultimate25 { color: #00BFFF; border-left: 4px solid #00BFFF; }
+.ultimate26 { color: #FF4500; border-left: 4px solid #FF4500; } 
+.ultimate27 { color: #00CED1; border-left: 4px solid #00CED1; }
+.ultimate28 { color: #8A2BE2; border-left: 4px solid #8A2BE2; } 
+.ultimate29 { color: #FFD700; border-left: 4px solid #FFD700; }
+.ultimate30 { color: #FF69B4; border-left: 4px solid #FF69B4; }
+.ultimate31 { color: #000000; border-left: 4px solid #000000; }
+.ultimate32 { color: #00FF00; border-left: 4px solid #00FF00; }
+.ultimate33 { color: #FF0000; border-left: 4px solid #FF0000; } 
+.ultimate34 { color: #0000FF; border-left: 4px solid #0000FF; } 
+.ultimate35 { color: #800080; border-left: 4px solid #800080; } 
+.ultimate36 { color: #FFA500; border-left: 4px solid #FFA500; } 
+.ultimate37 { color: #008080; border-left: 4px solid #008080; }
+.ultimate38 { color: #4B0082; border-left: 4px solid #4B0082; } 
+.ultimate39 { color: #FF6347; border-left: 4px solid #FF6347; } 
+.ultimate40 { color: #7CFC00; border-left: 4px solid #7CFC00; } 
+.ultimate41 { color: #DC143C; border-left: 4px solid #DC143C; } 
+.ultimate42 { color: #00FFFF; border-left: 4px solid #00FFFF; } 
+.ultimate43 { color: #FF00FF; border-left: 4px solid #FF00FF; }
+.ultimate44 { color: #FFFF00; border-left: 4px solid #FFFF00; }
+.ultimate45 { color: #8B0000; border-left: 4px solid #8B0000; } 
+.ultimate46 { color: #800000; border-left: 4px solid #800000; } 
+.ultimate47 { color: #FFDAB9; border-left: 4px solid #FFDAB9; }
+.ultimate48 { color: #000080; border-left: 4px solid #000080; }
+.ultimate49 { color: #FF1493; border-left: 4px solid #FF1493; }
+.ultimate50 { color: #00BFFF; border-left: 4px solid #00BFFF; }
+          .equipment { position: relative; padding: 5px; margin: 3px 0; }
+        .tooltip { 
+            display: none;
+            position: absolute;
+            left: 70%;
+            top: 0;
+            background: white;
+            border: 1px solid #ddd;
+            padding: 5px;
+            min-width: 120px;
+            z-index: 0;
+            transform: scale(0.5);
+            margin-top: -80px;
+        }
+        .equipment:hover .tooltip { display: block; }
+        @keyframes shake {
+            -50%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .error { animation: shake 0.3s; color: red; }
+        #actionLog {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+        .offline-reward {
+            color: #2ecc71;
+            font-weight: bold;
+            animation: fadeOut 1.5s ease-out 2s forwards;
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        .success { color: #27ae60; }
+        .info { color: #2980b9; }
+        .auto-buy-container {
+            margin: 15px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .auto-buy-btn { background-color: #e0e0e0; }
+        .achievement { margin: 5px 0; padding: 5px; border: 1px solid #ddd; border-radius: 5px; }
+        .achievement.unlocked { background-color: #e0f7fa; }
+        .tab { cursor: pointer; padding: 10px; border: 1px solid #ccc; display: inline-block; margin-right: 5px; }
+        .tab.active { background-color: #ccc; }
+
+        /* 新增样式：装备品质面板缩小 200% */
+        #equipmentList {
+    transform: scale(1);
+    transform-origin: top left;
+    width: 100%;
+    /* 新增以下样式 */
+    max-height: 20vh; /* 限制最大高度为屏幕高度的20%，可根据需求调整 */
+    overflow-y: auto; /* 允许垂直滚动 */
+    -webkit-overflow-scrolling: touch; /* 启用移动端平滑滚动特性 */
+    overscroll-behavior-y: contain; /* 阻止滚动到底部时的全局回弹 */
+}
+
+        /* 新增样式：游戏日志分页 */
+        .log-tab { cursor: pointer; padding: 10px; border: 1px solid #ccc; display: inline-block; margin-right: 5px; }
+        .log-tab.active { background-color: #ccc; }
+        #gameLogPage1, #gameLogPage2, #gameLogPage3, #gameLogPage4 { display: none; }
+        #gameLogPage1.active, #gameLogPage2.active, #gameLogPage3.active, #gameLogPage4.active { display: block; }
+
+        /* 自定义对话框样式 */
+        #customDialog {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border: 1px solid #ccc;
+            z-index: 1000;
+            text-align: center;
+        }
+        #dialogOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+        #dialogConfirm, #dialogCancel {
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+        }
+
+        /* 新增股票样式 */
+        #stocksContainer { margin-top: 20px; }
+        .stock-item { 
+            padding: 10px; 
+            border: 1px solid #ddd; 
+            margin: 5px 0; 
+            cursor: pointer; 
+        }
+        .stock-item.selected { background-color: #e3f2fd; }
+        .stock-control { margin-top: 20px; }
+        .stock-control input { 
+            padding: 5px;
+            width: 120px;
+            margin-right: 10px;
+        }
+
+        /* 新增彩票样式 */
+        #lotteryResults, #traditionalLotteryNumbers {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+
+        /* 新增银行系统样式 */
+        #bankList {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+
+        /* 新增打怪模式样式 */
+        #monsterUI {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #f9f9f9;
+            border: 1px solid #ccc;
+            padding: 10px;
+            width: 300px;
+            z-index: 1000;
+        }
+        #monsterUI h3 { margin-top: 0; }
+        #monsterUI .monster-info { margin-bottom: 10px; }
+        #monsterUI .player-info { margin-bottom: 10px; }
+        #monsterUI .battle-log { max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; }
+
+        /* 新增魂环样式 */
+        #soulRingsContainer .equipment {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid gold;
+            border-radius: 4px;
+        }
+         /* 功法秘笈样式 */
+.technique {
+    padding: 10px;
+    margin: 5px;
+    border: 1px solid #8B4513; /* 棕色边框 */
+    border-radius: 4px;
+    background-color: #FFF8DC; /* 浅黄色背景 */
+} 
+#worldBossUI {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px; /* 从800px缩小到600px */
+            max-width: 90%;
+            max-height: 80vh; /* 限制最大高度 */
+            background: #1a1a1a;
+            border: 2px solid #d4af37;
+            box-shadow: 0 0 15px #d4af37;
+            padding: 15px; /* 减少内边距 */
+            z-index: 1001;
+            display: none;
+            color: #fff;
+            border-radius: 8px; /* 稍微减小圆角 */
+            overflow-y: auto; /* 添加滚动条 */
+        }
+        
+        #worldBossUI h3 {
+            color: #d4af37;
+            text-align: center;
+            margin-top: 0;
+            font-size: 20px; /* 减小字号 */
+            text-shadow: 0 0 5px #d4af37;
+            margin-bottom: 10px; /* 减小下边距 */
+        }
+        
+        .boss-section {
+            margin-bottom: 15px; /* 减小间距 */
+            padding: 10px; /* 减小内边距 */
+            background: #2a2a2a;
+            border-radius: 6px;
+            border: 1px solid #444;
+        }
+        
+        .boss-section-title {
+            color: #d4af37;
+            font-weight: bold;
+            margin-bottom: 8px; /* 减小下边距 */
+            font-size: 16px; /* 减小字号 */
+        }
+        
+        .boss-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px; /* 减小下边距 */
+            font-size: 14px; /* 减小字号 */
+        }
+        
+        .boss-name {
+            font-size: 18px; /* 从22px减小 */
+            color: #d4af37;
+            text-align: center;
+            margin: 8px 0; /* 减小边距 */
+            text-shadow: 0 0 5px #d4af37;
+        }
+        
+        .boss-world {
+            font-size: 14px; /* 从16px减小 */
+            color: #aaa;
+            text-align: center;
+            margin-bottom: 10px; /* 减小下边距 */
+            font-style: italic;
+        }
+        
+        .boss-stars {
+            text-align: center;
+            font-size: 16px; /* 从20px减小 */
+            color: gold;
+            margin-bottom: 10px; /* 减小下边距 */
+        }
+        
+        .boss-health-bar {
+            height: 20px; /* 从30px减小 */
+            background: #333;
+            border-radius: 10px;
+            margin-bottom: 10px; /* 减小下边距 */
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .boss-health-fill {
+            height: 100%;
+            background: linear-gradient(to right, #d4af37, #f1e5ac);
+            width: 100%;
+            transition: width 0.3s;
+        }
+        
+        .boss-health-text {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            line-height: 20px; /* 与health-bar高度匹配 */
+            color: #000;
+            font-weight: bold;
+            font-size: 12px; /* 减小字号 */
+        }
+        
+        .boss-time-left {
+            text-align: center;
+            font-size: 14px; /* 从18px减小 */
+            margin-bottom: 10px; /* 减小下边距 */
+            color: #d4af37;
+        }
+        
+        .boss-button {
+            background: linear-gradient(to bottom, #d4af37, #a67c00);
+            border: none;
+            color: #000;
+            padding: 6px 12px; /* 减小内边距 */
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 3px; /* 减小外边距 */
+            transition: all 0.3s;
+            font-size: 12px; /* 减小字号 */
+        }
+        
+        .boss-button:hover {
+            background: linear-gradient(to bottom, #f1e5ac, #d4af37);
+            box-shadow: 0 0 8px #d4af37; /* 减小阴影 */
+        }
+        
+        .boss-button:disabled {
+            background: #555;
+            color: #888;
+            cursor: not-allowed;
+        }
+        
+        .boss-rankings {
+            max-height: 120px; /* 从200px减小 */
+            overflow-y: auto;
+            border: 1px solid #444;
+            padding: 6px; /* 减小内边距 */
+            border-radius: 4px;
+            font-size: 12px; /* 减小字号 */
+        }
+        
+        .boss-ranking-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 3px 0; /* 减小内边距 */
+            border-bottom: 1px solid #444;
+            font-size: 12px; /* 减小字号 */
+        }
+        
+        .boss-battle-log {
+            max-height: 100px; /* 从150px减小 */
+            overflow-y: auto;
+            border: 1px solid #444;
+            padding: 6px; /* 减小内边距 */
+            border-radius: 4px;
+            font-size: 11px; /* 减小字号 */
+        }
+        
+        .boss-battle-log-entry {
+            margin-bottom: 3px; /* 减小下边距 */
+            padding-bottom: 3px; /* 减小内边距 */
+            border-bottom: 1px dotted #444;
+        }
+        
+        .boss-rewards {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+        
+        .boss-reward-tier {
+            background: #333;
+            padding: 6px; /* 减小内边距 */
+            border-radius: 4px;
+            margin: 3px; /* 减小外边距 */
+            text-align: center;
+            width: 45%; /* 调整宽度使两列显示 */
+            min-width: 120px;
+            font-size: 12px; /* 减小字号 */
+        }
+        
+        .boss-reward-tier h4 {
+            color: #d4af37;
+            margin-top: 0;
+            font-size: 13px; /* 减小字号 */
+        }
+        
+        .boss-close-button {
+            position: absolute;
+            top: 5px; /* 减小位置 */
+            right: 5px;
+            background: none;
+            border: none;
+            color: #d4af37;
+            font-size: 16px; /* 从20px减小 */
+            cursor: pointer;
+            padding: 2px;
+        }
+        
+        .boss-summon-count {
+            position: absolute;
+            top: 5px; /* 减小位置 */
+            left: 5px;
+            color: #d4af37;
+            font-weight: bold;
+            font-size: 12px; /* 减小字号 */
+        }
+  .player-name {
+  margin: 10px 0;
+  padding: 8px 15px;
+  font-size: 18px;
+  font-weight: bold;
+  position: relative;
+  display: inline-block;
+  background: linear-gradient(90deg, #fff, #f8f9fa, #fff);
+  background-size: 200% 100%;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.player-name::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    rgba(52, 152, 219, 0) 0%,
+    rgba(52, 152, 219, 0.1) 50%,
+    rgba(52, 152, 219, 0) 100%);
+  animation: shine 3s infinite;
+}
+
+#playerName {
+  background: linear-gradient(90deg, #3498db, #9b59b6, #e74c3c);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradientShift 5s ease infinite;
+  padding: 0 5px;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes shine {
+  100% { left: 100%; }
+}
+
+.player-name:hover #playerName {
+  animation: gradientShift 2s ease infinite, bounce 0.5s ease;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.titleBranch {
+    margin: 20px 0;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+.titleRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.titleItem {
+    padding: 8px 12px;
+    background: #f0f0f0;
+    border-radius: 4px;
+    cursor: pointer;
+    width: calc(20% - 10px); /* 每排5个 */
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.titleItem.unlocked {
+    background: #4CAF50;
+    color: white;
+}
+
+.titleItem.selected {
+    border: 2px solid #ffd700;
+    font-weight: bold;
+}
+/* 通天塔界面缩小样式 */
+#towerUI {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px; /* 缩小宽度 */
+    max-width: 90%; /* 响应式最大宽度 */
+    max-height: 70vh; /* 限制最大高度为屏幕的70% */
+    background: #f9f9f9;
+    border: 1px solid #ccc;
+    padding: 15px; /* 减少内边距 */
+    z-index: 1001;
+    display: none; /* 默认隐藏 */
+    overflow-y: auto; /* 内容过多时显示滚动条 */
+    border-radius: 6px;
+}
+
+#towerUI h3 {
+    font-size: 18px; /* 缩小标题字体 */
+    margin: 10px 0;
+    text-align: center;
+}
+
+#towerUI .floor-info {
+    font-size: 14px; /* 缩小信息字体 */
+    margin: 8px 0;
+    padding: 8px;
+    background: #f0f0f0;
+    border-radius: 4px;
+}
+
+#towerUI button {
+    padding: 6px 12px; /* 缩小按钮 */
+    font-size: 12px;
+    margin: 4px;
+}
+
+#towerUI .tower-log {
+    max-height: 150px; /* 缩小日志区域 */
+    overflow-y: auto;
+    font-size: 12px;
+    padding: 8px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+}

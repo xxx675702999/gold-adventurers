@@ -1,0 +1,27 @@
+// 功法秘笈配置
+const techniqueConfig = {
+    "immortalAsuraBody": { name: "不灭修罗体", type: "health", effect: 0.0001, description: "每一级增加0.01%生命永久属性" },
+    "eightDesolationsWarDemonBody": { name: "八荒战魔躯", type: "health", effect: 0.001, description: "每一级增加0.1%生命永久属性" },
+    "nineRevolutionsProfoundBody": { name: "九转玄黄身", type: "health", effect: 0.005, description: "每一级增加0.5%生命永久属性" },
+    "loneDestinyBone": { name: "天煞孤星骨", type: "health", effect: 0.01, description: "每一级增加1%生命永久属性" },
+    "bloodPrisonMadGodArmor": { name: "血狱狂神铠", type: "health", effect: 0.05, description: "每一级增加5%生命永久属性" },
+    "godSlayingBurningHeavenArt": { name: "弑神焚天诀", type: "attack", effect: 0.0001, description: "每一级增加0.01%攻击永久属性" },
+    "burialHeavenBladePrisonManual": { name: "葬天刀狱谱", type: "attack", effect: 0.001, description: "每一级增加0.1%攻击永久属性" },
+    "tenDirectionsAnnihilationSpearCodex": { name: "十方俱灭枪典", type: "attack", effect: 0.005, description: "每一级增加0.5%攻击永久属" },
+    "thousandCalamitiesVoidArrowArt": { name: "千劫裂空箭术", type: "attack", effect: 0.01, description: "每一级增加1%攻击永久属性" },
+    "ancientAnnihilationHalberdArt": { name: "万古寂灭戟法", type: "attack", effect: 0.05, description: "每一级增加5%攻击永久属性" },
+    "nineCalamitiesWorldDestroyingPalm": { name: "九劫灭世掌", type: "critDamage", effect: 0.001, description: "每一级增加0.1%爆伤永久属性" },
+    "chaosCreationForce": { name: "混沌开天劲", type: "critDamage", effect: 0.005, description: "每一级增加0.5%爆伤永久属性" },
+    "dragonElephantShatteringVoidArt": { name: "龙象碎穹功", type: "critDamage", effect: 0.01, description: "每一级增加1%爆伤永久属性" },
+    "greatSunFallingStarFist": { name: "大日陨星拳", type: "critDamage", effect: 0.05, description: "每一级增加5%爆伤永久属性" },
+    "nineHeavensThunderboltTruth": { name: "九霄雷殛真解", type: "critRate", effect: 0.00001, description: "每一级增加0.001%暴击率永久属性" },
+    "netherBloodSeaDiagram": { name: "幽冥血海图录", type: "critRate", effect: 0.0005, description: "每一级增加0.05%暴击率永久属性" },
+    "riverStarsHangingSecretScroll": { name: "星河倒悬秘卷", type: "critRate", effect: 0.0001, description: "每一级增加0.01%暴击率永久属性" },
+    "eightDesolationsFireDragonRecord": { name: "八荒火龙焚世录", type: "critRate", effect: 0.001, description: "每一级增加0.1%暴击率永久属性" },
+    "iceSealThreeThousandRealmArt": { name: "冰封三千界心法", type: "critRate", effect: 0.005, description: "每一级增加0.5%暴击率永久属性" },
+    "greatVoidReturnToVoidCodex": { name: "太虚归墟典", type: "multiAttack", effect: 2, description: "每一级攻击次数+2永久属性" },
+    "samsaraCalamityAnnihilationSutra": { name: "轮回劫灭经", type: "multiAttack", effect: 25, description: "每一级攻击次数+25永久属性" },
+    "yinYangReversalArt": { name: "阴阳逆命术", type: "multiAttack", effect: 50, description: "每一级攻击次数+50永久属性" },
+    "zhouHeavenStarsFallingWay": { name: "周天星陨道", type: "multiAttack", effect: 100, description: "每一级攻击次数+100永久属性" },
+    "ancientVoidRecord": { name: "万古空冥录", type: "multiAttack", effect: 500, description: "每一级攻击次数+500永久属性" }
+};
